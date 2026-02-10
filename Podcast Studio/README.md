@@ -44,7 +44,7 @@ The project is designed as a practical exploration of AI-driven content adaptati
 4. User flow
 
    - User pastes article URLs (one per line)
-      - User configures:
+   - User configures:
       - target podcast length (minutes)
       - TTS model and voice
       - chunk size (characters)
@@ -169,7 +169,6 @@ The project is designed as a practical exploration of AI-driven content adaptati
 11. Production-ready next steps
 
    Planned improvements:
-
       - improved URL input UX and validation
       - script correction and feedback loop
       - dynamic model and voice previews
