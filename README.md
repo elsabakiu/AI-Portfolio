@@ -20,6 +20,7 @@ Current focus areas
 - Production-aware AI system design
 
 Featured projects
+
 🎙️ Podcast Studio – AI Podcast Episode Generator
 An AI-powered application that transforms long-form online articles into narrated podcast episodes.
 
@@ -37,7 +38,9 @@ Key concepts
 - Simple web interface for fast experimentation
 
 📁 Project folder: Podcast Studio/
+
 📄 Detailed README inside the project folder
+
 
 How to read this portfolio
 - This repository is organized to reflect product thinking, not just code:
