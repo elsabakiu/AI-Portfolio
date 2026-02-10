@@ -1,8 +1,7 @@
 # AI Portfolio – Elsa Bakiu
 
 AI Product Manager with 12+ years of experience building and scaling complex B2B and B2G platforms.  
-This repository showcases end-to-end AI product work, focusing on LLM-powered workflows, usability, and production-aware system design.
-
+This portfolio showcases end-to-end AI product work, focusing on LLM-powered workflows, usability, and production-aware system design.
 
 ## TL;DR
 
@@ -53,18 +52,6 @@ See the detailed README inside the project folder for full documentation.
 - System design for generative AI
 - UX considerations for AI-driven workflows
 - Translating complex requirements into usable products
-
-
-## Background (short)
-
-- Product Manager at Unite Services GmbH
-  - Led platform redesigns and migrations
-  - Delivered B2B and B2G products at scale
-  - Worked in regulated and international environments
-- Experience in public procurement, enterprise software, healthcare, and research
-- Former Research Engineer with published work in HCI and crowdsourcing
-
-This portfolio complements my CV by showing how I think and build, not just where I worked.
 
 
 ## How to navigate this repo
