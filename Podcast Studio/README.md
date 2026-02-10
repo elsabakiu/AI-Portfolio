@@ -168,13 +168,13 @@ The project is designed as a practical exploration of AI-driven content adaptati
 
 11. Production-ready next steps
 
-   Planned improvements:
-      - improved URL input UX and validation
-      - script correction and feedback loop
-      - dynamic model and voice previews
-      - subtitle (SRT) generation
-      - performance optimizations
-      - dynamic prompt adaptation based on content type
+      Planned improvements:
+         - improved URL input UX and validation
+         - script correction and feedback loop
+         - dynamic model and voice previews
+         - subtitle (SRT) generation
+         - performance optimizations
+         - dynamic prompt adaptation based on content type
 
 
 
