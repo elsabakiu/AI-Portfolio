@@ -1,0 +1,71 @@
+# =========================
+# Python
+# =========================
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.Python
+env/
+venv/
+.venv/
+ENV/
+pip-wheel-metadata/
+
+# =========================
+# Environment variables
+# =========================
+.env
+.env.*
+*.env
+
+# =========================
+# OS files
+# =========================
+.DS_Store
+Thumbs.db
+
+# =========================
+# VS Code
+# =========================
+.vscode/
+.history/
+
+# =========================
+# Jupyter / notebooks
+# =========================
+.ipynb_checkpoints/
+
+# =========================
+# Audio & generated outputs
+# =========================
+podcast_output/
+*.mp3
+*.wav
+*.ogg
+
+# =========================
+# Temporary / runtime files
+# =========================
+*.log
+*.tmp
+*.temp
+
+# =========================
+# Gradio
+# =========================
+gradio_cached_examples/
+.gradio/
+
+# =========================
+# Build / packaging
+# =========================
+build/
+dist/
+*.egg-info/
+
+# =========================
+# Misc
+# =========================
+ffmpeg_concat_list.txt
+concat_list.txt
