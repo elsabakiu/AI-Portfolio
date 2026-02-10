@@ -1,73 +1,96 @@
-AI Portfolio – Elsa Bakiu
+# AI Portfolio – Elsa Bakiu
 
-This repository showcases selected projects and experiments at the intersection of product management, AI, and complex software systems.
+AI Product Manager with 12+ years of experience building and scaling complex B2B and B2G platforms.  
+This repository showcases end-to-end AI product work, focusing on LLM-powered workflows, usability, and production-aware system design.
 
-I am a Product Manager with 12+ years of experience building and scaling B2B and B2G platforms in regulated, international environments. My recent focus is on applying AI and LLMs to real product problems, with an emphasis on usability, reliability, and responsible system design.
+---
 
-This portfolio is intended to complement my CV by showing how I think and build, not just what I’ve worked on.
+## TL;DR
 
-About me
-- Product Manager with a strong technical background (MSc Computer Science)
-- Experience leading platform redesigns, migrations, and large-scale rollouts
-- Background in eProcurement, public procurement, healthcare, and enterprise software
-- Hands-on with AI prototyping, prompt design, evaluation, and system trade-offs
-- Passionate about building practical, user-centered AI products
+- Product Manager with strong technical background (MSc Computer Science)
+- Experience leading large-scale platform redesigns and regulated products
+- Hands-on with AI prototyping, prompt design, and system trade-offs
+- Focused on turning AI capabilities into usable, reliable products
 
-Current focus areas
-- AI-assisted content generation
-- LLM-powered workflows
-- Audio-first and accessibility-focused experiences
-- Production-aware AI system design
+---
 
-Featured projects
+## What this portfolio shows
 
-🎙️ Podcast Studio – AI Podcast Episode Generator
+This portfolio is not a collection of demos.  
+It focuses on how AI is applied to real product problems, including:
+
+- Problem framing and user needs
+- AI system design under real-world constraints
+- Prompt design and controllability
+- Trade-offs, limitations, and next steps
+- Usable outputs, not just code
+
+---
+
+## Featured project
+
+### 🎙️ Podcast Studio – AI Podcast Episode Generator
+
 An AI-powered application that transforms long-form online articles into narrated podcast episodes.
 
-What it demonstrates
-- End-to-end AI product thinking (input → processing → output)
-- Prompt design for structured, spoken content
-- Chunking strategies to handle LLM and TTS constraints
+Why it matters:
+- Explores AI-driven content adaptation
+- Focuses on audio-first and accessibility use cases
+- Demonstrates reliability challenges in LLM and TTS pipelines
+
+What it demonstrates:
+- End-to-end AI product thinking
+- Prompt design for structured, spoken output
+- Chunking strategies to handle LLM and TTS limits
 - Balancing automation with user control
-- Translating AI capabilities into a usable product experience
+- Simple UI for fast experimentation and feedback
 
-Key concepts
-- Article extraction and normalization
-- LLM-based script generation
-- Text-to-speech with chunking and audio merging
-- Simple web interface for fast experimentation
+Project folder: Podcast Studio  
+See the detailed README inside the project folder for full documentation.
 
-📁 Project folder: Podcast Studio/
+---
 
-📄 Detailed README inside the project folder
+## Skills demonstrated through projects
 
-
-How to read this portfolio
-- This repository is organized to reflect product thinking, not just code:
-- Each project includes a clear problem statement and solution
-- Design decisions and trade-offs are documented
-- Outputs (scripts, audio, UI) are treated as first-class artifacts
-- Code is used as a means to explore and validate product ideas
-
-I intentionally focus on clarity, constraints, and real-world usability over technical novelty for its own sake.
-
-Skills highlighted through projects
 - AI product discovery and prototyping
-- Prompt engineering and controllability
-- Evaluation thinking for generative systems
-- System design under real-world constraints
-- Collaboration between product, design, and engineering concerns
+- Prompt engineering and evaluation thinking
+- System design for generative AI
+- UX considerations for AI-driven workflows
+- Translating complex requirements into usable products
 
-Contact
+---
+
+## Background (short)
+
+- Product Manager at Unite Services GmbH
+  - Led platform redesigns and migrations
+  - Delivered B2B and B2G products at scale
+  - Worked in regulated and international environments
+- Experience in public procurement, enterprise software, healthcare, and research
+- Former Research Engineer with published work in HCI and crowdsourcing
+
+This portfolio complements my CV by showing how I think and build, not just where I worked.
+
+---
+
+## How to navigate this repo
+
+- Start with the featured project above
+- Read the project README for problem, solution, and design decisions
+- Review outputs (UI, scripts, audio) before diving into code
+
+---
+
+## Contact
 
 - LinkedIn: https://www.linkedin.com/in/elsa-bakiu
 - Location: Munich, Germany
 - Email: elsabakiu@gmail.com
 
+---
 
-Notes
+## Notes
 
 This portfolio is evolving. New projects and deeper documentation will be added over time as I continue exploring AI-powered product experiences.
 
-If you’re reviewing this as a recruiter or hiring manager:
-I’m always happy to walk through any project, explain decisions, and discuss what I would improve next.
+If you are reviewing this as a recruiter or hiring manager, I am happy to walk through any project and discuss design decisions, trade-offs, and next steps.

@@ -1,177 +1,247 @@
-🎙️ Podcast Studio – AI Podcast Episode Generator
+# 🎙️ Podcast Studio – AI Podcast Episode Generator
 
-Podcast Studio is an AI-powered Python application that transforms long-form online articles into narrated podcast episodes.
-It combines article extraction, LLM-based script generation, and text-to-speech into a single, end-to-end content pipeline with a simple web interface.
-The project is designed as a practical exploration of AI-driven content adaptation, audio-first UX, and production-aware LLM pipelines.
+Podcast Studio is an AI-powered Python application that transforms long-form online articles into narrated podcast episodes.  
+It combines article extraction, LLM-based script generation, and text-to-speech into a single end-to-end content pipeline with a simple web interface.
 
-1. Product overview
+This project was built to explore how LLMs can be turned into reliable, user-facing products, going beyond text demos to deliver complete, usable audio experiences.
 
-   Podcast Studio allows users to:
+---
 
-   - paste one or more article URLs
-   - define a target episode length (in minutes)
-   - select a text-to-speech voice
-   - generate both a podcast-style script and a narrated MP3 episode
+## At a glance
 
-   The system emphasizes:
+- What it is: AI-powered article-to-podcast generator  
+- Who it’s for: Users who prefer audio-first content and accessibility-friendly formats  
+- What it demonstrates: End-to-end AI product thinking, prompt design, and production-aware system constraints  
 
-   - predictable output length
-   - clean narrative structure
-   - reliability for long-form content
-   - transparency over black-box automation
+---
 
-2. Problem statement
+## What this product does
 
-   High-quality written content is widely available, but:
-   - many users prefer audio over reading
-   - converting articles into podcasts is time-consuming
-   - most AI tools stop at summaries and do not produce usable audio
+Podcast Studio allows users to:
 
-   Podcast creation usually involves multiple steps: summarizing, scripting, recording, editing, and exporting.
-   This project explores how AI can automate that workflow while keeping user control, explainability, and quality constraints.
+- Paste one or more article URLs
+- Define a target episode length in minutes
+- Select a text-to-speech voice
+- Generate both a podcast-style script and a narrated MP3 episode
 
-3. Solution
+The system is designed around:
 
-   Podcast Studio automates the full content-to-audio pipeline:
+- Predictable output length
+- Clean narrative structure
+- Reliability for long-form content
+- Transparency over black-box automation
 
-   - Fetch and clean article content
-   - Generate an original, spoken-style script using an LLM
-   - Split long scripts into safe chunks
-   - Convert text chunks into speech
-   - Merge audio into a single podcast episode
-   - The result is a usable MVP that goes beyond text generation and delivers a complete audio artifact.
+---
 
-4. User flow
+## Problem this project addresses
 
-   - User pastes article URLs (one per line)
-   - User configures:
-      - target podcast length (minutes)
-      - TTS model and voice
-      - chunk size (characters)
+High-quality written content is widely available, but:
 
-   - System processes the content:
-      - parses articles
-      - generates a structured script
-      - chunks text for TTS
-      - generates and merges audio
+- Many users prefer listening over reading
+- Converting articles into podcasts is time-consuming
+- Most AI tools stop at summaries and do not produce usable audio
 
-   - User receives:
-      - generated script (preview)
-      - playable and downloadable MP3 episode
+Creating podcasts usually involves multiple steps:
 
-5. AI & system design
+- Summarizing
+- Scripting
+- Recording
+- Editing
+- Exporting
 
-   - Source processing
-      - Articles are fetched and parsed using newspaper.Article
-         -Output format: {url, text}
-      - Non-content elements are removed to keep prompts clean and focused
+This project explores how AI can automate that workflow while keeping user control, explainability, and clear quality boundaries.
 
-   - Script generation (LLM)
-      - All sources are combined into a single prompt
-      - Prompt enforces:
-         - original narration (no copying from sources)
-         - simple, spoken language
-         - clear structure:
-            - hook
-            - background
-            - 3–5 key causes or points
-            - recap
-            - reflective closing
-      - Script length is guided by a user-defined minutes parameter (approximate)
+---
 
-   - Text preparation & chunking
-      - Generated script is normalized
-      - Chunking strategy:
-         - paragraph-first
-         - sentence-aware
-         - hard cuts only as fallback
-         - This avoids mid-sentence breaks and stays within TTS limits
+## How the product works end to end
 
-   - Text-to-speech (TTS)
-      - Each chunk is converted to audio using OpenAI TTS
-      - Chunking improves:
-         - reliability for long scripts
-         - API limit handling
-         - partial failure recovery
-      - Audio assembly
-         - All audio chunks are merged into a single MP3 using ffmpeg
+Podcast Studio automates the full content-to-audio pipeline:
 
-   End-to-end system flow
-   Sources → LLM script → chunking → TTS per chunk → final MP3
+- Fetch and clean article content
+- Generate an original, spoken-style script using an LLM
+- Split long scripts into safe chunks
+- Convert text chunks into speech
+- Merge audio into a single podcast episode
 
-6. User interface
+End-to-end flow:
 
-   The UI is built with Gradio to support fast iteration and experimentation:
+Sources -> LLM script -> chunking -> TTS per chunk -> final MP3
 
-      - URL input (one per line)
-      - target length, voice, and chunk-size controls
-      - generated script preview
-      - audio player with download option
+The result is a usable MVP that delivers a complete audio artifact, not just generated text.
 
-   The UI intentionally prioritizes clarity and speed over visual complexity.
+---
 
-7. Repository structure
-   podcast-studio/
-   ├── README.md
-   ├── requirements.txt
-   ├── .env                # API keys (not committed)
-   │
-   ├── src/
-   │   ├── data_processor.py    # Fetch and process articles
-   │   ├── llm_processor.py     # Script generation with OpenAI
-   │   ├── tts_generator.py     # TTS + audio handling
-   │   └── main.py              # Gradio application
-   │
-   ├── screenshots/             # UI screenshots
-   │
-   ├── podcast_output/          # Generated audio & intermediate files
-   │   ├── chunks/
-   │   ├── concat_list.txt
-   │   └── podcast_episode_final.mp3
-   │
-   ├── templates/               # Optional Gradio templates
-   └── Podcast_Generator.ipynb  # Early experimentation notebook
+## User flow
 
-8. Setup
-   1. Create and activate a virtual environment
-      python -m venv venv
-      source venv/bin/activate   # macOS / Linux
-      venv\Scripts\activate      # Windows
+User input:
+- Paste article URLs one per line
+- Set target podcast length in minutes
+- Select TTS model and voice
+- Adjust chunk size in characters
 
-   2. Install dependencies
-      pip install -r requirements.txt
+System processing:
+- Parse and normalize articles
+- Generate a structured podcast script
+- Chunk text for TTS safety
+- Generate and merge audio
 
-   3. Configure environment variables
-      Create a .env file in the project root:
-      OPENAI_API_KEY=your_api_key_here
+Output:
+- Script preview
+- Playable and downloadable MP3 episode
 
-9. Usage
+---
 
-   Run the Gradio app:
-     - python src/main.py
+## Key AI and system design decisions
 
-   Steps:
-   - Paste article URLs (one per line)
-   - Set target podcast length (minutes)
-   - Choose TTS model and voice
-   - Click Generate episode
+### Article processing
+- Articles are fetched and parsed using newspaper.Article
+- Output format is {url, text}
+- Non-content elements are removed to keep prompts focused
 
-   The final audio file is saved as: podcast_output/podcast_episode_final.mp3
+Why: Clean input improves LLM reliability and narrative quality.
 
-10. Trade-offs & limitations
+---
 
-   - Episode length is approximate and based on average speaking speed
-   - No automatic factual verification beyond source grounding
-   - Audio tone is limited to predefined voices
-   - Very long or poorly structured articles may reduce narrative quality
-   - These trade-offs were accepted to keep the MVP simple, transparent, and explainable.
+### Script generation with LLMs
+- All sources are combined into a single prompt
+- Prompt enforces:
+  - Original narration
+  - Simple, spoken language
+  - Explicit structure:
+    - Hook
+    - Background
+    - Three to five key points
+    - Recap
+    - Reflective closing
 
-11. Production-ready next steps
+Script length is guided by a user-defined minutes parameter.
 
-   Planned improvements:
-      - improved URL input UX and validation
-      - script correction and feedback loop
-      - dynamic model and voice previews
-      - subtitle (SRT) generation
-      - performance optimizations
-      - dynamic prompt adaptation based on content type
+Why: Structure and length constraints reduce variability and improve usability.
+
+---
+
+### Why chunking is required
+- Generated scripts are normalized before audio generation
+- Chunking strategy:
+  - Paragraph-first
+  - Sentence-aware
+  - Hard cuts only as a fallback
+
+Why:
+TTS APIs have hard input limits and fail unpredictably on long text.
+Chunking preserves narrative flow while ensuring reliability and recoverability.
+
+---
+
+### Text-to-speech and audio assembly
+- Each chunk is converted to audio using OpenAI TTS
+- Chunking enables:
+  - Reliable long-form audio generation
+  - Safe API limit handling
+  - Partial failure recovery
+- Audio chunks are merged into a single MP3 using ffmpeg
+
+---
+
+## User interface
+
+The UI is built with Gradio to enable fast iteration and experimentation:
+
+- URL input one per line
+- Target length, voice, and chunk-size controls
+- Generated script preview
+- Audio player with download option
+
+The interface intentionally prioritizes clarity and speed over visual complexity.
+
+---
+
+## Repository structure
+
+```
+podcast-studio/
+README.md
+requirements.txt
+.env
+src/
+  data_processor.py
+  llm_processor.py
+  tts_generator.py
+  main.py
+screenshots/
+podcast_output/
+  chunks/
+  concat_list.txt
+  podcast_episode_final.mp3
+templates/
+Podcast_Generator.ipynb
+```
+
+---
+
+## Setup
+
+Create and activate a virtual environment:
+
+```
+python -m venv venv
+source venv/bin/activate
+```
+
+Install dependencies:
+
+```
+pip install -r requirements.txt
+```
+
+Create a .env file in the project root:
+
+```
+OPENAI_API_KEY=your_api_key_here
+```
+
+---
+
+## Usage
+
+Run the Gradio app:
+
+```
+python src/main.py
+```
+
+Steps:
+- Paste article URLs
+- Set target podcast length
+- Choose TTS model and voice
+- Click Generate episode
+
+The final audio file is saved as:
+
+```
+podcast_output/podcast_episode_final.mp3
+```
+
+---
+
+## Trade-offs and intentional limitations
+
+- Episode length is approximate to keep the UX simple
+- No automated factual verification beyond source grounding
+- Audio tone is limited to predefined voices
+- Very long or poorly structured articles may reduce narrative quality
+
+These constraints were intentionally accepted to keep the MVP focused, transparent, and explainable.
+
+---
+
+## Production-ready next steps
+
+Planned improvements:
+
+- Improved URL input UX and validation
+- Script correction and feedback loop
+- Dynamic model and voice previews
+- Subtitle generation in SRT format
+- Performance optimizations
+- Dynamic prompt adaptation based on content type
