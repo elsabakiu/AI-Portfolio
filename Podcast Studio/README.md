@@ -5,7 +5,6 @@ It combines article extraction, LLM-based script generation, and text-to-speech 
 
 This project was built to explore how LLMs can be turned into reliable, user-facing products, going beyond text demos to deliver complete, usable audio experiences.
 
----
 
 ## At a glance
 
@@ -13,7 +12,6 @@ This project was built to explore how LLMs can be turned into reliable, user-fac
 - Who it’s for: Users who prefer audio-first content and accessibility-friendly formats  
 - What it demonstrates: End-to-end AI product thinking, prompt design, and production-aware system constraints  
 
----
 
 ## What this product does
 
@@ -31,7 +29,6 @@ The system is designed around:
 - Reliability for long-form content
 - Transparency over black-box automation
 
----
 
 ## Problem this project addresses
 
@@ -51,7 +48,6 @@ Creating podcasts usually involves multiple steps:
 
 This project explores how AI can automate that workflow while keeping user control, explainability, and clear quality boundaries.
 
----
 
 ## How the product works end to end
 
@@ -69,7 +65,6 @@ Sources -> LLM script -> chunking -> TTS per chunk -> final MP3
 
 The result is a usable MVP that delivers a complete audio artifact, not just generated text.
 
----
 
 ## User flow
 
@@ -89,7 +84,6 @@ Output:
 - Script preview
 - Playable and downloadable MP3 episode
 
----
 
 ## Key AI and system design decisions
 
@@ -100,7 +94,6 @@ Output:
 
 Why: Clean input improves LLM reliability and narrative quality.
 
----
 
 ### Script generation with LLMs
 - All sources are combined into a single prompt
@@ -118,7 +111,6 @@ Script length is guided by a user-defined minutes parameter.
 
 Why: Structure and length constraints reduce variability and improve usability.
 
----
 
 ### Why chunking is required
 - Generated scripts are normalized before audio generation
@@ -131,7 +123,6 @@ Why:
 TTS APIs have hard input limits and fail unpredictably on long text.
 Chunking preserves narrative flow while ensuring reliability and recoverability.
 
----
 
 ### Text-to-speech and audio assembly
 - Each chunk is converted to audio using OpenAI TTS
@@ -141,7 +132,6 @@ Chunking preserves narrative flow while ensuring reliability and recoverability.
   - Partial failure recovery
 - Audio chunks are merged into a single MP3 using ffmpeg
 
----
 
 ## User interface
 
@@ -154,7 +144,6 @@ The UI is built with Gradio to enable fast iteration and experimentation:
 
 The interface intentionally prioritizes clarity and speed over visual complexity.
 
----
 
 ## Repository structure
 
@@ -177,7 +166,6 @@ templates/
 Podcast_Generator.ipynb
 ```
 
----
 
 ## Setup
 
@@ -200,7 +188,6 @@ Create a .env file in the project root:
 OPENAI_API_KEY=your_api_key_here
 ```
 
----
 
 ## Usage
 
@@ -222,8 +209,6 @@ The final audio file is saved as:
 podcast_output/podcast_episode_final.mp3
 ```
 
----
-
 ## Trade-offs and intentional limitations
 
 - Episode length is approximate to keep the UX simple
@@ -233,7 +218,6 @@ podcast_output/podcast_episode_final.mp3
 
 These constraints were intentionally accepted to keep the MVP focused, transparent, and explainable.
 
----
 
 ## Production-ready next steps
 

@@ -3,7 +3,6 @@
 AI Product Manager with 12+ years of experience building and scaling complex B2B and B2G platforms.  
 This repository showcases end-to-end AI product work, focusing on LLM-powered workflows, usability, and production-aware system design.
 
----
 
 ## TL;DR
 
@@ -12,7 +11,6 @@ This repository showcases end-to-end AI product work, focusing on LLM-powered wo
 - Hands-on with AI prototyping, prompt design, and system trade-offs
 - Focused on turning AI capabilities into usable, reliable products
 
----
 
 ## What this portfolio shows
 
@@ -25,7 +23,6 @@ It focuses on how AI is applied to real product problems, including:
 - Trade-offs, limitations, and next steps
 - Usable outputs, not just code
 
----
 
 ## Featured project
 
@@ -48,7 +45,6 @@ What it demonstrates:
 Project folder: Podcast Studio  
 See the detailed README inside the project folder for full documentation.
 
----
 
 ## Skills demonstrated through projects
 
@@ -58,7 +54,6 @@ See the detailed README inside the project folder for full documentation.
 - UX considerations for AI-driven workflows
 - Translating complex requirements into usable products
 
----
 
 ## Background (short)
 
@@ -71,7 +66,6 @@ See the detailed README inside the project folder for full documentation.
 
 This portfolio complements my CV by showing how I think and build, not just where I worked.
 
----
 
 ## How to navigate this repo
 
@@ -79,7 +73,6 @@ This portfolio complements my CV by showing how I think and build, not just wher
 - Read the project README for problem, solution, and design decisions
 - Review outputs (UI, scripts, audio) before diving into code
 
----
 
 ## Contact
 
@@ -87,7 +80,6 @@ This portfolio complements my CV by showing how I think and build, not just wher
 - Location: Munich, Germany
 - Email: elsabakiu@gmail.com
 
----
 
 ## Notes
 
