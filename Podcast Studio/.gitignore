@@ -39,10 +39,10 @@ Thumbs.db
 # =========================
 # Audio & generated outputs
 # =========================
-podcast_output/
-*.mp3
-*.wav
-*.ogg
+#podcast_output/
+#*.mp3
+#*.wav
+#*.ogg
 
 # =========================
 # Temporary / runtime files
