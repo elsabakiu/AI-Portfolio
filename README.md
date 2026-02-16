@@ -23,7 +23,7 @@ It focuses on how AI is applied to real product problems, including:
 - Usable outputs, not just code
 
 
-## Featured project
+## Projects
 
 ### 🎙️ Podcast Studio – AI Podcast Episode Generator
 
@@ -41,8 +41,43 @@ What it demonstrates:
 - Balancing automation with user control
 - Simple UI for fast experimentation and feedback
 
-Project folder: Podcast Studio  
+Project folder: `podcast-studio`  
 See the detailed README inside the project folder for full documentation.
+
+### 📰 News Summarizer – AI Briefing Assistant
+
+A product-style AI news pipeline that fetches headlines, generates summaries, runs sentiment analysis, and tracks usage/cost metrics.
+
+What it demonstrates:
+- Clear modular architecture (`providers`, `processing`, `pipeline`, `reporting`)
+- Production-grade logging with `run_id` correlation
+- Typed error handling and graceful failure thresholds
+- CLI + Gradio UX for different user needs
+
+Project folder: `news-summarizer`
+
+### 📈 Stock Market Analysis RAG – Investment Research Assistant
+
+A retrieval-augmented generation project for grounded Q&A on filings/transcripts from a local market research dataset.
+
+What it demonstrates:
+- End-to-end RAG pipeline (chunking, embeddings, retrieval, answer generation)
+- Reliability design (retry strategy, error mapping, document-level fault isolation)
+- PM-oriented product framing and release-ready documentation
+- Backward compatibility while modernizing architecture
+
+Project folder: `stock-market-analysis-RAG`
+
+### 🧠 AI Product Playbook – Reusable PM Assets
+
+A collection of reusable prompts and product-thinking artifacts used across projects.
+
+What it demonstrates:
+- Prompt libraries and reusable templates
+- Product requirements framing for AI features
+- Structured experimentation and workflow guidance
+
+Project folder: `ai-product-playbook`
 
 
 ## Skills demonstrated through projects
@@ -56,9 +91,9 @@ See the detailed README inside the project folder for full documentation.
 
 ## How to navigate this repo
 
-- Start with the featured project above
+- Start with the project that matches your interest area (content, news intelligence, or RAG)
 - Read the project README for problem, solution, and design decisions
-- Review outputs (UI, scripts, audio) before diving into code
+- Review docs and outputs before diving into code
 
 
 ## Contact
