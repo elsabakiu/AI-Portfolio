@@ -3,14 +3,34 @@ requires = ["setuptools>=68", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "lab2-rag-openai"
+name = "stock-market-rag"
 version = "0.1.0"
-description = "Week 2 Day 5 Lab 2: Native OpenAI RAG pipeline"
+description = "PM-grade stock market research assistant using retrieval-augmented generation"
 readme = "README.md"
 requires-python = ">=3.11"
+dependencies = [
+  "openai>=1.0.0",
+  "python-dotenv>=1.0.1",
+  "numpy>=1.26.0",
+  "pypdf>=5.1.0",
+]
 
-dependencies = []
+[project.optional-dependencies]
+dev = [
+  "pytest>=8.3.0",
+  "ruff>=0.6.0",
+]
+
+[project.scripts]
+stock-market-rag = "stock_market_rag.cli:main"
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+
+[tool.setuptools.packages.find]
+where = ["src"]
 
 [tool.pytest.ini_options]
+pythonpath = ["src"]
 testpaths = ["tests"]
 addopts = "-q"

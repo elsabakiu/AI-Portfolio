@@ -1,12 +1,5 @@
-from pathlib import Path
+"""Backward-compatible file IO API."""
 
-from pypdf import PdfReader
+from stock_market_rag.indexing.io_utils import read_pdf_text, read_text_file
 
-
-def read_text_file(path: Path) -> str:
-    return path.read_text(encoding="utf-8")
-
-
-def read_pdf_text(path: Path) -> str:
-    reader = PdfReader(str(path))
-    return "\n".join(page.extract_text() or "" for page in reader.pages)
+__all__ = ["read_text_file", "read_pdf_text"]

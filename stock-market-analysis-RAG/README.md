@@ -1,53 +1,119 @@
-# Week 2 Day 5 - Lab 2 (RAG with OpenAI Native APIs)
+# Stock Market RAG
 
-Build a complete Retrieval-Augmented Generation (RAG) pipeline using OpenAI APIs directly.
+AI product-style research assistant for analyzing company filings/transcripts with grounded answers from local source documents.
 
-## Learning Goals
+## Product Pitch
 
-- Implement embeddings with OpenAI directly
-- Store vectors and perform similarity retrieval
-- Build end-to-end RAG question answering over documents
-- Understand each pipeline stage without framework abstraction
+Convert dense earnings/filing documents into fast, evidence-backed answers for PMs, founders, and analysts who need decision-ready insights.
 
-## Project Structure
+## Problem Statement
 
-- `src/lab2_rag_openai/config.py`: env + model config helpers
-- `src/lab2_rag_openai/io_utils.py`: text/PDF loading
-- `src/lab2_rag_openai/chunking.py`: baseline chunking
-- `src/lab2_rag_openai/openai_client.py`: native OpenAI API wrappers
-- `src/lab2_rag_openai/vector_store.py`: in-memory vector storage + cosine search
-- `src/lab2_rag_openai/pipeline.py`: indexing + retrieval + answering flow
-- `src/lab2_rag_openai/main.py`: runnable starter script
-- `data/raw/`: source docs
-- `outputs/`: future reports/results
+Financial documents are long, fragmented, and hard to query quickly. Manual synthesis slows investment and strategy decisions.
 
-## Setup
+## Target Users
 
-1. Create and activate virtual env.
-2. Install requirements:
-   - `pip install -r requirements.txt`
-3. Create local env:
-   - `cp .env.example .env`
-4. Add your `OPENAI_API_KEY` in `.env`.
+- Product Managers tracking AI/semiconductor competitive moves
+- Founders monitoring market narratives and risk signals
+- Analysts who need explainable, source-grounded summaries
 
-## Quick Run
+## MVP Capabilities
 
-1. Put your document in `data/raw/` (PDF or TXT).
-2. Update `default_doc` in `src/lab2_rag_openai/main.py` if needed.
-3. Run:
-   - `PYTHONPATH=src python -m lab2_rag_openai.main`
+- Multi-document indexing over local market datasets
+- Chunking + embedding + similarity retrieval pipeline
+- Grounded Q&A constrained to retrieved evidence
+- Structured logs with `run_id` correlation
+- Robust retry and typed error handling
+- Console and JSON run reports with observability metrics
 
-## Current Pipeline (Starter)
+## Quickstart
 
-1. Load document text
-2. Chunk document into fixed-size chunks
-3. Generate embeddings via OpenAI
-4. Store embeddings in in-memory vector store
-5. Embed question and retrieve top-k chunks
-6. Generate answer from retrieved context using OpenAI chat
+```bash
+cd stock-market-analysis-RAG
+python -m venv .venv
+source .venv/bin/activate
+pip install -r requirements.txt
+cp .env.example .env
+```
 
-## Notes
+Add `OPENAI_API_KEY` to `.env`, then run:
 
-- This scaffold intentionally uses an in-memory store first.
-- You can later swap `vector_store.py` with Pinecone/FAISS/Weaviate.
-- Keep this implementation as the "native baseline" before adding abstractions.
+```bash
+PYTHONPATH=src python -m stock_market_rag --output console
+```
+
+Or after editable install:
+
+```bash
+pip install -e .
+stock-market-rag --output json --out-file outputs/latest_run.json
+```
+
+## CLI Usage
+
+```bash
+python -m stock_market_rag [options]
+```
+
+Options:
+
+- `--dataset-root <path>`: custom dataset folder
+- `--top-k <int>`: retrieved chunks per question
+- `--question <text>`: repeatable custom question flag
+- `--output {console,json}`
+- `--out-file <path>`
+- `--log-level {DEBUG,INFO,WARNING,ERROR}`
+
+Legacy compatibility command still works:
+
+```bash
+PYTHONPATH=src python -m lab2_rag_openai.main
+```
+
+## Reliability Design
+
+- Retry with backoff+jitter for transient OpenAI failures
+- Typed exceptions for config/auth/rate-limit/timeout/data issues
+- Per-document failure isolation (bad docs are skipped, run continues)
+- Non-zero exit codes for runtime/config failures
+
+## Observability
+
+Logs include `run_id` and stage metadata.
+
+Run metrics include:
+
+- `docs_indexed`, `chunks_indexed`
+- `embedding_calls`, `chat_calls`, `retrieval_requests`
+- `failed_docs`
+- average stage latency
+
+## Architecture
+
+- `src/stock_market_rag/config.py`: settings + validation
+- `src/stock_market_rag/logging_config.py`: structured logs
+- `src/stock_market_rag/providers/openai_client.py`: OpenAI interactions + retry/error mapping
+- `src/stock_market_rag/indexing/`: document loading and chunking
+- `src/stock_market_rag/retrieval/vector_store.py`: in-memory similarity search
+- `src/stock_market_rag/pipeline/run.py`: orchestration
+- `src/stock_market_rag/reporting/`: console/json output
+
+## PM Trade-offs
+
+- In-memory vector store keeps setup simple but is not persistent/scalable.
+- OpenAI-only provider keeps quality consistent but limits resilience/diversification.
+- Retrieval quality depends on chunking defaults; domain-tuned chunking can improve precision.
+
+## Roadmap
+
+1. Persistent vector backend (FAISS/pgvector) for faster iterative querying.
+2. Evaluation harness for retrieval relevance and answer faithfulness.
+3. Multi-provider support for embeddings/chat fallback.
+4. Scheduled report generation and comparative trend snapshots.
+
+## Tests
+
+```bash
+PYTHONPATH=src pytest
+```
+
+Tests are network-free and use fakes/mocks.

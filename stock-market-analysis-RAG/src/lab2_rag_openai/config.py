@@ -1,14 +1,10 @@
+"""Backward-compatible config helpers."""
+
+from __future__ import annotations
+
 import os
-from pathlib import Path
 
-from dotenv import load_dotenv
-
-
-PROJECT_ROOT = Path(__file__).resolve().parents[2]
-ENV_PATH = PROJECT_ROOT / ".env"
-
-# Force local .env to avoid collisions with parent project env files.
-load_dotenv(dotenv_path=ENV_PATH, override=True)
+from stock_market_rag.config import load_settings
 
 
 def get_required_env(name: str) -> str:
@@ -19,8 +15,8 @@ def get_required_env(name: str) -> str:
 
 
 def get_embedding_model() -> str:
-    return os.getenv("OPENAI_EMBEDDING_MODEL", "text-embedding-3-small")
+    return load_settings().embedding_model
 
 
 def get_chat_model() -> str:
-    return os.getenv("OPENAI_CHAT_MODEL", "gpt-4o-mini")
+    return load_settings().chat_model

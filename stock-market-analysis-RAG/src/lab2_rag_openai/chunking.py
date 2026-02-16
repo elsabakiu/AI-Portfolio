@@ -1,6 +1,13 @@
+"""Backward-compatible chunking API.
+
+Prefer `stock_market_rag.indexing.chunking`.
+"""
+
+from __future__ import annotations
+
 from dataclasses import dataclass
 
-from langchain_text_splitters import RecursiveCharacterTextSplitter
+from stock_market_rag.indexing.chunking import recursive_character_chunking as _recursive_character_chunking
 
 
 @dataclass
@@ -10,11 +17,7 @@ class Chunk:
     source: str
 
 
-DEFAULT_SEPARATORS = ["\n\n", "\n", ". ", " ", ""]
-
-
 def simple_character_chunking(text: str, source: str, chunk_size: int = 1000, overlap: int = 100) -> list[Chunk]:
-    """Simple baseline chunker for Lab 2; replace with more advanced chunking as needed."""
     if overlap >= chunk_size:
         raise ValueError("overlap must be smaller than chunk_size")
 
@@ -40,19 +43,11 @@ def recursive_character_chunking(
     overlap: int = 120,
     separators: list[str] | None = None,
 ) -> list[Chunk]:
-    """Recommended chunking strategy for mixed filing/transcript content."""
-    if overlap >= chunk_size:
-        raise ValueError("overlap must be smaller than chunk_size")
-
-    splitter = RecursiveCharacterTextSplitter(
+    new_chunks = _recursive_character_chunking(
+        text=text,
+        source=source,
         chunk_size=chunk_size,
-        chunk_overlap=overlap,
-        separators=separators or DEFAULT_SEPARATORS,
-        length_function=len,
+        overlap=overlap,
+        separators=separators,
     )
-    parts = splitter.split_text(text)
-    return [
-        Chunk(id=f"{source}-{idx}", text=part.strip(), source=source)
-        for idx, part in enumerate(parts)
-        if part.strip()
-    ]
+    return [Chunk(id=c.id, text=c.text, source=c.source) for c in new_chunks]

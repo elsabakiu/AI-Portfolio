@@ -1,47 +1,26 @@
+"""Backward-compatible pipeline helpers."""
+
+from __future__ import annotations
+
 from pathlib import Path
 
-from lab2_rag_openai.chunking import Chunk, recursive_character_chunking
-from lab2_rag_openai.io_utils import read_pdf_text, read_text_file
+from lab2_rag_openai.chunking import Chunk
 from lab2_rag_openai.openai_client import OpenAIService
 from lab2_rag_openai.vector_store import EmbeddedChunk, InMemoryVectorStore
+from stock_market_rag.config import load_settings
+from stock_market_rag.pipeline.run import RagPipeline
 
 
 def load_document(path: Path) -> str:
-    if path.suffix.lower() == ".pdf":
-        return read_pdf_text(path)
-    return read_text_file(path)
+    from stock_market_rag.indexing.io_utils import load_document as _load_document
+
+    return _load_document(path)
 
 
 def discover_documents(dataset_root: Path) -> list[Path]:
-    allowed = {".pdf", ".txt", ".htm", ".html", ".md", ".csv"}
-    return sorted(path for path in dataset_root.rglob("*") if path.is_file() and path.suffix.lower() in allowed)
+    from stock_market_rag.indexing.io_utils import discover_documents as _discover_documents
 
-
-def build_index(
-    document_path: Path,
-    source_name: str,
-    service: OpenAIService,
-    chunk_size: int = 1000,
-    overlap: int = 120,
-    embedding_batch_size: int = 100,
-) -> tuple[InMemoryVectorStore, list[Chunk]]:
-    text = load_document(document_path)
-    chunks = recursive_character_chunking(
-        text=text,
-        source=source_name,
-        chunk_size=chunk_size,
-        overlap=overlap,
-    )
-
-    embeddings = service.get_embeddings_batch(
-        texts=[c.text for c in chunks],
-        batch_size=embedding_batch_size,
-        log_progress=True,
-    )
-
-    store = InMemoryVectorStore()
-    store.add([EmbeddedChunk(chunk=chunk, embedding=embedding) for chunk, embedding in zip(chunks, embeddings)])
-    return store, chunks
+    return _discover_documents(dataset_root)
 
 
 def build_index_from_documents(
@@ -52,29 +31,85 @@ def build_index_from_documents(
     overlap: int = 120,
     embedding_batch_size: int = 100,
 ) -> tuple[InMemoryVectorStore, list[Chunk]]:
+    settings = load_settings()
+    settings = settings.__class__(
+        openai_api_key=settings.openai_api_key,
+        embedding_model=settings.embedding_model,
+        chat_model=settings.chat_model,
+        embedding_batch_size=embedding_batch_size,
+        request_timeout=settings.request_timeout,
+        max_retries=settings.max_retries,
+        chunk_size=chunk_size,
+        chunk_overlap=overlap,
+        top_k=settings.top_k,
+        log_json=settings.log_json,
+        dataset_root=settings.dataset_root,
+    )
+    pipeline = RagPipeline(settings=settings, provider=service.provider)
+
+    from stock_market_rag.reporting.metrics import MetricsCollector
+
+    metrics = MetricsCollector()
+    store_new, chunks_new = pipeline.build_index_from_documents(
+        document_paths=document_paths,
+        dataset_root=dataset_root,
+        metrics=metrics,
+    )
+
     store = InMemoryVectorStore()
-    all_chunks: list[Chunk] = []
+    store._store = store_new
+    chunks = [Chunk(id=c.id, text=c.text, source=c.source) for c in chunks_new]
+    return store, chunks
 
-    for path in document_paths:
-        source_name = str(path.relative_to(dataset_root)).replace("/", "-")
-        text = load_document(path)
-        chunks = recursive_character_chunking(
-            text=text,
-            source=source_name,
-            chunk_size=chunk_size,
-            overlap=overlap,
-        )
-        if not chunks:
-            continue
-        embeddings = service.get_embeddings_batch(
-            texts=[c.text for c in chunks],
-            batch_size=embedding_batch_size,
-            log_progress=True,
-        )
-        store.add([EmbeddedChunk(chunk=chunk, embedding=embedding) for chunk, embedding in zip(chunks, embeddings)])
-        all_chunks.extend(chunks)
 
-    return store, all_chunks
+def build_index(
+    document_path: Path,
+    source_name: str,
+    service: OpenAIService,
+    chunk_size: int = 1000,
+    overlap: int = 120,
+    embedding_batch_size: int = 100,
+) -> tuple[InMemoryVectorStore, list[Chunk]]:
+    return build_index_from_documents(
+        document_paths=[document_path],
+        dataset_root=document_path.parent,
+        service=service,
+        chunk_size=chunk_size,
+        overlap=overlap,
+        embedding_batch_size=embedding_batch_size,
+    )
+
+
+def retrieve_top_k_chunks(
+    store: InMemoryVectorStore,
+    query: str,
+    service: OpenAIService,
+    top_k: int = 3,
+) -> list[tuple[EmbeddedChunk, float]]:
+    query_embedding = service.embed_texts([query])[0]
+    return store.search_with_scores(query_embedding=query_embedding, top_k=top_k)
+
+
+def format_context_for_llm(retrieved_with_scores: list[tuple[EmbeddedChunk, float]]) -> list[str]:
+    context_blocks: list[str] = []
+    for idx, (item, score) in enumerate(retrieved_with_scores, start=1):
+        context_blocks.append(
+            f"[Context {idx}] source={item.chunk.source} chunk_id={item.chunk.id} similarity={score:.4f}\n{item.chunk.text}"
+        )
+    return context_blocks
+
+
+def rag_query(
+    store: InMemoryVectorStore,
+    question: str,
+    service: OpenAIService,
+    top_k: int = 3,
+) -> tuple[str, list[EmbeddedChunk], list[tuple[EmbeddedChunk, float]]]:
+    retrieved_with_scores = retrieve_top_k_chunks(store=store, query=question, service=service, top_k=top_k)
+    retrieved = [item for item, _ in retrieved_with_scores]
+    context_chunks = format_context_for_llm(retrieved_with_scores)
+    answer = service.answer_with_context(question=question, context_chunks=context_chunks)
+    return answer, retrieved, retrieved_with_scores
 
 
 def answer_question(
@@ -90,54 +125,3 @@ def answer_question(
         top_k=top_k,
     )
     return answer, retrieved
-
-
-def retrieve_top_k_chunks(
-    store: InMemoryVectorStore,
-    query: str,
-    service: OpenAIService,
-    top_k: int = 3,
-) -> list[tuple[EmbeddedChunk, float]]:
-    """
-    Vector search step:
-    1) Embed query
-    2) Compute cosine similarity vs all chunk embeddings
-    3) Return top-k chunks with similarity scores
-    """
-    query_embedding = service.embed_texts([query])[0]
-    return store.search_with_scores(query_embedding=query_embedding, top_k=top_k)
-
-
-def format_context_for_llm(retrieved_with_scores: list[tuple[EmbeddedChunk, float]]) -> list[str]:
-    """Format retrieved chunks with source metadata for grounding."""
-    context_blocks: list[str] = []
-    for idx, (item, score) in enumerate(retrieved_with_scores, start=1):
-        context_blocks.append(
-            (
-                f"[Context {idx}] source={item.chunk.source} chunk_id={item.chunk.id} "
-                f"similarity={score:.4f}\n{item.chunk.text}"
-            )
-        )
-    return context_blocks
-
-
-def rag_query(
-    store: InMemoryVectorStore,
-    question: str,
-    service: OpenAIService,
-    top_k: int = 3,
-) -> tuple[str, list[EmbeddedChunk], list[tuple[EmbeddedChunk, float]]]:
-    """
-    Complete RAG step:
-    retrieval + context formatting + answer generation.
-    """
-    retrieved_with_scores = retrieve_top_k_chunks(
-        store=store,
-        query=question,
-        service=service,
-        top_k=top_k,
-    )
-    retrieved = [item for item, _ in retrieved_with_scores]
-    context_chunks = format_context_for_llm(retrieved_with_scores)
-    answer = service.answer_with_context(question=question, context_chunks=context_chunks)
-    return answer, retrieved, retrieved_with_scores

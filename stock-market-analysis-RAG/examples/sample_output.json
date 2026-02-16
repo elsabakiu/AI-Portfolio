@@ -1,0 +1,34 @@
+{
+  "run_id": "a1b2c3d4e5f6",
+  "dataset_root": "data/raw/investment_research_assistant",
+  "embedding_model": "text-embedding-3-small",
+  "chat_model": "gpt-4o-mini",
+  "questions": [
+    {
+      "question": "Which company appears to have the strongest near-term growth outlook and why?",
+      "answer": "Based on retrieved context, NVDA shows strong datacenter momentum while AMD also signals robust AI demand.",
+      "retrieved": [
+        {
+          "chunk_id": "NVDA-filings-NVDA_10-K_2025-02-26_nvda-20250126.htm-12",
+          "source": "NVDA-filings-NVDA_10-K_2025-02-26_nvda-20250126.htm",
+          "similarity": 0.8612,
+          "text_preview": "Datacenter revenue increased with strong AI infrastructure demand..."
+        }
+      ]
+    }
+  ],
+  "metrics": {
+    "embedding_calls": 14,
+    "chat_calls": 3,
+    "chunks_indexed": 227,
+    "docs_indexed": 12,
+    "retrieval_requests": 3,
+    "failed_docs": 0,
+    "stage_latency_ms": {
+      "index_document": 318.2,
+      "retrieval": 95.4,
+      "answer": 520.1
+    }
+  },
+  "generated_at": "2026-02-16T22:00:00+00:00"
+}
