@@ -1,0 +1,47 @@
+{
+  "run_id": "a1b2c3d4e5f6",
+  "source": "all",
+  "category": "technology",
+  "query": null,
+  "language": "en",
+  "mode": "sync",
+  "requested_limit": 2,
+  "generated_at": "2026-02-16T20:45:00+00:00",
+  "articles": [
+    {
+      "title": "Example headline",
+      "description": "Short description",
+      "content": "Article text",
+      "url": "https://example.com/story",
+      "source": "NewsAPI",
+      "published_at": "2026-02-16T18:00:00Z",
+      "summary": "Two sentence summary.",
+      "sentiment": "Neutral, confidence 72."
+    }
+  ],
+  "failures": [],
+  "metrics": {
+    "n_fetched": 2,
+    "n_processed": 2,
+    "n_succeeded": 2,
+    "n_failed": 0,
+    "stage_latency_ms": {
+      "fetch": 301.21,
+      "article_process": 1452.10
+    },
+    "token_usage_by_provider": {
+      "openai": {
+        "requests": 2,
+        "input_tokens": 744,
+        "output_tokens": 176,
+        "estimated_cost_usd": 0.000217
+      },
+      "cohere": {
+        "requests": 2,
+        "input_tokens": 310,
+        "output_tokens": 80,
+        "estimated_cost_usd": 0.001575
+      }
+    }
+  }
+}
