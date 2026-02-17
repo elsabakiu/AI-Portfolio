@@ -23,61 +23,30 @@ It focuses on how AI is applied to real product problems, including:
 - Usable outputs, not just code
 
 
-## Projects
+## Highlighted Projects
 
-### 🎙️ Podcast Studio – AI Podcast Episode Generator
+### ✍️ Personal Branding Copilot – AI Content Generation for Thought Leadership
 
-An AI-powered application that transforms long-form online articles into narrated podcast episodes.
-
-Why it matters:
-- Explores AI-driven content adaptation
-- Focuses on audio-first and accessibility use cases
-- Demonstrates reliability challenges in LLM and TTS pipelines
+An AI content product MVP focused on generating differentiated, on-brand personal branding posts through a structured workflow: dual knowledge-base retrieval, multi-angle generation, evaluator-based selection, refinement, and human-in-the-loop feedback memory.
 
 What it demonstrates:
-- End-to-end AI product thinking
-- Prompt design for structured, spoken output
-- Chunking strategies to handle LLM and TTS limits
-- Balancing automation with user control
-- Simple UI for fast experimentation and feedback
+- Product-driven AI workflow design (not single-prompt output)
+- RAG + prompt orchestration for context-aware generation
+- Quality controls with brand checks and iterative refinement
+- Gradio UX for fast generation and validation loops
 
-Project folder: `podcast-studio`  
-See the detailed README inside the project folder for full documentation.
-
-### 📰 News Summarizer – AI Briefing Assistant
-
-A product-style AI news pipeline that fetches headlines, generates summaries, runs sentiment analysis, and tracks usage/cost metrics.
-
-What it demonstrates:
-- Clear modular architecture (`providers`, `processing`, `pipeline`, `reporting`)
-- Production-grade logging with `run_id` correlation
-- Typed error handling and graceful failure thresholds
-- CLI + Gradio UX for different user needs
-
-Project folder: `news-summarizer`
+Project folder: `personal-branding-copilot`
 
 ### 📈 Stock Market Analysis RAG – Investment Research Assistant
 
-A retrieval-augmented generation project for grounded Q&A on filings/transcripts from a local market research dataset.
+A retrieval-augmented generation system for grounded Q&A over market research data (filings/transcripts), designed for reliability and traceability.
 
 What it demonstrates:
-- End-to-end RAG pipeline (chunking, embeddings, retrieval, answer generation)
-- Reliability design (retry strategy, error mapping, document-level fault isolation)
-- PM-oriented product framing and release-ready documentation
-- Backward compatibility while modernizing architecture
+- End-to-end RAG architecture (chunking, embeddings, retrieval, answer generation)
+- Reliability mechanisms (retries, error mapping, fault isolation)
+- PM-oriented structure with clear product framing and documentation
 
 Project folder: `stock-market-analysis-RAG`
-
-### 🧠 AI Product Playbook – Reusable PM Assets
-
-A collection of reusable prompts and product-thinking artifacts used across projects.
-
-What it demonstrates:
-- Prompt libraries and reusable templates
-- Product requirements framing for AI features
-- Structured experimentation and workflow guidance
-
-Project folder: `ai-product-playbook`
 
 
 ## Skills demonstrated through projects
@@ -91,7 +60,7 @@ Project folder: `ai-product-playbook`
 
 ## How to navigate this repo
 
-- Start with the project that matches your interest area (content, news intelligence, or RAG)
+- Start with one of the two highlighted projects above
 - Read the project README for problem, solution, and design decisions
 - Review docs and outputs before diving into code
 
