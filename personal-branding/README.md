@@ -47,6 +47,7 @@ then they can publish more consistently with stronger brand alignment.
 ### Product Interface
 - Gradio app with:
   - Dashboard view for post generation and validation.
+  - Outputs shown directly as `Final Post`, `Hashtags`, and `Generated Image` (no separate generation-steps panel).
   - Content Pillars view for strategic planning.
 
 ## 3) End-to-End Flow
@@ -80,14 +81,18 @@ then they can publish more consistently with stronger brand alignment.
 
 ```text
 personal-branding/
-├── generation/
-│   ├── gradio_app.py          # main product UI
-│   ├── generate_post.py       # draft generation pipeline
-│   ├── brand_checker.py       # post quality/brand scoring
-│   ├── refiner.py             # post refinement
-│   ├── post_assets.py         # hashtags + image
-│   ├── cohere_evaluator.py    # candidate selection
-│   └── feedback_loop.py       # acceptance/rejection memory
+├── personal_branding/
+│   ├── apps/
+│   │   └── gradio_app.py      # main product UI
+│   ├── pipeline/
+│   │   ├── generate_post.py   # draft generation pipeline
+│   │   ├── brand_checker.py   # post quality/brand scoring
+│   │   ├── refiner.py         # post refinement
+│   │   ├── post_assets.py     # hashtags + image
+│   │   └── feedback_loop.py   # acceptance/rejection memory
+│   └── services/
+│       ├── llm_client.py
+│       └── cohere_evaluator.py
 ├── prompts/                   # prompt templates
 ├── src/knowledge_base/        # primary + secondary context docs
 └── data/                      # generated artifacts, feedback, cache
@@ -116,7 +121,7 @@ COHERE_API_KEY=your_cohere_key
 ### Launch app
 From `personal-branding/`:
 ```bash
-python generation/gradio_app.py
+python personal_branding/apps/gradio_app.py
 ```
 
 Default URL: `http://127.0.0.1:7860` (or next available local port).

@@ -563,26 +563,24 @@ def run_generation(
     max_tokens: int,
     retries: int,
     timeout: float,
-) -> Tuple[str, str, str, Optional[str], Dict[str, Any], Any]:
-    steps: List[str] = []
+) -> Tuple[str, str, Optional[str], Dict[str, Any], Any]:
     topic = (topic or "").strip()
     target_persona = (target_persona or "").strip()
     prompt_persona = target_persona or "SME decision makers"
 
     if not topic:
-        return "Validation failed: Topic is required.", "", "", None, {}, gr.update(visible=False)
+        raise gr.Error("Validation failed: Topic is required.")
     if not (custom_model or model):
-        return "Validation failed: Model selection is required.", "", "", None, {}, gr.update(visible=False)
+        raise gr.Error("Validation failed: Model selection is required.")
 
     has_key = bool(os.getenv("OPENAI_API_KEY"))
     if not has_key:
-        return "Validation failed: OPENAI_API_KEY not found in environment.", "", "", None, {}, gr.update(visible=False)
+        raise gr.Error("Validation failed: OPENAI_API_KEY not found in environment.")
     has_cohere_key = bool(os.getenv("COHERE_API_KEY"))
     if not has_cohere_key:
-        return "Validation failed: COHERE_API_KEY not found in environment.", "", "", None, {}, gr.update(visible=False)
+        raise gr.Error("Validation failed: COHERE_API_KEY not found in environment.")
 
     try:
-        steps.append("1. Inputs validated - topic, objective, and keys are present.")
         config = _build_config(
             model=model,
             custom_model=custom_model,
@@ -597,12 +595,11 @@ def run_generation(
             target_persona=prompt_persona,
         )
         config["feedback_guidance"] = feedback_guidance
-        steps.append(
-            "2. Loaded feedback memory - "
-            f"accepted: {feedback_meta.get('accepted_count', 0)}, "
-            f"rejected: {feedback_meta.get('rejected_count', 0)}."
+        logger.info(
+            "Loaded feedback memory accepted=%s rejected=%s",
+            feedback_meta.get("accepted_count", 0),
+            feedback_meta.get("rejected_count", 0),
         )
-        steps.append("3. Generating candidate drafts - creates multiple angle variations.")
         draft_post, metadata = generate_post(
             topic=topic,
             post_type=post_type,
@@ -615,11 +612,8 @@ def run_generation(
             else None
         )
         if selected_angle:
-            steps.append(f"4. Cohere selected best angle - picked: {selected_angle}.")
-        else:
-            steps.append("4. Cohere selected best angle - ranked drafts by quality.")
+            logger.info("Cohere selected angle=%s", selected_angle)
 
-        steps.append("5. First refinement pass - removes vague language and improves specificity.")
         refined_post, refinement_metadata = refine_post(
             draft_post=draft_post,
             topic=topic,
@@ -630,13 +624,11 @@ def run_generation(
         if not refined_post:
             refined_post = draft_post
 
-        steps.append("6. Initial brand check - scores tone, SME relevance, clarity, and differentiation.")
         initial_brand_result, initial_brand_metadata = check_brand_consistency(
             post=refined_post,
             config=config,
         )
 
-        steps.append("7. Feedback-driven refinement - applies brand checker suggestions.")
         feedback_refined_post, feedback_refinement_metadata = refine_post(
             draft_post=refined_post,
             topic=topic,
@@ -648,9 +640,6 @@ def run_generation(
         )
         final_post = feedback_refined_post or refined_post
 
-        steps.append("8. Final brand check - verifies improvements after feedback.")
-        steps.append("9. Generating hashtags for publishing.")
-        steps.append("10. Generating supporting image.")
         with concurrent.futures.ThreadPoolExecutor(max_workers=3) as executor:
             future_brand = executor.submit(check_brand_consistency, post=final_post, config=config)
             future_hashtags = executor.submit(
@@ -686,9 +675,8 @@ def run_generation(
             },
         }
         final_score = final_brand_result.get("score", 0)
-        steps.append(f"11. Final post ready - final brand score: {final_score}/100.")
         if not image_path:
-            steps.append("Image generation failed - see logs/metadata.")
+            logger.warning("Image generation failed - see logs/metadata.")
         metadata["post_assets"] = {
             "hashtags": hashtags_metadata,
             "image": image_metadata,
@@ -704,7 +692,6 @@ def run_generation(
         }
 
         return (
-            "\n".join(steps),
             final_post,
             hashtags,
             image_path,
@@ -712,8 +699,8 @@ def run_generation(
             gr.update(visible=True),
         )
     except Exception as exc:
-        steps.append(f"Failed: {exc}")
-        return "\n".join(steps), "", "", None, {}, gr.update(visible=False)
+        logger.exception("Generation failed: %s", exc)
+        raise gr.Error(f"Generation failed: {exc}")
 
 
 def _persist_feedback(
@@ -860,10 +847,6 @@ def build_interface() -> gr.Blocks:
                                         label="Timeout (seconds)", minimum=10, maximum=180, step=5, value=60
                                     )
                                 generate_btn = gr.Button("Generate Post", variant="primary", elem_id="generate-btn")
-                                steps_output = gr.Textbox(
-                                    label="Generation Steps",
-                                    lines=10,
-                                )
 
                     with gr.Group(elem_classes=["panel-card"]):
                         final_post_output = gr.Textbox(
@@ -931,7 +914,6 @@ def build_interface() -> gr.Blocks:
                 timeout,
             ],
             outputs=[
-                steps_output,
                 final_post_output,
                 hashtags_output,
                 image_output,
