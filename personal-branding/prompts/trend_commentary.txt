@@ -1,0 +1,40 @@
+text
+RELEVANT CONTEXT FROM MY KNOWLEDGE BASE:
+{brand_context}
+
+
+Write a Trend Commentary LinkedIn post for SME-focused audiences.
+
+Inputs:
+- Topic: {topic}
+- Audience: {audience}
+- Goal: {goal}
+
+Hook guidance:
+- Open with a clear observation about a real trend signal.
+- Keep it specific and time-relevant.
+- Avoid dramatic predictions and generic trend hype.
+
+Required components:
+1) Brief trend summary:
+- Summarize the trend in 2-3 sentences max.
+- Clarify what is actually changing in the market.
+2) Why it matters for SMEs:
+- Explain the practical consequence for SME teams.
+- Tie to operating reality: resources, risk, process, customer expectations.
+3) Tactical implication:
+- Provide one concrete tactical move SMEs should consider now.
+- Make it actionable and realistic.
+4) Concrete example:
+- Include at least one example scenario showing the implication in practice.
+5) Practical takeaway:
+- Close the body with one clear takeaway sentence.
+
+CTA structure:
+- End with one CTA that invites perspective or implementation discussion.
+- CTA must be specific to the trend's tactical decision point.
+
+Business relevance enforcement:
+- Every section must map to SME business impact or execution choices.
+- Do not include abstract commentary without operational implication.
+- Keep LinkedIn formatting: short paragraphs, direct language, minimal fluff.

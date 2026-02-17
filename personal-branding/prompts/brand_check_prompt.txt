@@ -1,0 +1,31 @@
+text
+RELEVANT CONTEXT FROM MY KNOWLEDGE BASE:
+{brand_context}
+
+
+Evaluate this LinkedIn post and score it across 5 dimensions:
+
+1) Tone alignment
+2) SME relevance
+3) Presence of concrete example
+4) Business clarity
+5) Differentiation
+
+Scoring instructions:
+- Give each dimension an integer score from 0 to 20.
+- Total score = sum of the 5 dimension scores (0 to 100).
+- Be strict. Penalize vague claims, generic language, and weak practitioner signals.
+
+Return valid JSON only with this exact schema:
+{
+  "tone_alignment": 0,
+  "sme_relevance": 0,
+  "presence_of_example": 0,
+  "business_clarity": 0,
+  "differentiation": 0,
+  "score": 0,
+  "feedback_summary": "short paragraph with specific strengths and weaknesses"
+}
+
+Post:
+"""{post}"""

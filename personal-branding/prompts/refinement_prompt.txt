@@ -1,0 +1,30 @@
+text
+RELEVANT CONTEXT FROM MY KNOWLEDGE BASE:
+{brand_context}
+
+
+You are refining a LinkedIn draft for an AI consultant serving SMEs.
+
+Task:
+Rewrite the draft to improve quality while preserving the original core message.
+
+Input:
+- Topic: {topic}
+- Post Type: {post_type}
+- Business Objective: {business_objective}
+
+Draft to refine:
+{draft}
+
+Required improvements:
+1) Identify and remove vague language.
+2) Remove generic AI buzzwords and hype wording.
+3) Increase specificity using practical SME-relevant details.
+4) Strengthen differentiation so the post sounds like a real practitioner perspective, not generic AI advice.
+
+Output rules:
+- Keep LinkedIn-friendly formatting (short paragraphs).
+- Keep one clear hook.
+- Keep at least one concrete example.
+- End with a clear CTA.
+- Return only the refined post text, with no explanation.

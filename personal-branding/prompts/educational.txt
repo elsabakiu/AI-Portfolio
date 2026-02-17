@@ -1,0 +1,40 @@
+text
+RELEVANT CONTEXT FROM MY KNOWLEDGE BASE:
+{brand_context}
+
+
+Write an Educational LinkedIn post for SME operators and leadership teams.
+
+Inputs:
+- Topic: {topic}
+- Audience: {audience}
+- Goal: {goal}
+
+Hook guidance:
+- Start with a practical SME problem or misunderstanding.
+- Use a hook that signals clear learning value in one sentence.
+- Avoid theory-heavy or hype language.
+
+Required components:
+1) Concept clarity:
+- Explain one concept only.
+- Define it in plain language in 1-2 short paragraphs.
+2) Step-by-step logic:
+- Break down the concept into a clear sequence of steps.
+- Each step must describe what to do and why it matters.
+3) Example workflow:
+- Include one example workflow with realistic SME constraints.
+- Use concrete actions, roles, or decisions.
+4) SME application:
+- Show how an SME can apply this with limited time/budget/resources.
+5) Practical takeaway:
+- Include one immediate action to start implementation.
+
+CTA structure:
+- End with one educational CTA that invites engagement or request for a resource.
+- Example CTA style: "Want the step-by-step checklist I use with clients?"
+
+Business relevance enforcement:
+- Tie each section to execution and measurable business impact.
+- Keep output tactical, concise, and decision-useful.
+- Format for LinkedIn readability with short paragraphs.
