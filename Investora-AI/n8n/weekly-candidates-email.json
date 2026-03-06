@@ -1,0 +1,106 @@
+{
+  "name": "Investora AI — Weekly User Digest Email",
+  "nodes": [
+    {
+      "id": "1",
+      "name": "Receive Weekly Digest Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [240, 300],
+      "parameters": {
+        "path": "investora-candidates",
+        "httpMethod": "POST",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "webhookId": "investora-candidates"
+    },
+    {
+      "id": "2",
+      "name": "Build Weekly Email HTML",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [520, 300],
+      "parameters": {
+        "jsCode": "const b = $json.body || {};\nconst userId = b.user_id || 'user';\nconst email = b.email || '';\nconst weekStart = b.week_start || '';\nconst weekEnd = b.week_end || '';\nconst runDate = b.run_date || '';\n\nconst stats = b.weekly_stats || {};\nconst pulse = b.portfolio_pulse || {};\nconst topWeeklySignals = (b.top_weekly_signals || []).slice(0, 5);\nconst topConviction = (b.top_conviction || []).slice(0, 3);\nconst watchlistAttention = (b.watchlist_attention || []).slice(0, 5);\nconst discovery = (b.discovery || []).slice(0, 6);\nconst nextActions = (b.next_actions || []).slice(0, 3);\n\nconst row = (txt) => `<tr><td style='padding:8px 10px;border-top:1px solid #173047;color:#d9e7f5;'>${txt}</td></tr>`;\n\nconst weeklyRows = topWeeklySignals.length\n  ? topWeeklySignals.map((s) => row(`<strong>${s.ticker || ''}</strong> • ${s.signal_type || ''} • ${(s.severity || '').toUpperCase()}<br/><span style='color:#9fc3e6;'>${s.narrative || ''}</span>`)).join('')\n  : row('No notable weekly signals.');\n\nconst convictionRows = topConviction.length\n  ? topConviction.map((s) => row(`<strong>${s.ticker || ''}</strong> • Confidence ${Math.round(Number(s.confidence || 0) * 100)}%<br/><span style='color:#9fc3e6;'>${s.narrative || ''}</span>`)).join('')\n  : row('No conviction ideas this week.');\n\nconst attentionRows = watchlistAttention.length\n  ? watchlistAttention.map((s) => row(`<strong>${s.ticker || ''}</strong> • ${(s.urgency || '').toUpperCase()} • ${s.action_frame || 'Monitor'}`)).join('')\n  : row('No watchlist attention signals this week.');\n\nconst discoveryRows = discovery.length\n  ? discovery.map((s) => row(`<strong>${s.ticker || ''}</strong> • Fit ${Math.round(Number(s.profile_fit_score || 0) * 100)}% • Confidence ${Math.round(Number(s.confidence || 0) * 100)}%`)).join('')\n  : row('No discovery matches this week.');\n\nconst actionRows = nextActions.length\n  ? nextActions.map((x) => row(`• ${x}`)).join('')\n  : row('No immediate action required.');\n\nconst html = `<!DOCTYPE html>\n<html lang='en'>\n<head><meta charset='UTF-8'/><meta name='viewport' content='width=device-width,initial-scale=1.0'/></head>\n<body style='margin:0;padding:0;background:#050b16;font-family:Arial,Helvetica,sans-serif;color:#e6edf7;'>\n<table role='presentation' width='100%' cellspacing='0' cellpadding='0' style='background:#050b16;padding:24px 0;'>\n<tr><td align='center'>\n<table role='presentation' width='680' cellspacing='0' cellpadding='0' style='max-width:680px;width:100%;background:#0b1220;border-radius:14px;overflow:hidden;border:1px solid #173047;'>\n\n<tr><td style='padding:22px 26px;background:linear-gradient(135deg,#0b1220 0%,#0f1b30 100%);border-bottom:1px solid #173047;'>\n  <h1 style='margin:0;font-size:20px;line-height:1.25;color:#ffffff;'>InvestoraAI Weekly Update</h1>\n  <p style='margin:6px 0 0;font-size:12px;color:#8fa6bf;'>${weekStart} to ${weekEnd} • User: ${userId}</p>\n</td></tr>\n\n<tr><td style='padding:16px 24px 8px;'>\n  <h2 style='margin:0 0 10px;font-size:15px;color:#b7e8ff;'>Week At A Glance</h2>\n  <table role='presentation' width='100%' cellspacing='0' cellpadding='0'>\n    <tr>\n      <td style='padding:10px;border:1px solid #1f3a57;border-radius:8px;background:#081426;font-size:13px;color:#d9e7f5;'><strong style='color:#9fc3e6;'>Total Signals</strong><br/>${stats.total_signals || 0}</td>\n      <td width='8'></td>\n      <td style='padding:10px;border:1px solid #1f3a57;border-radius:8px;background:#081426;font-size:13px;color:#d9e7f5;'><strong style='color:#9fc3e6;'>High Priority</strong><br/>${stats.high_priority_signals || 0}</td>\n      <td width='8'></td>\n      <td style='padding:10px;border:1px solid #1f3a57;border-radius:8px;background:#081426;font-size:13px;color:#d9e7f5;'><strong style='color:#9fc3e6;'>Market Regime</strong><br/>${pulse.market_regime || 'Neutral'}</td>\n    </tr>\n  </table>\n</td></tr>\n\n<tr><td style='padding:16px 24px 8px;'><h2 style='margin:0 0 10px;font-size:15px;color:#b7e8ff;'>Top Weekly Signals</h2><table role='presentation' width='100%' cellspacing='0' cellpadding='0' style='background:#081426;border:1px solid #1f3a57;border-radius:8px;overflow:hidden;'>${weeklyRows}</table></td></tr>\n<tr><td style='padding:16px 24px 8px;'><h2 style='margin:0 0 10px;font-size:15px;color:#b7e8ff;'>Top Conviction Ideas</h2><table role='presentation' width='100%' cellspacing='0' cellpadding='0' style='background:#081426;border:1px solid #1f3a57;border-radius:8px;overflow:hidden;'>${convictionRows}</table></td></tr>\n<tr><td style='padding:16px 24px 8px;'><h2 style='margin:0 0 10px;font-size:15px;color:#b7e8ff;'>Watchlist - Needs Attention</h2><table role='presentation' width='100%' cellspacing='0' cellpadding='0' style='background:#081426;border:1px solid #1f3a57;border-radius:8px;overflow:hidden;'>${attentionRows}</table></td></tr>\n<tr><td style='padding:16px 24px 8px;'><h2 style='margin:0 0 10px;font-size:15px;color:#b7e8ff;'>Discovery Signals</h2><table role='presentation' width='100%' cellspacing='0' cellpadding='0' style='background:#081426;border:1px solid #1f3a57;border-radius:8px;overflow:hidden;'>${discoveryRows}</table></td></tr>\n<tr><td style='padding:16px 24px 12px;'><h2 style='margin:0 0 10px;font-size:15px;color:#b7e8ff;'>Next Actions</h2><table role='presentation' width='100%' cellspacing='0' cellpadding='0' style='background:#081426;border:1px solid #1f3a57;border-radius:8px;overflow:hidden;'>${actionRows}</table></td></tr>\n\n<tr><td style='background:#081224;padding:14px 24px;border-top:1px solid #173047;'>\n  <p style='margin:0;font-size:11px;color:#7f9dbc;line-height:1.45;'>This update is informational only and not financial advice. Run date: ${runDate}.</p>\n</td></tr>\n\n</table>\n</td></tr>\n</table>\n</body>\n</html>`;\n\nreturn [{ json: { to: email, subject: `InvestoraAI Weekly Update (${weekStart} - ${weekEnd})`, html } }];"
+      }
+    },
+    {
+      "id": "3",
+      "name": "Send Email",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [800, 300],
+      "parameters": {
+        "operation": "send",
+        "toList": "={{ $json.to || $('Receive Weekly Digest Webhook').item.json.body.email }}",
+        "subject": "={{ $json.subject }}",
+        "emailType": "html",
+        "message": "={{ $json.html }}",
+        "options": {}
+      },
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "1",
+          "name": "Gmail Account"
+        }
+      }
+    },
+    {
+      "id": "4",
+      "name": "Respond 200 OK",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [1080, 300],
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify({ received: true, user_id: $('Receive Weekly Digest Webhook').item.json.body.user_id, email: $('Receive Weekly Digest Webhook').item.json.body.email }) }}",
+        "options": {
+          "responseCode": 200
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Receive Weekly Digest Webhook": {
+      "main": [
+        [
+          {
+            "node": "Build Weekly Email HTML",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build Weekly Email HTML": {
+      "main": [
+        [
+          {
+            "node": "Send Email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Email": {
+      "main": [
+        [
+          {
+            "node": "Respond 200 OK",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "meta": {
+    "description": "Receives user-specific weekly digest payloads and sends branded weekly update emails to payload-provided addresses."
+  }
+}
