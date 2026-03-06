@@ -1,5 +1,8 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState, useCallback } from "react";
+import { z } from "zod";
+import { apiRequest, apiRequestValidated } from "@/lib/apiClient";
+import { queryKeys } from "@/lib/queryKeys";
 
 const API_BASE = import.meta.env.VITE_API_BASE_URL as string;
 
@@ -89,16 +92,14 @@ export interface ReportPayload {
 // ── Fetch function ────────────────────────────────────────────────────────────
 
 export async function fetchLatestReport(): Promise<ReportPayload> {
-  const res = await fetch(`${API_BASE}/latest-report`);
-  if (!res.ok) throw new Error(`Failed to fetch report: ${res.status}`);
-  return res.json() as Promise<ReportPayload>;
+  return apiRequest<ReportPayload>("/latest-report");
 }
 
 // ── React Query hooks ─────────────────────────────────────────────────────────
 
 export function useLatestReport() {
   return useQuery<ReportPayload, Error>({
-    queryKey: ["latest-report"],
+    queryKey: queryKeys.latestReport,
     queryFn: fetchLatestReport,
     staleTime: 60 * 60 * 1000, // 1 hour — weekly data rarely changes
     retry: 1,
@@ -106,15 +107,11 @@ export function useLatestReport() {
 }
 
 async function triggerWeeklyRun(): Promise<void> {
-  const res = await fetch(`${API_BASE}/run-weekly`, {
+  await apiRequest<void>("/run-weekly", {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ no_post: false }),
+    body: { no_post: false },
+    retries: 0,
   });
-  if (!res.ok) {
-    const text = await res.text().catch(() => res.statusText);
-    throw new Error(`Report generation failed (${res.status}): ${text.slice(0, 120)}`);
-  }
 }
 
 export function useRunWeekly() {
@@ -123,7 +120,7 @@ export function useRunWeekly() {
     mutationFn: triggerWeeklyRun,
     onSuccess: () => {
       // Invalidate so the dashboard auto-refetches the new report
-      queryClient.invalidateQueries({ queryKey: ["latest-report"] });
+      queryClient.invalidateQueries({ queryKey: queryKeys.latestReport });
     },
   });
 }
@@ -229,8 +226,8 @@ export function useStreamRun() {
               });
             } else if (event.type === "done") {
               setNodeProgress((prev) => prev.map((n) => ({ ...n, status: "completed" })));
-              queryClient.invalidateQueries({ queryKey: ["latest-report"] });
-              queryClient.invalidateQueries({ queryKey: ["run-history"] });
+              queryClient.invalidateQueries({ queryKey: queryKeys.latestReport });
+              queryClient.invalidateQueries({ queryKey: queryKeys.runHistory });
               queryClient.invalidateQueries({ queryKey: ["dashboard"] });
               queryClient.invalidateQueries({ queryKey: ["personalized-signals"] });
             } else if (event.type === "error") {
@@ -266,14 +263,12 @@ export interface RunHistoryItem {
 }
 
 async function fetchRunHistory(): Promise<RunHistoryItem[]> {
-  const res = await fetch(`${API_BASE}/run-history?limit=10`);
-  if (!res.ok) throw new Error(`Failed to fetch run history: ${res.status}`);
-  return res.json() as Promise<RunHistoryItem[]>;
+  return apiRequest<RunHistoryItem[]>("/run-history?limit=10");
 }
 
 export function useRunHistory() {
   return useQuery<RunHistoryItem[], Error>({
-    queryKey: ["run-history"],
+    queryKey: queryKeys.runHistory,
     queryFn: fetchRunHistory,
     staleTime: 5 * 60 * 1000,
     retry: 1,
@@ -724,13 +719,61 @@ export interface UserReportBundle {
   mismatch_alerts: Array<{ ticker: string; issue: string; recommendation: string }>;
 }
 
+const PersonalizedSignalSchema = z.object({
+  signal_id: z.string().optional().default(""),
+  ticker: z.string(),
+  signal_type: z.string(),
+  direction: z.string(),
+  severity: z.string(),
+  narrative: z.string().nullable().optional().default(null),
+  confidence: z.number(),
+  watchlist_relevance: z.number().optional().default(0),
+  profile_fit_score: z.number().optional().default(0),
+  risk_mismatch_penalty: z.number().optional().default(0),
+  bucket: z.enum(["in_watchlist", "discovery"]).optional().default("discovery"),
+  action_frame: z.string().optional().default(""),
+  urgency: z.enum(["High", "Medium", "Low"]).optional().default("Low"),
+  catalyst_window: z.string().nullable().optional().default(null),
+  risk_flags: z.array(z.string()).optional().default([]),
+  fit_score: z.number().optional().default(0),
+});
+
+const UserReportBundleSchema: z.ZodType<UserReportBundle> = z.object({
+  user_id: z.string(),
+  run_id: z.string(),
+  run_date: z.string(),
+  generated_at: z.string().optional().default(""),
+  watchlist_performance: z.record(
+    z.object({
+      "1d": z.number().nullable(),
+      "1w": z.number().nullable(),
+      "1m": z.number().nullable(),
+    })
+  ).optional().default({}),
+  market_regime: z.enum(["Risk-On", "Neutral", "Risk-Off"]).optional().default("Neutral"),
+  risk_alignment: z.enum(["Aligned", "Caution", "Off-Profile"]).optional().default("Caution"),
+  watchlist_signals: z.array(PersonalizedSignalSchema),
+  discovery_signals: z.array(PersonalizedSignalSchema),
+  top_conviction: z.array(PersonalizedSignalSchema).optional().default([]),
+  mismatch_alerts: z.array(
+    z.object({
+      ticker: z.string(),
+      issue: z.string(),
+      recommendation: z.string(),
+    })
+  ).optional().default([]),
+});
+
+const PersonalizedSignalsSchema = z.object({
+  watchlist_signals: z.array(PersonalizedSignalSchema),
+  discovery_signals: z.array(PersonalizedSignalSchema),
+});
+
 export function useDashboard(userId: string | undefined) {
   return useQuery<UserReportBundle, Error>({
-    queryKey: ["dashboard", userId],
+    queryKey: queryKeys.dashboard(userId),
     queryFn: async () => {
-      const res = await fetch(`${API_BASE}/user/${userId}/dashboard`);
-      if (!res.ok) throw new Error(`dashboard: ${res.status}`);
-      return res.json() as Promise<UserReportBundle>;
+      return apiRequestValidated(`/user/${userId}/dashboard`, UserReportBundleSchema, { retries: 0 });
     },
     enabled: Boolean(userId),
     staleTime: 5 * 60_000,   // 5 minutes — bundles update per analysis run
@@ -740,11 +783,13 @@ export function useDashboard(userId: string | undefined) {
 
 export function usePersonalizedSignals(userId: string | undefined) {
   return useQuery<Pick<UserReportBundle, "watchlist_signals" | "discovery_signals">, Error>({
-    queryKey: ["personalized-signals", userId],
+    queryKey: queryKeys.personalizedSignals(userId),
     queryFn: async () => {
-      const res = await fetch(`${API_BASE}/user/${userId}/personalized-signals`);
-      if (!res.ok) throw new Error(`personalized-signals: ${res.status}`);
-      return res.json();
+      return apiRequestValidated(
+        `/user/${userId}/personalized-signals`,
+        PersonalizedSignalsSchema,
+        { retries: 0 }
+      );
     },
     enabled: Boolean(userId),
     staleTime: 5 * 60_000,

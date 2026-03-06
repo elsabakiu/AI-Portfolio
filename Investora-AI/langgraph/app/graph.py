@@ -2,7 +2,6 @@ from __future__ import annotations
 
 import json
 import logging
-import os
 import time
 import uuid
 from concurrent.futures import ThreadPoolExecutor, as_completed
@@ -11,7 +10,6 @@ from functools import lru_cache
 from pathlib import Path
 from typing import Any, Callable, Dict, List, Literal, Optional, Tuple
 
-from langgraph.graph import END, StateGraph
 from openai import OpenAI
 
 from .mcp_tools import (
@@ -30,15 +28,20 @@ from .alert_checker import check_user_alerts
 from .alert_client import post_alerts_to_n8n, post_user_alerts_to_n8n
 from .n8n_client import post_candidates_to_n8n, post_report_to_n8n
 from .budget_manager import budget_manager
-from .event_store import save_bundle
 from .personalization import build_user_bundle
 from .profile_store import load_all_profiles
+from .repositories import BundleRepository, RunRepository
 from .reporting import DEFAULT_COMPANIES, build_markdown, build_report, persist_report
 from .scoring import compute_all_scores, momentum_weekly_return
 from .state import GraphState, today_iso
+from .settings import get_settings
+from .metrics import record_node_timing, record_provider_call
 from .weekly_digest import build_weekly_user_digest
 
 logger = logging.getLogger(__name__)
+settings = get_settings()
+_bundle_repo = BundleRepository()
+_run_repo = RunRepository()
 
 DEFAULT_UNIVERSE = [
     "AAPL",
@@ -66,7 +69,7 @@ def _load_universe_tickers() -> List[str]:
 
     Caller-seeded tickers from init_state() still take priority over this loader.
     """
-    use_mock_data = os.environ.get("USE_MOCK_DATA", "true").lower() == "true"
+    use_mock_data = settings.run.use_mock_data
     if use_mock_data and _UNIVERSE_PATH.exists():
         try:
             with _UNIVERSE_PATH.open() as f:
@@ -96,7 +99,7 @@ def _configure_logging() -> None:
 
 
 def _parse_universe() -> List[str]:
-    raw = os.environ.get("STOCK_UNIVERSE", "")
+    raw = settings.run.stock_universe
     if raw.strip():
         tickers = [x.strip().upper() for x in raw.split(",") if x.strip()]
     else:
@@ -112,14 +115,14 @@ def init_state(state: GraphState) -> GraphState:
     _configure_logging()
     # Caller may pre-seed run_id (for streaming), tickers, skip_synthesis, scope.
     run_id = state.get("run_id") or str(uuid.uuid4())
-    run_date = state.get("run_date") or os.environ.get("RUN_DATE", today_iso())
+    run_date = state.get("run_date") or settings.run.run_date or today_iso()
 
     # Ticker source priority: caller-seeded > universe_mock.json > STOCK_UNIVERSE env > DEFAULT_UNIVERSE
     tickers = state.get("tickers") or _load_universe_tickers()
 
     skip_synthesis = bool(state.get("skip_synthesis", False))
     # Request-scoped posting toggle; env var kept as backward-compatible fallback.
-    skip_post = bool(state.get("skip_post", os.environ.get("SKIP_N8N_POST", "false").lower() == "true"))
+    skip_post = bool(state.get("skip_post", settings.run.skip_n8n_post))
     scope = state.get("scope") or ("fast" if skip_synthesis else "full")
     trigger_weekly_digest = bool(state.get("trigger_weekly_digest", False))
 
@@ -168,7 +171,7 @@ def _should_skip_post(state: GraphState) -> bool:
     """Return whether outbound posting should be skipped for this run."""
     if "skip_post" in state:
         return bool(state.get("skip_post"))
-    return os.environ.get("SKIP_N8N_POST", "false").lower() == "true"
+    return settings.run.skip_n8n_post
 
 
 def _next_missing_for_ticker(data: Dict[str, Any]) -> Literal["market", "fundamentals", "news", "complete"]:
@@ -212,11 +215,11 @@ def _openai_react_plan(state: GraphState) -> Tuple[Optional[str], str, str]:
     if not pending:
         return None, "compute", "All required tool data collected; proceed to scoring."
 
-    api_key = os.environ.get("OPENAI_API_KEY")
+    api_key = settings.providers.openai_api_key
     if not api_key:
         raise RuntimeError("OPENAI_API_KEY is required for ReAct planning.")
 
-    model = os.environ.get("OPENAI_MODEL", "gpt-4o-mini")
+    model = settings.providers.openai_model
     client = OpenAI(api_key=api_key)
 
     universe_snapshot = []
@@ -292,7 +295,7 @@ def plan_next_action(state: GraphState) -> GraphState:
 
     # In mock mode, avoid LLM planning entirely to guarantee zero external AI calls
     # and keep graph traversal bounded for large mock universes.
-    use_mock_data = os.environ.get("USE_MOCK_DATA", "true").lower() == "true"
+    use_mock_data = settings.run.use_mock_data
     if use_mock_data:
         if pending:
             selected_ticker, selected_action, reason = (
@@ -351,6 +354,7 @@ def plan_next_action(state: GraphState) -> GraphState:
 
 
 def _run_market_tool(state: GraphState, ticker: str) -> None:
+    record_provider_call("market")
     tool = get_market_tool()
     result = tool.run({"ticker": ticker})
     state["per_ticker_data"].setdefault(ticker, {})["market"] = result
@@ -360,6 +364,7 @@ def _run_market_tool(state: GraphState, ticker: str) -> None:
 
 
 def _run_fundamentals_tool(state: GraphState, ticker: str) -> None:
+    record_provider_call("fundamentals")
     tool = get_fundamentals_tool()
     result = tool.run({"ticker": ticker})
     state["per_ticker_data"].setdefault(ticker, {})["fundamentals"] = result
@@ -374,6 +379,7 @@ def _run_fundamentals_tool(state: GraphState, ticker: str) -> None:
 
 
 def _run_news_tool(state: GraphState, ticker: str) -> None:
+    record_provider_call("news")
     tool = get_news_tool()
     result = tool.run({"ticker": ticker, "end_date": state["run_date"]})
     state["per_ticker_data"].setdefault(ticker, {})["news"] = result
@@ -492,7 +498,7 @@ def execute_tool_action(state: GraphState) -> GraphState:
             return state
 
         tool = get_fundamentals_tool() if action == "fundamentals" else get_news_tool()
-        max_workers = int(os.environ.get("TOOL_PARALLELISM", "8"))
+        max_workers = settings.concurrency.tool_parallelism
         max_workers = max(1, min(max_workers, len(admitted)))
 
         def _fetch_one(ticker: str) -> Dict[str, Any]:
@@ -607,8 +613,8 @@ def execute_tool_action(state: GraphState) -> GraphState:
 
 
 def compute_scores_node(state: GraphState) -> GraphState:
-    quality_weight = float(os.environ.get("QUALITY_WEIGHT", "0.55"))
-    momentum_weight = float(os.environ.get("MOMENTUM_WEIGHT", "0.45"))
+    quality_weight = settings.pipeline.quality_weight
+    momentum_weight = settings.pipeline.momentum_weight
 
     failed = set(state["failed_tickers"])
     eligible = {
@@ -800,7 +806,7 @@ def _evidence_target_tickers(state: GraphState) -> List[str]:
     if not scored:
         return []
 
-    top_n = int(os.environ.get("EVIDENCE_TOP_N", "25"))
+    top_n = settings.pipeline.evidence_top_n
     ranked = sorted(scored, key=lambda kv: float(kv[1].get("overall", 0.0)), reverse=True)
 
     selected: List[str]
@@ -833,9 +839,9 @@ def retrieve_rag_context_node(state: GraphState) -> GraphState:
     retrieved_items = 0
     queries_run = 0
 
-    lookback_days = int(os.environ.get("RAG_LOOKBACK_DAYS", "42"))
-    top_k = int(os.environ.get("RAG_TOP_K", "5"))
-    parallelism = int(os.environ.get("RAG_PARALLELISM", "6"))
+    lookback_days = settings.pipeline.rag_lookback_days
+    top_k = settings.pipeline.rag_top_k
+    parallelism = settings.concurrency.rag_parallelism
 
     target_tickers = _evidence_target_tickers(state)
     if not target_tickers:
@@ -902,15 +908,15 @@ def synthesize_evidence_node(state: GraphState) -> GraphState:
         state["per_ticker_synthesis"] = {}
         return state
 
-    api_key = os.environ.get("OPENAI_API_KEY")
+    api_key = settings.providers.openai_api_key
     if not api_key:
         logger.warning("synthesize_evidence_node: OPENAI_API_KEY not set; skipping synthesis.")
         state["per_ticker_synthesis"] = {}
         return state
 
-    model = os.environ.get("SYNTHESIS_MODEL", "gpt-4o-mini")
+    model = settings.providers.synthesis_model
     synthesis: Dict[str, Any] = {}
-    parallelism = int(os.environ.get("SYNTHESIS_PARALLELISM", "4"))
+    parallelism = settings.concurrency.synthesis_parallelism
 
     target_tickers = _evidence_target_tickers(state)
     if not target_tickers:
@@ -1039,7 +1045,7 @@ def personalize_signals_node(state: GraphState) -> GraphState:
                 run_date=state["run_date"],
                 per_ticker_data=state.get("per_ticker_data", {}),
             )
-            save_bundle(bundle)
+            _bundle_repo.save_user_bundle(bundle)
             bundles[user_id] = bundle
         except Exception as exc:  # noqa: BLE001
             # Per-user failure must not fail the full node.
@@ -1162,7 +1168,7 @@ def post_candidates_node(state: GraphState) -> GraphState:
 
 
 def persist_snapshot_node(state: GraphState) -> GraphState:
-    from .event_store import init_db, persist_run
+    from .event_store import init_db
     from .models import AnalysisSnapshot
     from .monitor_client import post_monitor_event
 
@@ -1179,7 +1185,7 @@ def persist_snapshot_node(state: GraphState) -> GraphState:
     )
     try:
         init_db()
-        persist_run(snapshot)
+        _run_repo.save_snapshot(snapshot)
         logger.info("persist_snapshot_node", extra={"run_id": state["run_id"]})
     except Exception as exc:  # noqa: BLE001
         state["errors"].append({"ticker": "*", "tool": "event_store", "error": str(exc)})
@@ -1259,6 +1265,7 @@ def _timed_node(name: str, fn: Callable[[GraphState], GraphState]) -> Callable[[
         started = time.perf_counter()
         out = fn(state)
         duration_ms = round((time.perf_counter() - started) * 1000.0, 2)
+        record_node_timing(name, duration_ms)
         timings = out.get("node_timings")
         if not isinstance(timings, dict):
             timings = {}
@@ -1275,56 +1282,9 @@ def _timed_node(name: str, fn: Callable[[GraphState], GraphState]) -> Callable[[
 
 @lru_cache(maxsize=1)
 def _compiled_graph_singleton():
-    graph = StateGraph(GraphState)
+    from .graph_builder import compile_graph
 
-    graph.add_node("init_state", _timed_node("init_state", init_state))
-    graph.add_node("plan_next_action", _timed_node("plan_next_action", plan_next_action))
-    graph.add_node("execute_tool_action", _timed_node("execute_tool_action", execute_tool_action))
-    graph.add_node("compute_scores", _timed_node("compute_scores", compute_scores_node))
-    graph.add_node("detect_anomalies", _timed_node("detect_anomalies", detect_anomalies_node))
-    graph.add_node("retrieve_rag_context", _timed_node("retrieve_rag_context", retrieve_rag_context_node))
-    graph.add_node("synthesize_evidence", _timed_node("synthesize_evidence", synthesize_evidence_node))
-    graph.add_node("emit_signals", _timed_node("emit_signals", emit_signals_node))
-    graph.add_node("personalize_signals", _timed_node("personalize_signals", personalize_signals_node))
-    graph.add_node("check_user_alerts", _timed_node("check_user_alerts", check_user_alerts_node))
-    graph.add_node("post_alerts", _timed_node("post_alerts", post_alerts_node))
-    graph.add_node("post_candidates", _timed_node("post_candidates", post_candidates_node))
-    graph.add_node("assemble_report_json", _timed_node("assemble_report_json", assemble_report_json_node))
-    graph.add_node("assemble_markdown", _timed_node("assemble_markdown", assemble_markdown_node))
-    graph.add_node("post_to_n8n", _timed_node("post_to_n8n", post_to_n8n_node))
-    graph.add_node("persist_report", _timed_node("persist_report", persist_report_node))
-    graph.add_node("persist_snapshot", _timed_node("persist_snapshot", persist_snapshot_node))
-
-    graph.set_entry_point("init_state")
-    graph.add_edge("init_state", "plan_next_action")
-
-    graph.add_conditional_edges(
-        "plan_next_action",
-        planner_router,
-        {
-            "execute_tool_action": "execute_tool_action",
-            "compute": "compute_scores",
-        },
-    )
-
-    graph.add_edge("execute_tool_action", "plan_next_action")
-
-    graph.add_edge("compute_scores", "detect_anomalies")
-    graph.add_edge("detect_anomalies", "retrieve_rag_context")
-    graph.add_edge("retrieve_rag_context", "synthesize_evidence")
-    graph.add_edge("synthesize_evidence", "emit_signals")
-    graph.add_edge("emit_signals", "personalize_signals")
-    graph.add_edge("personalize_signals", "check_user_alerts")
-    graph.add_edge("check_user_alerts", "post_alerts")
-    graph.add_edge("post_alerts", "post_candidates")
-    graph.add_edge("post_candidates", "assemble_report_json")
-    graph.add_edge("assemble_report_json", "assemble_markdown")
-    graph.add_edge("assemble_markdown", "post_to_n8n")
-    graph.add_edge("post_to_n8n", "persist_report")
-    graph.add_edge("persist_report", "persist_snapshot")
-    graph.add_edge("persist_snapshot", END)
-
-    return graph.compile()
+    return compile_graph(timed_node=_timed_node, planner_router=planner_router)
 
 
 def build_graph(force_rebuild: bool = False):

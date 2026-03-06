@@ -1,0 +1,5 @@
+[
+  "init_state",
+  "plan_next_action",
+  "compute_scores"
+]

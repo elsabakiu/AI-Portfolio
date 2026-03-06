@@ -2,7 +2,6 @@ from __future__ import annotations
 
 import argparse
 import json
-import os
 import sys
 from pathlib import Path
 from typing import Any, Dict, List, Optional
@@ -13,8 +12,10 @@ if __package__ in (None, ""):
     # Support direct execution: python app/run_weekly.py
     sys.path.append(str(Path(__file__).resolve().parents[1]))
     from app.graph import build_graph
+    from app.settings import get_settings
 else:
     from .graph import build_graph
+    from .settings import get_settings
 
 
 def run_weekly(
@@ -23,7 +24,7 @@ def run_weekly(
     skip_post: bool = False,
 ) -> Dict[str, Any]:
     load_dotenv()
-    recursion_limit = int(os.environ.get("GRAPH_RECURSION_LIMIT", "120"))
+    recursion_limit = get_settings().run.graph_recursion_limit
 
     app = build_graph()
     initial: Dict[str, Any] = {
@@ -52,7 +53,7 @@ def run_analysis(
 ) -> Dict[str, Any]:
     """Run a targeted analysis — optionally on a subset of tickers, optionally skipping LLM synthesis."""
     load_dotenv()
-    recursion_limit = int(os.environ.get("GRAPH_RECURSION_LIMIT", "120"))
+    recursion_limit = get_settings().run.graph_recursion_limit
 
     initial: Dict[str, Any] = {
         "skip_synthesis": skip_synthesis,

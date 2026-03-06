@@ -13,15 +13,21 @@ from typing import Any, Dict, List, Optional
 from zoneinfo import ZoneInfo
 
 from dotenv import load_dotenv
-from fastapi import Body, Depends, FastAPI, HTTPException, Header, Query
+from fastapi import Body, Depends, FastAPI, HTTPException, Header, Query, Request
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import JSONResponse
 from fastapi.responses import StreamingResponse
 from pydantic import BaseModel
 
-from .run_weekly import run_analysis, run_weekly
+from .errors import DomainError, error_payload
+from .metrics import snapshot_metrics
+from .repositories import AlertRepository, BundleRepository, ProfileRepository
 from .run_limiter import run_limiter
+from .services import AnalysisService, NotificationService, PersonalizationService
+from .settings import get_settings
 
 logger = logging.getLogger(__name__)
+settings = get_settings()
 
 # Load .env from langgraph/ root — no-op on Render (env vars already injected)
 load_dotenv(Path(__file__).resolve().parent.parent / ".env")
@@ -35,7 +41,7 @@ try:
     from sentry_sdk.integrations.fastapi import FastApiIntegration
     from sentry_sdk.integrations.starlette import StarletteIntegration
 
-    _sentry_dsn = os.environ.get("SENTRY_DSN", "")
+    _sentry_dsn = settings.providers.sentry_dsn
     if _sentry_dsn:
         sentry_sdk.init(
             dsn=_sentry_dsn,
@@ -53,7 +59,7 @@ except Exception:
 
 def _verify_cron_secret(authorization: str = Header(default="")) -> None:
     """Reject requests with a wrong Bearer token when CRON_SECRET is configured."""
-    secret = os.environ.get("CRON_SECRET", "")
+    secret = settings.providers.cron_secret
     if not secret:
         return  # auth disabled — allow all (dev/local)
     if authorization != f"Bearer {secret}":
@@ -62,8 +68,7 @@ def _verify_cron_secret(authorization: str = Header(default="")) -> None:
 app = FastAPI(title="LangGraph Weekly Market Agent", version="1.0.0")
 
 # CORS — allow localhost in dev + production origins from CORS_ORIGINS env var
-_raw_origins = os.environ.get("CORS_ORIGINS", "")
-_explicit_origins = [o.strip() for o in _raw_origins.split(",") if o.strip()]
+_explicit_origins = settings.providers.cors_origins
 
 app.add_middleware(
     CORSMiddleware,
@@ -76,6 +81,32 @@ app.add_middleware(
 
 # In-memory registry of active streaming runs: run_id → asyncio.Queue
 _active_streams: Dict[str, asyncio.Queue] = {}
+_bundle_repo = BundleRepository()
+_profile_repo = ProfileRepository()
+_alert_repo = AlertRepository()
+_analysis_service = AnalysisService()
+_personalization_service = PersonalizationService(bundle_repository=_bundle_repo)
+_notification_service = NotificationService(alert_repository=_alert_repo)
+
+
+@app.middleware("http")
+async def correlation_id_middleware(request: Request, call_next):
+    request.state.correlation_id = request.headers.get("X-Correlation-ID") or str(uuid.uuid4())
+    response = await call_next(request)
+    response.headers["X-Correlation-ID"] = request.state.correlation_id
+    return response
+
+
+@app.exception_handler(DomainError)
+async def handle_domain_error(request: Request, exc: DomainError):
+    return JSONResponse(
+        status_code=400,
+        content=error_payload(
+            code=exc.code,
+            message=exc.message,
+            details=exc.details,
+        ),
+    )
 
 
 class RunWeeklyRequest(BaseModel):
@@ -108,9 +139,9 @@ def _acquire_run_slot_or_raise(timeout_s: float = 90.0) -> None:
 
 @app.post("/run-weekly", dependencies=[Depends(_verify_cron_secret)])
 def run_weekly_endpoint(req: RunWeeklyRequest):
-    _acquire_run_slot_or_raise(float(os.environ.get("RUN_QUEUE_WAIT_SECONDS", "90")))
+    _acquire_run_slot_or_raise(settings.run.run_queue_wait_seconds)
     try:
-        return run_weekly(
+        return _analysis_service.run_weekly_analysis(
             run_date=req.run_date,
             skip_synthesis=req.skip_synthesis,
             skip_post=req.no_post,
@@ -121,9 +152,9 @@ def run_weekly_endpoint(req: RunWeeklyRequest):
 
 @app.post("/run-analysis", dependencies=[Depends(_verify_cron_secret)])
 def run_analysis_endpoint(req: RunAnalysisRequest):
-    _acquire_run_slot_or_raise(float(os.environ.get("RUN_QUEUE_WAIT_SECONDS", "90")))
+    _acquire_run_slot_or_raise(settings.run.run_queue_wait_seconds)
     try:
-        return run_analysis(
+        return _analysis_service.run_targeted_analysis(
             tickers=req.tickers,
             skip_synthesis=req.skip_synthesis,
             skip_post=req.no_post,
@@ -152,12 +183,12 @@ async def run_analysis_stream_endpoint(req: RunAnalysisRequest):
     if req.tickers:
         initial["tickers"] = [t.upper() for t in req.tickers]
 
-    recursion_limit = int(os.environ.get("GRAPH_RECURSION_LIMIT", "120"))
+    recursion_limit = settings.run.graph_recursion_limit
 
     def graph_thread() -> None:
         acquired = False
         try:
-            status = run_limiter.acquire(timeout_s=float(os.environ.get("RUN_QUEUE_WAIT_SECONDS", "90")))
+            status = run_limiter.acquire(timeout_s=settings.run.run_queue_wait_seconds)
             if status != "acquired":
                 msg = (
                     "Run queue is full. Try again shortly."
@@ -491,7 +522,7 @@ def get_market_ai_view(ticker: str):
         "Be factual and concise. Do not give explicit buy/sell advice."
     )
 
-    api_key = os.environ.get("OPENAI_API_KEY", "")
+    api_key = settings.providers.openai_api_key
     if not api_key:
         raise HTTPException(status_code=503, detail="OPENAI_API_KEY not configured")
 
@@ -551,15 +582,15 @@ class UpdateAlertRequest(BaseModel):
 
 @app.get("/user/{user_id}/alerts")
 def get_user_alerts(user_id: str):
-    from .event_store import init_db, get_alerts
+    from .event_store import init_db
 
     init_db()
-    return get_alerts(user_id)
+    return _notification_service.list_user_alerts(user_id)
 
 
 @app.post("/user/{user_id}/alerts", status_code=201)
 def create_user_alert(user_id: str, req: CreateAlertRequest):
-    from .event_store import init_db, create_alert
+    from .event_store import init_db
 
     # Accept legacy condition aliases from older frontends and normalize.
     condition_aliases = {
@@ -576,12 +607,12 @@ def create_user_alert(user_id: str, req: CreateAlertRequest):
         raise HTTPException(status_code=400, detail="value must be positive")
 
     init_db()
-    return create_alert(user_id, req.ticker, normalized_condition, req.value)
+    return _alert_repo.create_user_alert(user_id, req.ticker, normalized_condition, req.value)
 
 
 @app.patch("/user/{user_id}/alerts/{alert_id}")
 def patch_user_alert(user_id: str, alert_id: str, req: UpdateAlertRequest):
-    from .event_store import init_db, update_alert
+    from .event_store import init_db
 
     normalized_status: Optional[str] = None
     if req.status is not None:
@@ -616,7 +647,7 @@ def patch_user_alert(user_id: str, alert_id: str, req: UpdateAlertRequest):
         raise HTTPException(status_code=400, detail="No update fields provided")
 
     init_db()
-    updated = update_alert(
+    updated = _alert_repo.update_user_alert(
         alert_id,
         status=normalized_status,
         ticker=req.ticker,
@@ -630,10 +661,10 @@ def patch_user_alert(user_id: str, alert_id: str, req: UpdateAlertRequest):
 
 @app.delete("/user/{user_id}/alerts/{alert_id}", status_code=204)
 def delete_user_alert(user_id: str, alert_id: str):
-    from .event_store import init_db, delete_alert
+    from .event_store import init_db
 
     init_db()
-    if not delete_alert(alert_id):
+    if not _alert_repo.delete_user_alert(alert_id):
         raise HTTPException(status_code=404, detail="Alert not found")
 
 
@@ -648,10 +679,8 @@ def put_user_profile(user_id: str, profile: Dict[str, Any] = Body(...)):
     Returns 200 {"ok": True} on success; any DB error surfaces as 500.
     """
     from .event_store import init_db
-    from .profile_store import save_profile
-
     init_db()
-    save_profile(user_id, profile)
+    _profile_repo.save_profile_json(user_id, profile)
     return {"ok": True, "user_id": user_id}
 
 
@@ -662,10 +691,10 @@ def get_user_dashboard(user_id: str):
     personalized bundle exists yet (i.e., no analysis run has completed
     the personalization node).
     """
-    from .event_store import init_db, load_latest_bundle
+    from .event_store import init_db
 
     init_db()
-    bundle = load_latest_bundle(user_id)
+    bundle = _personalization_service.get_user_dashboard(user_id)
     if bundle is None:
         raise HTTPException(
             status_code=404,
@@ -680,13 +709,15 @@ def get_user_personalized_signals(user_id: str):
     Lightweight alternative to /dashboard — returns only the watchlist and
     discovery signal buckets from the latest personalized bundle.
     """
-    from .event_store import init_db, load_latest_bundle
+    from .event_store import init_db
 
     init_db()
-    bundle = load_latest_bundle(user_id)
+    bundle = _personalization_service.get_user_personalized_signals(user_id)
     if bundle is None:
         raise HTTPException(status_code=404, detail="No personalized signals yet.")
-    return {
-        "watchlist_signals": bundle.get("watchlist_signals", []),
-        "discovery_signals": bundle.get("discovery_signals", []),
-    }
+    return bundle
+
+
+@app.get("/debug/metrics")
+def get_debug_metrics():
+    return snapshot_metrics()

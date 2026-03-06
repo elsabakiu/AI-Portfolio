@@ -24,13 +24,11 @@ import {
 import { useUser } from "@/contexts/UserContext";
 import { useDashboard, useLatestReport, useRunHistory, useStreamRun } from "@/lib/report";
 import { INTEREST_OPTIONS } from "@/lib/auth";
+import { SectionErrorState } from "@/components/states/SectionErrorState";
+import { useOnboardingFlow } from "@/features/onboarding/hooks/useOnboardingFlow";
 
 function SectionFallback({ name }: { name: string }) {
-  return (
-    <div className="rounded-lg border border-border/50 bg-card p-4 text-sm text-muted-foreground">
-      Unable to load {name}
-    </div>
-  );
+  return <SectionErrorState label={`Unable to load ${name}`} />;
 }
 
 const Index = () => {
@@ -61,8 +59,12 @@ const Index = () => {
       user?.profile?.interests &&
       user.profile.interests.length > 0
   );
-  const showOnboarding = noDashboardYet || !hasDashboardData;
-  const onboardingReady = hasWatchlist && hasProfileSetup;
+  const { showOnboarding, onboardingReady } = useOnboardingFlow({
+    hasDashboardData: !noDashboardYet && hasDashboardData,
+    hasWatchlist,
+    hasProfileSetup,
+    isStreaming,
+  });
   const currentNode = nodeProgress.find((n) => n.status === "running")?.node;
   const currentNodeLabel =
     currentNode

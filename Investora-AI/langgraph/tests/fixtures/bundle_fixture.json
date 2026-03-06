@@ -1,0 +1,21 @@
+{
+  "user_id": "user-123",
+  "run_id": "run-2026-03-07-001",
+  "run_date": "2026-03-07",
+  "watchlist_signals": [
+    {
+      "ticker": "AAPL",
+      "signal_type": "quality",
+      "confidence": 0.84,
+      "narrative": "Strong profitability with resilient demand."
+    }
+  ],
+  "discovery_signals": [
+    {
+      "ticker": "NVDA",
+      "signal_type": "momentum",
+      "confidence": 0.8,
+      "narrative": "Continued earnings revisions support trend."
+    }
+  ]
+}
