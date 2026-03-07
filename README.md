@@ -9,7 +9,11 @@ Portfolio of AI product work focused on turning ambiguous opportunities into use
 
 ## Portfolio Index
 ### 1) Investora-AI (`investora-ai`)
-AI investment decision-support product designed to reduce analysis time and improve confidence through personalized insights, prioritization, and guided weekly workflows.
+AI investment decision-support product framed from a product management lens:
+- Problem: investors face fragmented signals, slow weekly review cycles, and low confidence in what to prioritize.
+- Product bet: unify data and AI reasoning into one workflow that turns market noise into personalized, actionable insights.
+- User value: faster analysis, clearer priorities, and better decision confidence through profile-aware recommendations.
+- Delivery focus: phased execution with reliability guardrails (contracts, tests, observability) to balance speed and quality.
 
 Key links:
 - Project README: [`investora-ai/README.md`](./investora-ai/README.md)

@@ -1,14 +1,15 @@
 # Investora-AI
 
-AI-powered investment intelligence platform combining a LangGraph analysis pipeline with a React dashboard for personalized signals, alerts, and weekly digests.
+AI-powered investment decision-support product built to help users move from fragmented market information to focused, confidence-based weekly actions.
 
 ## Executive Summary (Non-Technical)
-Investora-AI helps users move from market noise to focused weekly decisions. Instead of manually combining headlines, price moves, and fundamentals, users get:
-- a curated set of high-priority opportunities,
-- profile-aware watchlist and discovery signals,
-- actionable alerts and digest delivery.
+Investora-AI addresses a common decision problem: too many market signals, too little clarity on what deserves attention now.  
+It creates a single weekly decision workflow that helps users:
+- prioritize opportunities based on relevance and conviction,
+- align recommendations with their own risk profile and interests,
+- stay informed through timely alerts and digest-style summaries.
 
-The product is built for trust and iteration: transparent run progress, evidence-aware outputs, and regression-tested APIs.
+The product is designed around trust and usability: clear progress visibility, consistent signal framing, and measurable reliability standards.
 
 ## Demo Links and Visuals
 - Local app (frontend): `http://localhost:8080`
@@ -40,16 +41,16 @@ flowchart TD
 ```
 
 ## Key Features and User Value
-- Personalized signals:
-  - Watchlist + discovery buckets aligned with profile and risk preferences.
-- ReAct-style analysis pipeline:
-  - Deterministic in mock mode; provider-backed in live mode.
-- Real-time run visibility:
-  - SSE node-progress stream improves transparency and trust.
-- Alerting and weekly digests:
-  - User-level urgency filtering and notification delivery.
-- Reliability controls:
-  - Contract tests, integration tests, typed config, and logging redaction.
+- Prioritized decision feed:
+  - Surfaces what matters most this week instead of overwhelming users with raw data.
+- Personalized relevance:
+  - Separates watchlist attention from discovery ideas and aligns outputs with user preferences.
+- Transparent workflow experience:
+  - Shows run progress and system state to reduce black-box AI behavior.
+- Timely engagement:
+  - Uses alerts and digest delivery to keep users connected without constant dashboard monitoring.
+- Reliability by design:
+  - Includes quality gates that support safe iteration and consistent user experience.
 
 ## Tech Stack
 - Frontend:
@@ -133,11 +134,21 @@ Contract/integration coverage includes:
 - Large frontend chunks indicate room for code splitting and performance tuning.
 - Full market-grade compliance controls are not yet implemented (advisory/disclaimer hardening can be expanded).
 
-## Roadmap (Next)
-- Add stronger end-to-end KPI instrumentation (time-to-insight, alert precision proxy metrics).
-- Expand integration tests across weekly digest and alert webhook flows.
-- Introduce deeper portfolio analytics and scenario/risk simulations.
-- Improve frontend performance with route-level chunking and lazy data loading.
+## Roadmap (Strategic Priorities)
+### Next 30 Days: Adoption and Decision Quality
+- Increase first-week user activation through onboarding clarity and faster “time to first useful insight.”
+- Define and track product KPIs for decision quality (relevance, confidence, and follow-through signals).
+- Tighten recommendation framing so users can compare opportunities with less cognitive effort.
+
+### Next 60 Days: Product-Market Fit Signals
+- Strengthen personalization depth using behavior feedback loops (what users keep, dismiss, or act on).
+- Improve alert usefulness with better prioritization and cadence controls.
+- Validate retention hypotheses by cohort (new users vs. repeat weekly users).
+
+### Next 90 Days: Scale and Commercial Readiness
+- Expand from single-user workflows toward advisor/team use cases.
+- Introduce portfolio-level narratives and scenario views for higher-value decision contexts.
+- Prepare a production-readiness package focused on reliability, governance, and stakeholder reporting.
 
 ## Consulting Lens: Tradeoffs, Decisions, Risks
 ### Key tradeoffs
@@ -148,7 +159,7 @@ Contract/integration coverage includes:
 ### Delivery decisions
 - Modularized LangGraph nodes by responsibility to reduce change coupling.
 - Added service/repository boundaries for reusable business logic across API/cron paths.
-- Added contract tests before deeper changes to prevent API regressions.
+- Added contract tests before deeper changes to prevent user-facing regressions.
 
 ### Risks to monitor
 - Provider outage/rate-limit concentration for live runs.
