@@ -9,26 +9,11 @@ Portfolio of AI product work focused on turning ambiguous opportunities into use
 
 ## Portfolio Index
 ### 1) Investora-AI (`investora-ai`)
-AI investment decision-support product framed from a product management lens:
+Investora-AI is an AI-powered investment decision-support product that turns fragmented market data into personalized, prioritized insights so users can make faster, more confident weekly decisions.
 - Problem: investors face fragmented signals, slow weekly review cycles, and low confidence in what to prioritize.
 - Product bet: unify data and AI reasoning into one workflow that turns market noise into personalized, actionable insights.
 - User value: faster analysis, clearer priorities, and better decision confidence through profile-aware recommendations.
 - Delivery focus: phased execution with reliability guardrails (contracts, tests, observability) to balance speed and quality.
-
-Key links:
-- Project README: [`investora-ai/README.md`](./investora-ai/README.md)
-- Why this project matters: [`investora-ai/docs/WHY_THIS_PROJECT_MATTERS.md`](./investora-ai/docs/WHY_THIS_PROJECT_MATTERS.md)
-- Architecture references:
-  - [`investora-ai/docs/architecture/InvestoraAI — Full Architecture & Documentation.pdf`](./investora-ai/docs/architecture/InvestoraAI%20%E2%80%94%20Full%20Architecture%20%26%20Documentation.pdf)
-  - [`investora-ai/docs/architecture/InvestoraAI — Project Documentation.pdf`](./investora-ai/docs/architecture/InvestoraAI%20%E2%80%94%20Project%20Documentation.pdf)
-- Test evidence:
-  - Backend contracts/integration/unit: [`investora-ai/langgraph/tests`](./investora-ai/langgraph/tests)
-  - Frontend critical-flow tests: [`investora-ai/src/features`](./investora-ai/src/features)
-- Milestone commits:
-  - Graph modularization + refactor foundation: `e82c934`
-  - AI view config fix: `019b91e`
-  - Phase 2 node extraction: `b9194f8`
-  - Logging redaction + expanded tests: `992bcc7`
 
 ### 2) Personal Branding Copilot (`personal-branding-copilot`)
 AI content product concept for professionals who need consistent thought-leadership output without losing voice, with a focus on brand fit, quality control, and review efficiency.
