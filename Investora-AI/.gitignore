@@ -1,7 +1,12 @@
 .env
 __pycache__/
+*.py[cod]
+.pytest_cache/
+.coverage
+.DS_Store
 base/
 node_modules
+dist/
 .claude/worktrees/
 
 # Runtime artifacts

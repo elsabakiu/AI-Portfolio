@@ -1,79 +1,56 @@
-# AI Portfolio – Elsa Bakiu
+# AI Portfolio - Elsa Bakiu
 
-AI Product Manager with 12+ years of experience building and scaling complex B2B and B2G platforms.  
-This portfolio showcases end-to-end AI product work, focusing on LLM-powered workflows, usability, and production-aware system design.
+Portfolio of AI product work focused on turning ambiguous opportunities into user-facing outcomes, with clear scope, delivery tradeoffs, and measurable value.
 
-## TL;DR
+## Who This Is For
+- Hiring managers evaluating AI PM / AI consultant profiles
+- Product and engineering leaders assessing execution depth from framing to delivery
+- Teams seeking practical examples of AI systems with real tradeoff handling
 
-- Product Manager with strong technical background (MSc Computer Science)
-- Experience leading large-scale platform redesigns and regulated products
-- Hands-on with AI prototyping, prompt design, and system trade-offs
-- Focused on turning AI capabilities into usable, reliable products
+## Portfolio Index
+### 1) Investora-AI (`investora-ai`)
+AI investment decision-support product designed to reduce analysis time and improve confidence through personalized insights, prioritization, and guided weekly workflows.
 
+Key links:
+- Project README: [`investora-ai/README.md`](./investora-ai/README.md)
+- Why this project matters: [`investora-ai/docs/WHY_THIS_PROJECT_MATTERS.md`](./investora-ai/docs/WHY_THIS_PROJECT_MATTERS.md)
+- Architecture references:
+  - [`investora-ai/docs/architecture/InvestoraAI — Full Architecture & Documentation.pdf`](./investora-ai/docs/architecture/InvestoraAI%20%E2%80%94%20Full%20Architecture%20%26%20Documentation.pdf)
+  - [`investora-ai/docs/architecture/InvestoraAI — Project Documentation.pdf`](./investora-ai/docs/architecture/InvestoraAI%20%E2%80%94%20Project%20Documentation.pdf)
+- Test evidence:
+  - Backend contracts/integration/unit: [`investora-ai/langgraph/tests`](./investora-ai/langgraph/tests)
+  - Frontend critical-flow tests: [`investora-ai/src/features`](./investora-ai/src/features)
+- Milestone commits:
+  - Graph modularization + refactor foundation: `e82c934`
+  - AI view config fix: `019b91e`
+  - Phase 2 node extraction: `b9194f8`
+  - Logging redaction + expanded tests: `992bcc7`
 
-## What this portfolio shows
+### 2) Personal Branding Copilot (`personal-branding-copilot`)
+AI content product concept for professionals who need consistent thought-leadership output without losing voice, with a focus on brand fit, quality control, and review efficiency.
 
-This portfolio is not a collection of demos.  
-It focuses on how AI is applied to real product problems, including:
+### 3) News Summarizer (`news-summarizer`)
+AI summarization product aimed at helping users process high-volume news faster and act on the most relevant developments with less cognitive overload.
 
-- Problem framing and user needs
-- AI system design under real-world constraints
-- Prompt design and controllability
-- Trade-offs, limitations, and next steps
-- Usable outputs, not just code
+### 4) Podcast Studio (`podcast-studio`)
+AI-assisted content workflow for accelerating podcast production from idea to draft assets, improving speed and consistency for creators and teams.
 
+### 5) AI Product Playbook (`ai-product-playbook`)
+Practical operating toolkit for AI product discovery, prioritization, and execution, built for cross-functional teams delivering under real constraints.
 
-## Highlighted Projects
+## What I Can Do for Clients and Teams
+- Frame AI opportunities into scoped, outcome-driven product bets
+- Design MVP-to-production roadmaps balancing speed, risk, and quality
+- Translate between business, product, and engineering stakeholders
+- Build delivery plans with measurable quality gates (tests, contracts, observability)
+- Lead AI feature lifecycle: discovery, prototyping, validation, rollout, iteration
 
-### ✍️ Personal Branding Copilot – AI Content Generation for Thought Leadership
-
-An AI content product MVP focused on generating differentiated, on-brand personal branding posts through a structured workflow: dual knowledge-base retrieval, multi-angle generation, evaluator-based selection, refinement, and human-in-the-loop feedback memory.
-
-What it demonstrates:
-- Product-driven AI workflow design (not single-prompt output)
-- RAG + prompt orchestration for context-aware generation
-- Quality controls with brand checks and iterative refinement
-- Gradio UX for fast generation and validation loops
-
-Project folder: `personal-branding-copilot`
-
-### 📈 Stock Market Analysis RAG – Investment Research Assistant
-
-A retrieval-augmented generation system for grounded Q&A over market research data (filings/transcripts), designed for reliability and traceability.
-
-What it demonstrates:
-- End-to-end RAG architecture (chunking, embeddings, retrieval, answer generation)
-- Reliability mechanisms (retries, error mapping, fault isolation)
-- PM-oriented structure with clear product framing and documentation
-
-Project folder: `stock-market-analysis-RAG`
-
-
-## Skills demonstrated through projects
-
-- AI product discovery and prototyping
-- Prompt engineering and evaluation thinking
-- System design for generative AI
-- UX considerations for AI-driven workflows
-- Translating complex requirements into usable products
-
-
-## How to navigate this repo
-
-- Start with one of the two highlighted projects above
-- Read the project README for problem, solution, and design decisions
-- Review docs and outputs before diving into code
-
+## Delivery Style
+- Pragmatic: focused on user and business outcomes, not AI novelty alone
+- Structured: explicit decisions, tradeoffs, and risk handling
+- Hands-on: technical depth where needed to unblock execution and quality
 
 ## Contact
-
 - LinkedIn: https://www.linkedin.com/in/elsa-bakiu
-- Location: Munich, Germany
 - Email: elsabakiu@gmail.com
-
-
-## Notes
-
-This portfolio is evolving. New projects and deeper documentation will be added over time as I continue exploring AI-powered product experiences.
-
-If you are reviewing this as a recruiter or hiring manager, I am happy to walk through any project and discuss design decisions, trade-offs, and next steps.
+- Location: Munich, Germany
