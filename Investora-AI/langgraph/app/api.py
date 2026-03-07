@@ -21,12 +21,14 @@ from pydantic import BaseModel
 
 from .errors import DomainError, error_payload
 from .metrics import snapshot_metrics
+from .logging_utils import install_redaction_filter
 from .repositories import AlertRepository, BundleRepository, ProfileRepository
 from .run_limiter import run_limiter
 from .services import AnalysisService, NotificationService, PersonalizationService
 from .settings import get_settings
 
 logger = logging.getLogger(__name__)
+install_redaction_filter()
 
 # Load .env from langgraph/ root — no-op on Render (env vars already injected)
 load_dotenv(Path(__file__).resolve().parent.parent / ".env")

@@ -12,6 +12,7 @@ from ..budget_manager import budget_manager
 from ..graph_constants import DEFAULT_UNIVERSE, UNIVERSE_PATH
 from ..mcp_tools import MCPToolError, get_fundamentals_tool, get_market_tool, get_news_tool
 from ..metrics import record_provider_call
+from ..logging_utils import install_redaction_filter
 from ..profile_store import load_all_profiles
 from ..settings import get_settings
 from ..state import GraphState, today_iso
@@ -40,6 +41,7 @@ def _load_universe_tickers() -> List[str]:
 
 def _configure_logging() -> None:
     logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(name)s %(message)s")
+    install_redaction_filter()
 
 
 def _parse_universe() -> List[str]:
