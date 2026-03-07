@@ -27,10 +27,10 @@ from .services import AnalysisService, NotificationService, PersonalizationServi
 from .settings import get_settings
 
 logger = logging.getLogger(__name__)
-settings = get_settings()
 
 # Load .env from langgraph/ root — no-op on Render (env vars already injected)
 load_dotenv(Path(__file__).resolve().parent.parent / ".env")
+settings = get_settings()
 
 # ── Sentry (optional — only initialises when SENTRY_DSN is set) ───────────────
 # Wrapped in try/except so a bad DSN or import issue never crashes the server.

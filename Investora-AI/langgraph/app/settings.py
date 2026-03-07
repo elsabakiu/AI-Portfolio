@@ -3,8 +3,10 @@ from __future__ import annotations
 import logging
 import os
 from functools import lru_cache
+from pathlib import Path
 from typing import List
 
+from dotenv import load_dotenv
 from pydantic import BaseModel, Field, ValidationError
 
 logger = logging.getLogger(__name__)
@@ -89,6 +91,8 @@ def _as_int(name: str, default: int) -> int:
 
 @lru_cache(maxsize=1)
 def get_settings() -> AppSettings:
+    # Ensure .env is loaded before reading env variables in any import order.
+    load_dotenv(Path(__file__).resolve().parent.parent / ".env")
     cors = [o.strip() for o in os.environ.get("CORS_ORIGINS", "").split(",") if o.strip()]
 
     try:
