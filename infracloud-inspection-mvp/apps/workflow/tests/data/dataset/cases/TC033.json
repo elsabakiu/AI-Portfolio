@@ -1,0 +1,73 @@
+{
+  "case_id": "TC033",
+  "scenario": "Material correction from Stahlbeton to Ziegelstein with damage type cascade",
+  "description": "Inspector identifies that the structure is brick masonry, not reinforced concrete. This necessitates a change in damage type as well. Two conflicts on Material and Damage Type. Crowd noise.",
+  "tags": ["update", "crowd", "material_correction", "damage_type_cascade", "two_conflicts"],
+  "difficulty": "medium",
+  "audio": {"noise_profile": "crowd", "snr_db": 10},
+  "split": "test",
+  "input": {
+    "suspicion_id": "TC033",
+    "transcript": "Das Bauteil hier ist kein Stahlbeton, das ist eindeutig Ziegelmauerwerk. Der Längsriss als Schadenstyp passt dann nicht mehr, das sieht eher nach Verwitterung aus. Ich ändere Material auf Ziegelstein und Schadenstyp auf Mauerwerk Verwitterung.",
+    "existing_record": {
+      "Suspicion ID": "TC033",
+      "Asset": "Lübeck Stadthafen",
+      "Part": "Schleusenanlage",
+      "Object Part Category": "Außenwand",
+      "Main Component Category": "Schleusenkammer",
+      "Status": "Damage",
+      "Material": "Beton | Stahlbeton",
+      "Damage Type": "Risse | Längsriss (trocken)",
+      "Class": "2",
+      "Length": "60",
+      "Width": "0.6",
+      "Depth": null,
+      "Quantity": "general",
+      "Location Longitudinal": "km 0+080",
+      "Location Cross Section": "landseitig",
+      "Location Height": "GOK",
+      "Damage description": "Längsriss in der Schleusenwand",
+      "Remark": null,
+      "Note": null,
+      "Longitude": 10.6892,
+      "Latitude": 53.8612,
+      "Height [m+NHN]": 3.8
+    }
+  },
+  "gold": {
+    "intent": "UPDATE_FIELD",
+    "fields": {
+      "Material": {
+        "value": "Mauerwerk | Ziegelstein",
+        "source_type": "stated",
+        "evidence_span": "eindeutig Ziegelmauerwerk",
+        "is_critical": true
+      },
+      "Damage Type": {
+        "value": "Mauerwerk | Verwitterung",
+        "source_type": "stated",
+        "evidence_span": "sieht eher nach Verwitterung aus",
+        "is_critical": true
+      }
+    },
+    "conflicts": [
+      {
+        "field": "Material",
+        "existing_value": "Beton | Stahlbeton",
+        "correct_value": "Mauerwerk | Ziegelstein",
+        "direction": "correction"
+      },
+      {
+        "field": "Damage Type",
+        "existing_value": "Risse | Längsriss (trocken)",
+        "correct_value": "Mauerwerk | Verwitterung",
+        "direction": "correction"
+      }
+    ],
+    "catalog_valid": true
+  },
+  "benchmark": {
+    "expected_warning_stages": [],
+    "expected_audio_quality": "degraded"
+  }
+}

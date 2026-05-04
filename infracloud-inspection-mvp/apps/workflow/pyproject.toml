@@ -1,0 +1,20 @@
+[project]
+name = "infracloud-langgraph-service"
+version = "0.1.0"
+description = "LangGraph-based extraction service for InfraCloud inspection workflows."
+requires-python = ">=3.11"
+dependencies = [
+  "fastapi>=0.115.0",
+  "uvicorn>=0.30.0",
+  "pydantic>=2.8.0",
+  "langgraph>=0.2.0",
+  "langchain-openai>=0.2.0",
+  "openai>=1.40.0",
+  "python-dotenv>=1.0.1",
+  "langsmith>=0.1.0",
+  "sentry-sdk[fastapi]>=2.0.0",
+  "pytest>=8.0.0",
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

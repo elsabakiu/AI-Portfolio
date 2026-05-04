@@ -1,0 +1,72 @@
+{
+  "case_id": "TC006",
+  "scenario": "VALIDATE_DAMAGE",
+  "description": "Inspector confirms a minor dry longitudinal crack in mortar at Emden Außenhafen. Clean audio. Crack width is 0.1 mm, consistent with Class 1. Inspector explicitly names Class 1.",
+  "tags": [
+    "crack",
+    "class_1"
+  ],
+  "difficulty": "easy",
+  "audio": {
+    "noise_profile": "clean",
+    "snr_db": 999
+  },
+  "split": "test",
+  "input": {
+    "suspicion_id": "TC006",
+    "transcript": "Emden Außenhafen, Mole Nord, Feld 2. Längsriss, trocken, sehr fein — würde sagen 0,1 Millimeter, also Klasse 1. Material ist Mörtel, das stimmt. Schaden bestätigt.",
+    "existing_record": {
+      "Suspicion ID": "TC006",
+      "Asset": "Emden Außenhafen",
+      "Part": "Mole Nord",
+      "Object Part Category": "Betonkonstruktion",
+      "Main Component Category": "Kaikonstruktion",
+      "Status": "Suspicion",
+      "Material": "Beton | Mörtel",
+      "Damage Type": "Risse | Längsriss (trocken)",
+      "Class": "1",
+      "Length": null,
+      "Width": null,
+      "Depth": null,
+      "Quantity": "isolated",
+      "Location Longitudinal": "Mole Nord",
+      "Location Cross Section": "Feld 2",
+      "Location Height": null,
+      "Damage description": null,
+      "Remark": null,
+      "Note": null,
+      "Longitude": 9.994,
+      "Latitude": 54.323,
+      "Height [m+NHN]": 1.5
+    }
+  },
+  "gold": {
+    "intent": "VALIDATE_DAMAGE",
+    "fields": {
+      "Class": {
+        "value": "1",
+        "source_type": "stated",
+        "evidence_span": "also Klasse 1",
+        "is_critical": true
+      },
+      "Width": {
+        "value": "0.1",
+        "source_type": "stated",
+        "evidence_span": "würde sagen 0,1 Millimeter",
+        "is_critical": false
+      },
+      "Status": {
+        "value": "Damage",
+        "source_type": "stated",
+        "evidence_span": "Schaden bestätigt",
+        "is_critical": true
+      }
+    },
+    "conflicts": [],
+    "catalog_valid": true
+  },
+  "benchmark": {
+    "expected_warning_stages": [],
+    "expected_audio_quality": "good"
+  }
+}

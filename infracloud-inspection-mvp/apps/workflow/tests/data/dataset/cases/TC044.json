@@ -1,0 +1,47 @@
+{
+  "case_id": "TC044",
+  "scenario": "EDGE_CASE",
+  "description": "Ultra-short transcript of only 2 words falls below the word_count threshold of 3. Intent cannot be determined. Existing record has some fields filled.",
+  "tags": ["edge_case", "too_short", "word_count_threshold", "clean_audio"],
+  "difficulty": "hard",
+  "audio": {"noise_profile": "clean", "snr_db": 999},
+  "split": "dev",
+  "input": {
+    "suspicion_id": "TC044",
+    "transcript": "Ja, Schaden.",
+    "existing_record": {
+      "Suspicion ID": "TC044",
+      "Asset": "Kiel Nordhafen",
+      "Part": "Kaimauer",
+      "Object Part Category": "Oberfläche",
+      "Main Component Category": "Wand",
+      "Status": "Suspicion",
+      "Material": "Beton | Stahlbeton",
+      "Damage Type": null,
+      "Class": null,
+      "Length": null,
+      "Width": null,
+      "Depth": null,
+      "Quantity": null,
+      "Location Longitudinal": "km 3+100",
+      "Location Cross Section": null,
+      "Location Height": null,
+      "Damage description": null,
+      "Remark": null,
+      "Note": null,
+      "Longitude": 10.1345,
+      "Latitude": 54.3271,
+      "Height [m+NHN]": null
+    }
+  },
+  "gold": {
+    "intent": null,
+    "fields": {},
+    "conflicts": [],
+    "catalog_valid": false
+  },
+  "benchmark": {
+    "expected_warning_stages": ["check_audio_quality"],
+    "expected_audio_quality": "partial"
+  }
+}

@@ -1,0 +1,61 @@
+{
+  "case_id": "TC027",
+  "scenario": "Length correction from 20cm to 45cm, single dimension conflict",
+  "description": "Inspector physically measures the damage extent and finds it is significantly longer than the existing record. Length is corrected from 20cm to 45cm. Wave noise present.",
+  "tags": ["update", "waves", "length_correction", "single_conflict", "measurement"],
+  "difficulty": "easy",
+  "audio": {"noise_profile": "waves", "snr_db": 12},
+  "split": "dev",
+  "input": {
+    "suspicion_id": "TC027",
+    "transcript": "Ich habe die Abbruchkante jetzt nachgemessen. Die Länge beträgt fünfundvierzig Zentimeter, nicht zwanzig wie eingetragen. Der Rest der Daten stimmt, nur die Länge muss auf fünfundvierzig korrigiert werden.",
+    "existing_record": {
+      "Suspicion ID": "TC027",
+      "Asset": "Kiel Nordhafen",
+      "Part": "Kaimauer",
+      "Object Part Category": "Krone",
+      "Main Component Category": "Uferwand",
+      "Status": "Damage",
+      "Material": "Beton | Stahlbeton",
+      "Damage Type": "Beton | Kantenabbruch",
+      "Class": "2",
+      "Length": "20",
+      "Width": "8",
+      "Depth": "3",
+      "Quantity": "isolated",
+      "Location Longitudinal": "km 5+110",
+      "Location Cross Section": "landseitig",
+      "Location Height": "Krone",
+      "Damage description": "Kantenabbruch an der Kaimauerkrone",
+      "Remark": null,
+      "Note": null,
+      "Longitude": 10.1521,
+      "Latitude": 54.3304,
+      "Height [m+NHN]": 4.2
+    }
+  },
+  "gold": {
+    "intent": "UPDATE_FIELD",
+    "fields": {
+      "Length": {
+        "value": "45",
+        "source_type": "stated",
+        "evidence_span": "Länge beträgt fünfundvierzig Zentimeter",
+        "is_critical": false
+      }
+    },
+    "conflicts": [
+      {
+        "field": "Length",
+        "existing_value": "20",
+        "correct_value": "45",
+        "direction": "correction"
+      }
+    ],
+    "catalog_valid": true
+  },
+  "benchmark": {
+    "expected_warning_stages": [],
+    "expected_audio_quality": "degraded"
+  }
+}

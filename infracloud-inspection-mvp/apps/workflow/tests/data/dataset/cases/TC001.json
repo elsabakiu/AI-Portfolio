@@ -1,0 +1,73 @@
+{
+  "case_id": "TC001",
+  "scenario": "VALIDATE_DAMAGE",
+  "description": "Inspector confirms a dry longitudinal crack in a concrete quay wall. Class is not stated but must be derived from the crack width of 0.3 mm (Class 2). All other fields match the existing record.",
+  "tags": [
+    "crack",
+    "class_derivation",
+    "concrete"
+  ],
+  "difficulty": "easy",
+  "audio": {
+    "noise_profile": "clean",
+    "snr_db": 999
+  },
+  "split": "dev",
+  "input": {
+    "suspicion_id": "TC001",
+    "transcript": "Okay, ich bin jetzt am Kiel Nordhafen, Abschnitt 4, Feld 7. Der Längsriss ist trocken, Breite liegt bei etwa 0,3 Millimeter. Material ist Stahlbeton, das stimmt so. Ich bestätige den Schaden.",
+    "existing_record": {
+      "Suspicion ID": "TC001",
+      "Asset": "Kiel Nordhafen",
+      "Part": "Abschnitt 4",
+      "Object Part Category": "Betonkonstruktion",
+      "Main Component Category": "Kaikonstruktion",
+      "Status": "Suspicion",
+      "Material": "Beton | Stahlbeton",
+      "Damage Type": "Risse | Längsriss (trocken)",
+      "Class": null,
+      "Length": null,
+      "Width": null,
+      "Depth": null,
+      "Quantity": "isolated",
+      "Location Longitudinal": "Abschnitt 4",
+      "Location Cross Section": "Feld 7",
+      "Location Height": null,
+      "Damage description": null,
+      "Remark": null,
+      "Note": null,
+      "Longitude": 9.994,
+      "Latitude": 54.323,
+      "Height [m+NHN]": 1.5
+    }
+  },
+  "gold": {
+    "intent": "VALIDATE_DAMAGE",
+    "fields": {
+      "Class": {
+        "value": "2",
+        "source_type": "derived",
+        "evidence_span": "Breite liegt bei etwa 0,3 Millimeter",
+        "is_critical": true
+      },
+      "Material": {
+        "value": "Beton | Stahlbeton",
+        "source_type": "stated",
+        "evidence_span": "Material ist Stahlbeton, das stimmt so",
+        "is_critical": false
+      },
+      "Status": {
+        "value": "Damage",
+        "source_type": "inferred",
+        "evidence_span": "Ich bestätige den Schaden",
+        "is_critical": true
+      }
+    },
+    "conflicts": [],
+    "catalog_valid": true
+  },
+  "benchmark": {
+    "expected_warning_stages": [],
+    "expected_audio_quality": "good"
+  }
+}

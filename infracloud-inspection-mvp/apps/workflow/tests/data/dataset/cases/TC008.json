@@ -1,0 +1,72 @@
+{
+  "case_id": "TC008",
+  "scenario": "VALIDATE_DAMAGE",
+  "description": "Inspector confirms pitting corrosion (Lochkorrosion) on an alloyed steel fender element at Mannheim Rheinkai. Clean audio. All fields match; status confirmed as Damage.",
+  "tags": [
+    "steel",
+    "pitting_corrosion"
+  ],
+  "difficulty": "easy",
+  "audio": {
+    "noise_profile": "clean",
+    "snr_db": 999
+  },
+  "split": "test",
+  "input": {
+    "suspicion_id": "TC008",
+    "transcript": "Mannheim Rheinkai, Dalben 7, Südseite. Lochkorrosion am legierten Stahl, das ist eindeutig. Klasse 3, isolierter Bereich. Das stimmt alles mit dem Datensatz überein. Ich bestätige.",
+    "existing_record": {
+      "Suspicion ID": "TC008",
+      "Asset": "Mannheim Rheinkai",
+      "Part": "Dalben 7",
+      "Object Part Category": "Betonkonstruktion",
+      "Main Component Category": "Kaikonstruktion",
+      "Status": "Suspicion",
+      "Material": "Metall | legierten Stahl",
+      "Damage Type": "Bewehrung | Lochkorrosion",
+      "Class": "3",
+      "Length": null,
+      "Width": null,
+      "Depth": null,
+      "Quantity": "isolated",
+      "Location Longitudinal": "Dalben 7",
+      "Location Cross Section": "Südseite",
+      "Location Height": null,
+      "Damage description": null,
+      "Remark": null,
+      "Note": null,
+      "Longitude": 9.994,
+      "Latitude": 54.323,
+      "Height [m+NHN]": 1.5
+    }
+  },
+  "gold": {
+    "intent": "VALIDATE_DAMAGE",
+    "fields": {
+      "Status": {
+        "value": "Damage",
+        "source_type": "stated",
+        "evidence_span": "Ich bestätige",
+        "is_critical": true
+      },
+      "Class": {
+        "value": "3",
+        "source_type": "stated",
+        "evidence_span": "Klasse 3",
+        "is_critical": true
+      },
+      "Quantity": {
+        "value": "isolated",
+        "source_type": "stated",
+        "evidence_span": "isolierter Bereich",
+        "is_critical": false
+      }
+    },
+    "conflicts": [],
+    "catalog_valid": true
+  },
+  "benchmark": {
+    "expected_warning_stages": [],
+    "expected_audio_quality": "good"
+  }
+}

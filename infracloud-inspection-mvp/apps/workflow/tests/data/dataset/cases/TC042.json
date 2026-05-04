@@ -1,0 +1,90 @@
+{
+  "case_id": "TC042",
+  "scenario": "CREATE_NEW",
+  "description": "Inspector records a new wet spot on reinforced concrete with location description. Class 1 is stated. Crowd noise present.",
+  "tags": ["create_new", "wet_spot", "concrete", "location_described", "crowd"],
+  "difficulty": "medium",
+  "audio": {"noise_profile": "crowd", "snr_db": 10},
+  "split": "dev",
+  "input": {
+    "suspicion_id": "TC042",
+    "transcript": "Hier ist eine feuchte Stelle, die noch nicht erfasst wurde. Stahlbeton. Feuchte Stelle, Klasse 1. Lage: Kilometer 2+680, wasserseitig, Höhenlage MThw. Das ist ein neuer Schaden, bitte anlegen.",
+    "existing_record": {
+      "Suspicion ID": "TC042",
+      "Asset": "Bremerhaven Kaje Nord",
+      "Part": "Kaimauer",
+      "Object Part Category": "Oberfläche",
+      "Main Component Category": "Wand",
+      "Status": null,
+      "Material": null,
+      "Damage Type": null,
+      "Class": null,
+      "Length": null,
+      "Width": null,
+      "Depth": null,
+      "Quantity": null,
+      "Location Longitudinal": null,
+      "Location Cross Section": null,
+      "Location Height": null,
+      "Damage description": null,
+      "Remark": null,
+      "Note": null,
+      "Longitude": null,
+      "Latitude": null,
+      "Height [m+NHN]": null
+    }
+  },
+  "gold": {
+    "intent": "CREATE_NEW",
+    "fields": {
+      "Status": {
+        "value": "Damage",
+        "source_type": "inferred",
+        "evidence_span": "neuer Schaden",
+        "is_critical": true
+      },
+      "Material": {
+        "value": "Beton | Stahlbeton",
+        "source_type": "stated",
+        "evidence_span": "Stahlbeton",
+        "is_critical": true
+      },
+      "Damage Type": {
+        "value": "Beton | Feuchte Stelle",
+        "source_type": "stated",
+        "evidence_span": "Feuchte Stelle",
+        "is_critical": true
+      },
+      "Class": {
+        "value": "1",
+        "source_type": "stated",
+        "evidence_span": "Klasse 1",
+        "is_critical": true
+      },
+      "Location Longitudinal": {
+        "value": "km 2+680",
+        "source_type": "stated",
+        "evidence_span": "Kilometer 2+680",
+        "is_critical": false
+      },
+      "Location Cross Section": {
+        "value": "wasserseitig",
+        "source_type": "stated",
+        "evidence_span": "wasserseitig",
+        "is_critical": false
+      },
+      "Location Height": {
+        "value": "MThw",
+        "source_type": "stated",
+        "evidence_span": "Höhenlage MThw",
+        "is_critical": false
+      }
+    },
+    "conflicts": [],
+    "catalog_valid": true
+  },
+  "benchmark": {
+    "expected_warning_stages": [],
+    "expected_audio_quality": "degraded"
+  }
+}

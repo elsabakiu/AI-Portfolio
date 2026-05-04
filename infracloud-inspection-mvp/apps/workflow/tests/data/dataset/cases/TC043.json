@@ -1,0 +1,75 @@
+{
+  "case_id": "TC043",
+  "scenario": "CREATE_NEW",
+  "description": "Inspector describes seeing damage in concrete but is unclear about the damage type classification. No measurements provided. Material is identifiable as reinforced concrete but damage type must be inferred. Heavy wind noise present.",
+  "tags": [
+    "create_new",
+    "concrete",
+    "unclear_damage_type",
+    "wind_heavy",
+    "missing_fields"
+  ],
+  "difficulty": "hard",
+  "audio": {
+    "noise_profile": "wind_heavy",
+    "snr_db": 6
+  },
+  "split": "test",
+  "input": {
+    "suspicion_id": "TC043",
+    "transcript": "Da ist irgendwas... Stahlbeton, das ist klar. Aber ich bin nicht sicher was genau — es sieht aus wie ein Riss, irgendwie. Ich kann nicht genau sagen welche Art. Sollte als neuer Schaden angelegt werden.",
+    "existing_record": {
+      "Suspicion ID": "TC043",
+      "Asset": "Hamburg Kaianlage",
+      "Part": "Kaimauer",
+      "Object Part Category": "Oberfläche",
+      "Main Component Category": "Wand",
+      "Status": null,
+      "Material": null,
+      "Damage Type": null,
+      "Class": null,
+      "Length": null,
+      "Width": null,
+      "Depth": null,
+      "Quantity": null,
+      "Location Longitudinal": null,
+      "Location Cross Section": null,
+      "Location Height": null,
+      "Damage description": null,
+      "Remark": null,
+      "Note": null,
+      "Longitude": null,
+      "Latitude": null,
+      "Height [m+NHN]": null
+    }
+  },
+  "gold": {
+    "intent": "CREATE_NEW",
+    "fields": {
+      "Status": {
+        "value": "Damage",
+        "source_type": "inferred",
+        "evidence_span": "neuer Schaden angelegt werden",
+        "is_critical": true
+      },
+      "Material": {
+        "value": "Beton | Stahlbeton",
+        "source_type": "stated",
+        "evidence_span": "Stahlbeton, das ist klar",
+        "is_critical": true
+      },
+      "Damage Type": {
+        "value": "not_extractable",
+        "source_type": "inferred",
+        "evidence_span": "es sieht aus wie irgendwas strukturelles, kann ich nicht genau sagen",
+        "is_critical": false
+      }
+    },
+    "conflicts": [],
+    "catalog_valid": true
+  },
+  "benchmark": {
+    "expected_warning_stages": [],
+    "expected_audio_quality": "partial"
+  }
+}

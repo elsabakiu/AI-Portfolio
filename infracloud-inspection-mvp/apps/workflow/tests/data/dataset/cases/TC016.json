@@ -1,0 +1,54 @@
+{
+  "case_id": "TC016",
+  "scenario": "Direct rejection, nothing visible",
+  "description": "Inspector approaches the flagged location and immediately determines there is no damage present. Short, direct German statement with no hesitation.",
+  "tags": ["reject", "clean_audio", "short_transcript"],
+  "difficulty": "easy",
+  "audio": {"noise_profile": "clean", "snr_db": 999},
+  "split": "dev",
+  "input": {
+    "suspicion_id": "TC016",
+    "transcript": "Hier ist nichts. Die Stelle sieht vollkommen in Ordnung aus, kein Schaden erkennbar. Verdacht nicht bestätigt.",
+    "existing_record": {
+      "Suspicion ID": "TC016",
+      "Asset": "Kiel Nordhafen",
+      "Part": "Deckwerk",
+      "Object Part Category": "Oberfläche",
+      "Main Component Category": "Böschung",
+      "Status": "Suspicion",
+      "Material": "Beton | Stahlbeton",
+      "Damage Type": "Risse | Längsriss (trocken)",
+      "Class": "2",
+      "Length": null,
+      "Width": null,
+      "Depth": null,
+      "Quantity": "isolated",
+      "Location Longitudinal": "km 4+250",
+      "Location Cross Section": "wasserseitig",
+      "Location Height": "MThw",
+      "Damage description": "Möglicher Längsriss an der Böschungsdecke",
+      "Remark": null,
+      "Note": null,
+      "Longitude": 10.1345,
+      "Latitude": 54.3271,
+      "Height [m+NHN]": 1.2
+    }
+  },
+  "gold": {
+    "intent": "REJECT_DAMAGE",
+    "fields": {
+      "Status": {
+        "value": "Incorrectly detected",
+        "source_type": "stated",
+        "evidence_span": "kein Schaden erkennbar",
+        "is_critical": true
+      }
+    },
+    "conflicts": [],
+    "catalog_valid": true
+  },
+  "benchmark": {
+    "expected_warning_stages": [],
+    "expected_audio_quality": "good"
+  }
+}

@@ -1,0 +1,102 @@
+{
+  "case_id": "TC041",
+  "scenario": "CREATE_NEW",
+  "description": "Inspector records a new settlement in geotextile revetment with complete description including class, length, quantity, and full location. Wave noise present.",
+  "tags": ["create_new", "settlement", "geotextile", "full_details", "waves"],
+  "difficulty": "medium",
+  "audio": {"noise_profile": "waves", "snr_db": 12},
+  "split": "test",
+  "input": {
+    "suspicion_id": "TC041",
+    "transcript": "Neuer Eintrag. Kilometer 8+320, landseitig, unterhalb MThw. Böschung Deckwerk. Material ist Geotextil. Abgesackt, Formänderung. Klasse 3. Länge fünfzehn Meter. Einzelschaden, isoliert. Schaden neu, nicht im System vorhanden.",
+    "existing_record": {
+      "Suspicion ID": "TC041",
+      "Asset": "Elbe Deichlinie",
+      "Part": "Deckwerk",
+      "Object Part Category": "Böschung",
+      "Main Component Category": "Böschung",
+      "Status": null,
+      "Material": null,
+      "Damage Type": null,
+      "Class": null,
+      "Length": null,
+      "Width": null,
+      "Depth": null,
+      "Quantity": null,
+      "Location Longitudinal": null,
+      "Location Cross Section": null,
+      "Location Height": null,
+      "Damage description": null,
+      "Remark": null,
+      "Note": null,
+      "Longitude": null,
+      "Latitude": null,
+      "Height [m+NHN]": null
+    }
+  },
+  "gold": {
+    "intent": "CREATE_NEW",
+    "fields": {
+      "Status": {
+        "value": "Damage",
+        "source_type": "inferred",
+        "evidence_span": "Schaden neu, nicht im System vorhanden",
+        "is_critical": true
+      },
+      "Material": {
+        "value": "Steine | Geotextil",
+        "source_type": "stated",
+        "evidence_span": "Material ist Geotextil",
+        "is_critical": true
+      },
+      "Damage Type": {
+        "value": "Formänderung | Abgesackt",
+        "source_type": "stated",
+        "evidence_span": "Abgesackt, Formänderung",
+        "is_critical": true
+      },
+      "Class": {
+        "value": "3",
+        "source_type": "stated",
+        "evidence_span": "Klasse 3",
+        "is_critical": true
+      },
+      "Length": {
+        "value": "15",
+        "source_type": "stated",
+        "evidence_span": "Länge fünfzehn Meter",
+        "is_critical": false
+      },
+      "Quantity": {
+        "value": "isolated",
+        "source_type": "stated",
+        "evidence_span": "Einzelschaden, isoliert",
+        "is_critical": false
+      },
+      "Location Longitudinal": {
+        "value": "km 8+320",
+        "source_type": "stated",
+        "evidence_span": "Kilometer 8+320",
+        "is_critical": false
+      },
+      "Location Cross Section": {
+        "value": "landseitig",
+        "source_type": "stated",
+        "evidence_span": "landseitig",
+        "is_critical": false
+      },
+      "Location Height": {
+        "value": "MThw",
+        "source_type": "stated",
+        "evidence_span": "unterhalb MThw",
+        "is_critical": false
+      }
+    },
+    "conflicts": [],
+    "catalog_valid": true
+  },
+  "benchmark": {
+    "expected_warning_stages": [],
+    "expected_audio_quality": "degraded"
+  }
+}

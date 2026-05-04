@@ -1,9 +1,12 @@
 from __future__ import annotations
 
 import asyncio
+import base64
 import json
 import logging
 import os
+import hashlib
+import hmac
 import time
 import threading
 import uuid
@@ -17,7 +20,7 @@ from fastapi import Body, Depends, FastAPI, HTTPException, Header, Query, Reques
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from fastapi.responses import StreamingResponse
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 from .errors import DomainError, error_payload
 from .metrics import snapshot_metrics
@@ -123,6 +126,111 @@ class RunAnalysisRequest(BaseModel):
     no_post: bool = False
 
 
+class AuthRegisterRequest(BaseModel):
+    username: str
+    password: str
+    userId: Optional[str] = None
+    profile: Dict[str, Any] = Field(default_factory=dict)
+
+
+class AuthLoginRequest(BaseModel):
+    username: str
+    password: str
+
+
+def _b64url_encode(data: bytes) -> str:
+    return base64.urlsafe_b64encode(data).decode("ascii").rstrip("=")
+
+
+def _b64url_decode(value: str) -> bytes:
+    padding = "=" * (-len(value) % 4)
+    return base64.urlsafe_b64decode((value + padding).encode("ascii"))
+
+
+def _normalize_username(username: str) -> str:
+    return username.strip().lower()
+
+
+def _get_auth_secret() -> str:
+    return (
+        os.environ.get("AUTH_SECRET")
+        or settings.providers.cron_secret
+        or "investora-dev-auth-secret"
+    )
+
+
+def _hash_password(password: str) -> str:
+    salt = os.urandom(16)
+    derived = hashlib.pbkdf2_hmac("sha256", password.encode("utf-8"), salt, 120_000)
+    return "pbkdf2_sha256$120000$" + base64.b64encode(salt).decode("ascii") + "$" + base64.b64encode(derived).decode("ascii")
+
+
+def _verify_password(password: str, encoded_hash: str) -> bool:
+    try:
+        algorithm, iterations_raw, salt_b64, digest_b64 = encoded_hash.split("$", 3)
+        if algorithm != "pbkdf2_sha256":
+            return False
+        iterations = int(iterations_raw)
+        salt = base64.b64decode(salt_b64.encode("ascii"))
+        expected = base64.b64decode(digest_b64.encode("ascii"))
+    except Exception:
+        return False
+
+    candidate = hashlib.pbkdf2_hmac("sha256", password.encode("utf-8"), salt, iterations)
+    return hmac.compare_digest(candidate, expected)
+
+
+def _issue_auth_token(user_id: str, username: str, expires_in_seconds: int = 60 * 60 * 24 * 7) -> str:
+    payload = {
+        "user_id": user_id,
+        "username": username,
+        "exp": int(time.time()) + expires_in_seconds,
+    }
+    payload_bytes = json.dumps(payload, separators=(",", ":"), sort_keys=True).encode("utf-8")
+    payload_b64 = _b64url_encode(payload_bytes)
+    signature = hmac.new(_get_auth_secret().encode("utf-8"), payload_b64.encode("ascii"), hashlib.sha256).digest()
+    return f"{payload_b64}.{_b64url_encode(signature)}"
+
+
+def _decode_auth_token(token: str) -> Optional[Dict[str, Any]]:
+    try:
+        payload_b64, signature_b64 = token.split(".", 1)
+        expected_sig = hmac.new(
+            _get_auth_secret().encode("utf-8"),
+            payload_b64.encode("ascii"),
+            hashlib.sha256,
+        ).digest()
+        provided_sig = _b64url_decode(signature_b64)
+        if not hmac.compare_digest(provided_sig, expected_sig):
+            return None
+        payload = json.loads(_b64url_decode(payload_b64).decode("utf-8"))
+        if int(payload.get("exp", 0)) < int(time.time()):
+            return None
+        user_id = str(payload.get("user_id", "")).strip()
+        username = _normalize_username(str(payload.get("username", "")))
+        if not user_id or not username:
+            return None
+        return {"user_id": user_id, "username": username}
+    except Exception:
+        return None
+
+
+def _extract_bearer_token(authorization: str = Header(default="")) -> str:
+    if not authorization.startswith("Bearer "):
+        raise HTTPException(status_code=401, detail="Missing bearer token")
+    token = authorization.removeprefix("Bearer ").strip()
+    if not token:
+        raise HTTPException(status_code=401, detail="Missing bearer token")
+    return token
+
+
+def _require_auth(token: str = Depends(_extract_bearer_token)) -> Dict[str, Any]:
+    claims = _decode_auth_token(token)
+    if claims is None:
+        raise HTTPException(status_code=401, detail="Invalid or expired token")
+    return claims
+
+
 def _acquire_run_slot_or_raise(timeout_s: float = 90.0) -> None:
     status = run_limiter.acquire(timeout_s=timeout_s)
     if status == "acquired":
@@ -150,6 +258,76 @@ def run_weekly_endpoint(req: RunWeeklyRequest):
         )
     finally:
         run_limiter.release()
+
+
+@app.post("/auth/register")
+def register_endpoint(req: AuthRegisterRequest):
+    from sqlite3 import IntegrityError
+
+    from .event_store import create_user, init_db, load_user_by_username
+
+    username = _normalize_username(req.username)
+    password = req.password
+    if not username:
+        raise HTTPException(status_code=400, detail="Username is required")
+    if len(password) < 8:
+        raise HTTPException(status_code=400, detail="Password must be at least 8 characters")
+
+    init_db()
+    if load_user_by_username(username) is not None:
+        return {"ok": False, "error": "Username already taken"}
+
+    user_id = req.userId or str(uuid.uuid4())
+    password_hash = _hash_password(password)
+    profile = dict(req.profile or {})
+    profile.setdefault("email", username)
+
+    try:
+        create_user(user_id, username, password_hash)
+        _profile_repo.save_profile_json(user_id, profile)
+    except IntegrityError:
+        return {"ok": False, "error": "Username already taken"}
+
+    token = _issue_auth_token(user_id, username)
+    return {"ok": True, "userId": user_id, "token": token}
+
+
+@app.post("/auth/login")
+def login_endpoint(req: AuthLoginRequest):
+    from .event_store import init_db, load_user_by_username
+
+    username = _normalize_username(req.username)
+    if not username or not req.password:
+        raise HTTPException(status_code=400, detail="Username and password are required")
+
+    init_db()
+    user = load_user_by_username(username)
+    if user is None or not _verify_password(req.password, str(user["password_hash"])):
+        return {"ok": False, "error": "Invalid username or password"}
+
+    profile = _profile_repo.load_profile_json(str(user["user_id"])) or {}
+    profile.setdefault("email", username)
+    token = _issue_auth_token(str(user["user_id"]), username)
+    return {"ok": True, "userId": user["user_id"], "profile": profile, "token": token}
+
+
+@app.get("/auth/me")
+def me_endpoint(claims: Dict[str, Any] = Depends(_require_auth)):
+    from .event_store import init_db, load_user_by_username
+
+    init_db()
+    user = load_user_by_username(str(claims["username"]))
+    if user is None or str(user["user_id"]) != str(claims["user_id"]):
+        raise HTTPException(status_code=401, detail="Invalid token subject")
+
+    profile = _profile_repo.load_profile_json(str(user["user_id"])) or {}
+    profile.setdefault("email", str(user["username"]))
+    return {
+        "ok": True,
+        "userId": user["user_id"],
+        "username": user["username"],
+        "profile": profile,
+    }
 
 
 @app.post("/run-analysis", dependencies=[Depends(_verify_cron_secret)])
@@ -676,8 +854,8 @@ def delete_user_alert(user_id: str, alert_id: str):
 @app.put("/user/{user_id}/profile")
 def put_user_profile(user_id: str, profile: Dict[str, Any] = Body(...)):
     """
-    Mirror a user's profile JSON to SQLite so the LangGraph PersonalizationNode
-    can read it at run time.  Called by the frontend alongside the n8n webhook.
+    Persist a user's profile JSON to SQLite so the LangGraph PersonalizationNode
+    can read it at run time. This is the authoritative profile save endpoint.
     Returns 200 {"ok": True} on success; any DB error surfaces as 500.
     """
     from .event_store import init_db

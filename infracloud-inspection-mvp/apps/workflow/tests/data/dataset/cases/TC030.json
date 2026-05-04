@@ -1,0 +1,61 @@
+{
+  "case_id": "TC030",
+  "scenario": "Location cross-section correction from landseitig to wasserseitig",
+  "description": "Inspector corrects the spatial orientation of the damage from landward side to waterward side. This is a location metadata correction. Light wind noise. Single conflict.",
+  "tags": ["update", "wind_light", "location_correction", "single_conflict"],
+  "difficulty": "easy",
+  "audio": {"noise_profile": "wind_light", "snr_db": 15},
+  "split": "dev",
+  "input": {
+    "suspicion_id": "TC030",
+    "transcript": "Die Schadensposition war falsch eingetragen. Der Riss befindet sich auf der wasserseitigen Fläche, nicht auf der landseitigen. Querschnittsposition muss auf wasserseitig korrigiert werden.",
+    "existing_record": {
+      "Suspicion ID": "TC030",
+      "Asset": "Bremerhaven Südhafen",
+      "Part": "Kaimauer",
+      "Object Part Category": "Außenwand",
+      "Main Component Category": "Uferwand",
+      "Status": "Damage",
+      "Material": "Beton | Stahlbeton",
+      "Damage Type": "Risse | Diagonal (nass)",
+      "Class": "2",
+      "Length": "35",
+      "Width": "0.8",
+      "Depth": null,
+      "Quantity": "isolated",
+      "Location Longitudinal": "km 0+920",
+      "Location Cross Section": "landseitig",
+      "Location Height": "MThw",
+      "Damage description": "Diagonaler nasser Riss an der Kaimauerwand",
+      "Remark": null,
+      "Note": null,
+      "Longitude": 8.5812,
+      "Latitude": 53.5401,
+      "Height [m+NHN]": 3.1
+    }
+  },
+  "gold": {
+    "intent": "UPDATE_FIELD",
+    "fields": {
+      "Location Cross Section": {
+        "value": "wasserseitig",
+        "source_type": "stated",
+        "evidence_span": "befindet sich auf der wasserseitigen Fläche",
+        "is_critical": false
+      }
+    },
+    "conflicts": [
+      {
+        "field": "Location Cross Section",
+        "existing_value": "landseitig",
+        "correct_value": "wasserseitig",
+        "direction": "correction"
+      }
+    ],
+    "catalog_valid": true
+  },
+  "benchmark": {
+    "expected_warning_stages": [],
+    "expected_audio_quality": "degraded"
+  }
+}

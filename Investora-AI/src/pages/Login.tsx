@@ -25,12 +25,12 @@ const Login = () => {
     try {
       const result = await login(email.trim().toLowerCase(), password);
       if (result.ok) {
-      navigate("/dashboard");
+        navigate("/dashboard");
       } else {
         setError("Invalid email or password");
       }
     } catch {
-      setError("Connection error. Is n8n running?");
+      setError("Connection error. Check that the API is running.");
     } finally {
       setLoading(false);
     }

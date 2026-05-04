@@ -1,0 +1,73 @@
+{
+  "case_id": "TC011",
+  "scenario": "VALIDATE_DAMAGE",
+  "description": "Inspector confirms rust (Verrostet) on unalloyed steel sheet piling at Kiel Nordhafen. Crowd noise. Inspector adds a remark requesting an external institute be engaged due to structural concern.",
+  "tags": [
+    "steel",
+    "corrosion",
+    "remark_external"
+  ],
+  "difficulty": "medium",
+  "audio": {
+    "noise_profile": "crowd",
+    "snr_db": 10
+  },
+  "split": "test",
+  "input": {
+    "suspicion_id": "TC011",
+    "transcript": "Kiel Nordhafen, Spundwand Ost, Tafel 14. Stahl verrostet, unlgierter Stahl. Klasse 3 — ich mache mir Sorgen um die Restwandstärke, da sollte ein externes Institut draufschauen. Schaden ist bestätigt.",
+    "existing_record": {
+      "Suspicion ID": "TC011",
+      "Asset": "Kiel Nordhafen",
+      "Part": "Spundwand Ost",
+      "Object Part Category": "Betonkonstruktion",
+      "Main Component Category": "Kaikonstruktion",
+      "Status": "Suspicion",
+      "Material": "Metall | unlegierten Stahl",
+      "Damage Type": "Stahl | Verrostet",
+      "Class": "3",
+      "Length": null,
+      "Width": null,
+      "Depth": null,
+      "Quantity": "general",
+      "Location Longitudinal": "Spundwand Ost",
+      "Location Cross Section": "Tafel 14",
+      "Location Height": null,
+      "Damage description": null,
+      "Remark": null,
+      "Note": null,
+      "Longitude": 9.994,
+      "Latitude": 54.323,
+      "Height [m+NHN]": 1.5
+    }
+  },
+  "gold": {
+    "intent": "VALIDATE_DAMAGE",
+    "fields": {
+      "Remark": {
+        "value": "Engage external institute",
+        "source_type": "inferred",
+        "evidence_span": "da sollte ein externes Institut draufschauen",
+        "is_critical": false
+      },
+      "Status": {
+        "value": "Damage",
+        "source_type": "stated",
+        "evidence_span": "Schaden ist bestätigt",
+        "is_critical": true
+      },
+      "Class": {
+        "value": "3",
+        "source_type": "stated",
+        "evidence_span": "Klasse 3",
+        "is_critical": true
+      }
+    },
+    "conflicts": [],
+    "catalog_valid": true
+  },
+  "benchmark": {
+    "expected_warning_stages": [],
+    "expected_audio_quality": "degraded"
+  }
+}

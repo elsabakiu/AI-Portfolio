@@ -1,6 +1,7 @@
 # Investora-AI
 
-AI-powered investment decision-support product built to help users move from fragmented market information to focused, confidence-based weekly actions.
+## Project Description
+Investora-AI is an AI-powered investment decision-support platform that helps users turn fragmented market signals into clear weekly priorities. It combines market, fundamentals, and news data with AI reasoning to surface personalized opportunities, explain confidence levels, and support faster decision-making. The product focuses on clarity, trust, and consistency through transparent workflows, profile-aware recommendations, and measurable reliability gates.
 
 ## Executive Summary (Non-Technical)
 Investora-AI addresses a common decision problem: too many market signals, too little clarity on what deserves attention now.  
@@ -40,17 +41,23 @@ flowchart TD
     DL --> N8N[n8n Webhooks\nalerts/digests/reports]
 ```
 
-## Key Features and User Value
-- Prioritized decision feed:
-  - Surfaces what matters most this week instead of overwhelming users with raw data.
-- Personalized relevance:
-  - Separates watchlist attention from discovery ideas and aligns outputs with user preferences.
-- Transparent workflow experience:
-  - Shows run progress and system state to reduce black-box AI behavior.
-- Timely engagement:
-  - Uses alerts and digest delivery to keep users connected without constant dashboard monitoring.
-- Reliability by design:
-  - Includes quality gates that support safe iteration and consistent user experience.
+## Main Features and Functionality
+- Unified weekly analysis workflow:
+  - Runs a structured end-to-end pipeline that collects market/fundamentals/news data and generates decision-ready outputs.
+- Personalized recommendations:
+  - Matches suggestions to user profile data (risk tolerance, interests, watchlist) and separates watchlist focus from discovery ideas.
+- Prioritized opportunity scoring:
+  - Ranks signals by relevance and conviction so users can focus on highest-impact decisions first.
+- Transparent execution and progress tracking:
+  - Exposes run stages and status updates to reduce black-box behavior and improve user trust.
+- Streaming AI summaries and evidence synthesis:
+  - Delivers incremental analysis output and supporting rationale through API streaming endpoints.
+- Alerts and digest delivery:
+  - Integrates with n8n webhooks to send timely notifications, summaries, and report handoffs.
+- Data persistence and user dashboards:
+  - Stores profiles, bundles, and run outputs in SQLite for dashboard retrieval and historical context.
+- Reliability guardrails:
+  - Includes contracts/tests and mock-mode execution paths to support safe iteration and stable behavior.
 
 ## Tech Stack
 - Frontend:

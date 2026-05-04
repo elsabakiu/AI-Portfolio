@@ -1,0 +1,1278 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>InfraCloud — Voice AI Inspection Assistant · Solution Proposal</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Serif:ital,wght@0,300;0,600;1,300&display=swap" rel="stylesheet">
+<style>
+:root {
+  --navy: #0f2744;
+  --blue: #1d6fa8;
+  --blue-light: #e8f3fb;
+  --blue-mid: #b3d6ef;
+  --amber: #c96a00;
+  --amber-light: #fff3e0;
+  --amber-border: #f5b656;
+  --green: #1a6b41;
+  --green-light: #eaf5ee;
+  --red: #b52a2a;
+  --red-light: #fdf0f0;
+  --gray-100: #f5f6f8;
+  --gray-200: #e8eaee;
+  --gray-400: #9ba3b0;
+  --gray-700: #3d4452;
+  --text: #1c2230;
+  --text-light: #5a6275;
+  --rule: #dce0e8;
+  --serif: 'IBM Plex Serif', Georgia, serif;
+  --sans: 'IBM Plex Sans', system-ui, sans-serif;
+  --mono: 'IBM Plex Mono', 'Courier New', monospace;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: var(--sans);
+  font-size: 14px;
+  line-height: 1.7;
+  color: var(--text);
+  background: #fff;
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
+}
+
+/* ─── COVER ─── */
+.cover {
+  background: var(--navy);
+  color: #fff;
+  padding: 72px 80px 56px;
+  position: relative;
+  overflow: hidden;
+}
+.cover::after {
+  content: '';
+  position: absolute;
+  bottom: -60px;
+  right: -40px;
+  width: 340px;
+  height: 340px;
+  border: 1.5px solid rgba(255,255,255,0.08);
+  border-radius: 50%;
+}
+.cover-tag {
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.45);
+  margin-bottom: 36px;
+}
+.cover-title {
+  font-family: var(--serif);
+  font-size: 42px;
+  font-weight: 300;
+  line-height: 1.15;
+  margin-bottom: 12px;
+  max-width: 600px;
+}
+.cover-title strong {
+  font-weight: 600;
+  display: block;
+}
+.cover-subtitle {
+  font-size: 16px;
+  color: rgba(255,255,255,0.55);
+  margin-bottom: 52px;
+  font-weight: 300;
+}
+.cover-meta {
+  display: grid;
+  grid-template-columns: repeat(4, auto);
+  gap: 0;
+  border-top: 1px solid rgba(255,255,255,0.12);
+  padding-top: 28px;
+  width: fit-content;
+}
+.cover-meta-item {
+  padding-right: 40px;
+}
+.cover-meta-item:not(:last-child) {
+  border-right: 1px solid rgba(255,255,255,0.12);
+  margin-right: 40px;
+}
+.meta-label {
+  font-size: 10px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.35);
+  font-weight: 500;
+  margin-bottom: 2px;
+}
+.meta-value {
+  font-size: 13px;
+  color: rgba(255,255,255,0.75);
+}
+
+/* ─── LAYOUT ─── */
+.content {
+  max-width: 860px;
+  margin: 0 auto;
+  padding: 0 60px 80px;
+}
+
+/* ─── SECTIONS ─── */
+.section {
+  padding-top: 56px;
+}
+.section-tag {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--blue);
+  margin-bottom: 8px;
+}
+h1, h2 {
+  font-family: var(--serif);
+  font-weight: 300;
+  color: var(--navy);
+}
+h2 {
+  font-size: 28px;
+  line-height: 1.2;
+  margin-bottom: 20px;
+  padding-bottom: 16px;
+  border-bottom: 1.5px solid var(--rule);
+}
+h3 {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--navy);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin: 28px 0 10px;
+}
+p {
+  color: var(--text-light);
+  margin-bottom: 12px;
+  font-size: 14px;
+}
+p:last-child { margin-bottom: 0; }
+
+/* ─── PRINCIPLE CALLOUT ─── */
+.principle {
+  background: var(--navy);
+  color: #fff;
+  padding: 28px 36px;
+  margin: 32px 0;
+  border-radius: 4px;
+  position: relative;
+}
+.principle::before {
+  content: '"';
+  font-family: var(--serif);
+  font-size: 80px;
+  line-height: 1;
+  color: rgba(255,255,255,0.1);
+  position: absolute;
+  top: 8px;
+  left: 24px;
+}
+.principle p {
+  font-family: var(--serif);
+  font-size: 17px;
+  line-height: 1.55;
+  font-style: italic;
+  color: rgba(255,255,255,0.85);
+  font-weight: 300;
+  margin: 0;
+  padding-left: 28px;
+}
+
+/* ─── OPEN DECISION BOXES ─── */
+.open-decision {
+  background: var(--amber-light);
+  border: 1.5px solid var(--amber-border);
+  border-left: 4px solid var(--amber);
+  border-radius: 4px;
+  padding: 16px 20px;
+  margin: 20px 0;
+}
+.open-decision-label {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+  color: var(--amber);
+  margin-bottom: 6px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.open-decision-label::before {
+  content: '';
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--amber);
+}
+.open-decision p {
+  color: #5a3e00;
+  margin: 0;
+  font-size: 13px;
+}
+.open-decision ul {
+  margin: 8px 0 0 16px;
+  color: #5a3e00;
+  font-size: 13px;
+}
+
+/* ─── CONFIRMED ITEMS ─── */
+.confirmed {
+  background: var(--green-light);
+  border: 1.5px solid #90cca8;
+  border-left: 4px solid var(--green);
+  border-radius: 4px;
+  padding: 12px 16px;
+  margin: 16px 0;
+  font-size: 13px;
+  color: #0d3d22;
+}
+
+/* ─── FR CARDS ─── */
+.fr-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin: 20px 0;
+}
+.fr-card {
+  border: 1px solid var(--rule);
+  border-radius: 6px;
+  padding: 18px 20px;
+  background: var(--gray-100);
+}
+.fr-number {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--blue);
+  margin-bottom: 4px;
+}
+.fr-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--navy);
+  margin-bottom: 6px;
+}
+.fr-desc {
+  font-size: 12px;
+  color: var(--text-light);
+  line-height: 1.5;
+  margin: 0;
+}
+.fr-card.has-decision {
+  border-color: var(--amber-border);
+  background: #fffdf7;
+}
+.fr-card.has-decision .fr-number {
+  color: var(--amber);
+}
+
+/* ─── INTENT TABLE ─── */
+.intent-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 16px 0;
+  font-size: 13px;
+}
+.intent-table th {
+  background: var(--navy);
+  color: rgba(255,255,255,0.8);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  padding: 10px 14px;
+  text-align: left;
+}
+.intent-table td {
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--rule);
+  vertical-align: top;
+}
+.intent-table tr:last-child td { border-bottom: none; }
+.intent-table tr:nth-child(even) td { background: var(--gray-100); }
+.intent-tag {
+  font-family: var(--mono);
+  font-size: 11px;
+  background: var(--blue-light);
+  color: var(--blue);
+  padding: 2px 8px;
+  border-radius: 3px;
+  white-space: nowrap;
+}
+
+/* ─── NFR LIST ─── */
+.nfr-list {
+  list-style: none;
+  margin: 16px 0;
+}
+.nfr-list li {
+  display: flex;
+  gap: 14px;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--rule);
+  font-size: 13px;
+  align-items: flex-start;
+}
+.nfr-list li:last-child { border-bottom: none; }
+.nfr-icon {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: var(--blue-light);
+  flex-shrink: 0;
+  margin-top: 2px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.nfr-icon svg { width: 10px; height: 10px; }
+.nfr-name {
+  font-weight: 600;
+  color: var(--navy);
+  font-size: 12px;
+  display: block;
+  margin-bottom: 2px;
+}
+.nfr-desc { color: var(--text-light); margin: 0; }
+
+/* ─── OOS ─── */
+.oos-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 14px;
+  background: var(--red-light);
+  border: 1px solid #eab0b0;
+  border-radius: 4px;
+  margin-bottom: 8px;
+  font-size: 13px;
+  color: var(--red);
+}
+.oos-item::before {
+  content: '×';
+  font-weight: 700;
+  font-size: 16px;
+}
+
+/* ─── OPEN DECISIONS SUMMARY ─── */
+.decisions-summary {
+  margin: 24px 0;
+}
+.decision-row {
+  display: grid;
+  grid-template-columns: 28px 1fr 180px;
+  gap: 16px;
+  align-items: start;
+  padding: 16px 0;
+  border-bottom: 1px solid var(--rule);
+}
+.decision-num {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: var(--amber);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  font-weight: 600;
+  flex-shrink: 0;
+}
+.decision-body {}
+.decision-title {
+  font-weight: 600;
+  color: var(--navy);
+  font-size: 13px;
+  margin-bottom: 3px;
+  display: block;
+}
+.decision-desc {
+  font-size: 12px;
+  color: var(--text-light);
+  margin: 0;
+}
+.decision-impact {
+  text-align: right;
+}
+.impact-tag {
+  display: inline-block;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+  padding: 3px 10px;
+  border-radius: 20px;
+}
+.impact-high { background: #ffeee0; color: #b54b00; }
+.impact-medium { background: #fdf8e0; color: #7a6600; }
+.impact-arch { background: var(--blue-light); color: var(--blue); }
+
+/* ─── PAGE BREAK HINT ─── */
+@media print {
+  .page-break { page-break-before: always; }
+}
+
+/* ─── DIAGRAMS ─── */
+.diagram-wrap {
+  margin: 24px 0;
+  background: var(--gray-100);
+  border: 1px solid var(--rule);
+  border-radius: 6px;
+  padding: 24px 20px;
+}
+.diagram-caption {
+  font-size: 11px;
+  color: var(--gray-400);
+  text-align: center;
+  margin-top: 12px;
+  font-style: italic;
+}
+svg text { font-family: var(--sans); }
+
+/* Compact lists */
+ul.compact {
+  margin: 8px 0 12px 18px;
+  font-size: 13px;
+  color: var(--text-light);
+}
+ul.compact li { margin-bottom: 4px; }
+
+/* delta table */
+.delta-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+  margin: 12px 0;
+}
+.delta-table th {
+  background: var(--navy);
+  color: rgba(255,255,255,0.7);
+  font-size: 10px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  padding: 8px 12px;
+  text-align: left;
+  font-weight: 600;
+}
+.delta-table td {
+  padding: 9px 12px;
+  border-bottom: 1px solid var(--rule);
+}
+.delta-before {
+  color: var(--text-light);
+  font-family: var(--mono);
+  font-size: 12px;
+}
+.delta-after {
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--green);
+  font-weight: 500;
+}
+.delta-conf {
+  font-size: 12px;
+  color: var(--text-light);
+}
+.delta-conf.low { color: var(--amber); }
+.changed { background: #f0faf4; }
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════════════
+     COVER
+═══════════════════════════════════════════════════ -->
+<div class="cover">
+  <div class="cover-tag">HydroMapper · InfraCloud · Solution Proposal</div>
+  <div class="cover-title">
+    Voice AI<br>
+    <strong>Inspection Assistant</strong>
+  </div>
+  <div class="cover-subtitle">On-site validation and damage enrichment through voice capture and AI extraction</div>
+  <div class="cover-meta">
+    <div class="cover-meta-item">
+      <div class="meta-label">Prepared by</div>
+      <div class="meta-value">Elsa Bakiu</div>
+    </div>
+    <div class="cover-meta-item">
+      <div class="meta-label">Client</div>
+      <div class="meta-value">HydroMapper / InfraCloud</div>
+    </div>
+    <div class="cover-meta-item">
+      <div class="meta-label">Date</div>
+      <div class="meta-value">March 2026</div>
+    </div>
+    <div class="cover-meta-item">
+      <div class="meta-label">Status</div>
+      <div class="meta-value">Draft for review</div>
+    </div>
+  </div>
+</div>
+
+<div class="content">
+
+<!-- ═══════════════════════════════════════════════════
+     EXECUTIVE SUMMARY
+═══════════════════════════════════════════════════ -->
+<div class="section">
+  <div class="section-tag">Overview</div>
+  <h2>Executive Summary</h2>
+  <p>This document proposes a voice-enabled AI assistant that supports infrastructure inspectors during the on-site phase of WSV-regulated waterway inspections. The system bridges the gap between damage suspicions pre-identified in the office and the physical reality found on site — using audio capture, AI extraction, and structured human review to enrich and validate damage records in InfraCloud.</p>
+  <p>The proposal covers the system's core workflow, functional requirements, AI capabilities, and non-functional constraints. It explicitly surfaces the architectural and UX decisions that remain open and require resolution before implementation begins.</p>
+
+  <div class="principle">
+    <p>The objective is not to replace damage creation, but to bridge the gap between pre-inspection assumptions and on-site reality through structured, low-friction validation and enrichment.</p>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════
+     CORE WORKFLOW
+═══════════════════════════════════════════════════ -->
+<div class="section">
+  <div class="section-tag">Section 1</div>
+  <h2>Core Workflow</h2>
+  <p>The inspection lifecycle has two phases. Phase 1 is handled by InfraCloud today and is out of scope. This system targets Phase 2 — the on-site inspection — where inspectors validate, enrich, and create damage records.</p>
+
+  <div class="diagram-wrap">
+    <svg width="100%" viewBox="0 0 740 320" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <marker id="arr" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+          <path d="M2 1L8 5L2 9" fill="none" stroke="#9ba3b0" stroke-width="1.5" stroke-linecap="round"/>
+        </marker>
+        <marker id="arr-blue" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+          <path d="M2 1L8 5L2 9" fill="none" stroke="#1d6fa8" stroke-width="1.5" stroke-linecap="round"/>
+        </marker>
+      </defs>
+
+      <!-- Phase 1 box -->
+      <rect x="20" y="40" width="180" height="80" rx="6" fill="#f0f4f8" stroke="#9ba3b0" stroke-width="1"/>
+      <text x="110" y="68" text-anchor="middle" font-size="10" font-weight="600" fill="#5a6275" letter-spacing="1" font-family="IBM Plex Sans">PHASE 1</text>
+      <text x="110" y="88" text-anchor="middle" font-size="13" font-weight="600" fill="#0f2744" font-family="IBM Plex Sans">Pre-inspection</text>
+      <text x="110" y="106" text-anchor="middle" font-size="11" fill="#5a6275" font-family="IBM Plex Sans">Office · 3D model review</text>
+      <rect x="30" y="130" width="160" height="22" rx="3" fill="#e8eaee"/>
+      <text x="110" y="145" text-anchor="middle" font-size="10" fill="#3d4452" font-family="IBM Plex Sans">Out of scope — unchanged</text>
+
+      <!-- Arrow -->
+      <line x1="200" y1="80" x2="240" y2="80" stroke="#9ba3b0" stroke-width="1.5" marker-end="url(#arr)" stroke-dasharray="4 3"/>
+
+      <!-- Phase 2 container -->
+      <rect x="240" y="20" width="480" height="200" rx="8" fill="#e8f3fb" stroke="#1d6fa8" stroke-width="1.5"/>
+      <text x="290" y="42" font-size="10" font-weight="600" fill="#1d6fa8" letter-spacing="1" font-family="IBM Plex Sans">PHASE 2  ·  ON-SITE INSPECTION  ·  Focus of this project</text>
+
+      <!-- A. Validate -->
+      <rect x="260" y="56" width="130" height="140" rx="6" fill="#fff" stroke="#b3d6ef" stroke-width="1"/>
+      <rect x="260" y="56" width="130" height="28" rx="6" fill="#0f2744"/>
+      <rect x="260" y="70" width="130" height="14" fill="#0f2744"/>
+      <text x="325" y="75" text-anchor="middle" font-size="11" font-weight="600" fill="white" font-family="IBM Plex Sans">A. Validate</text>
+      <text x="325" y="104" text-anchor="middle" font-size="11" fill="#1c2230" font-family="IBM Plex Sans">Confirm suspicion</text>
+      <text x="325" y="120" text-anchor="middle" font-size="11" fill="#1a6b41" font-weight="600" font-family="IBM Plex Sans">→ Damage</text>
+      <line x1="285" y1="132" x2="365" y2="132" stroke="#dce0e8" stroke-width="1"/>
+      <text x="325" y="150" text-anchor="middle" font-size="11" fill="#1c2230" font-family="IBM Plex Sans">Reject suspicion</text>
+      <text x="325" y="166" text-anchor="middle" font-size="11" fill="#b52a2a" font-weight="600" font-family="IBM Plex Sans">→ Incorr. Detected</text>
+      <text x="325" y="186" text-anchor="middle" font-size="10" fill="#9ba3b0" font-family="IBM Plex Sans">Mandatory decision</text>
+
+      <!-- Arrow A→B -->
+      <line x1="390" y1="126" x2="416" y2="126" stroke="#1d6fa8" stroke-width="1.5" marker-end="url(#arr-blue)"/>
+
+      <!-- B. Enrich -->
+      <rect x="416" y="56" width="130" height="140" rx="6" fill="#fff" stroke="#b3d6ef" stroke-width="1"/>
+      <rect x="416" y="56" width="130" height="28" rx="6" fill="#0f2744"/>
+      <rect x="416" y="70" width="130" height="14" fill="#0f2744"/>
+      <text x="481" y="75" text-anchor="middle" font-size="11" font-weight="600" fill="white" font-family="IBM Plex Sans">B. Enrich</text>
+      <text x="481" y="98" text-anchor="middle" font-size="11" fill="#5a6275" font-family="IBM Plex Sans">Material · Type · Class</text>
+      <text x="481" y="114" text-anchor="middle" font-size="11" fill="#5a6275" font-family="IBM Plex Sans">Length · Width · Depth</text>
+      <text x="481" y="130" text-anchor="middle" font-size="11" fill="#5a6275" font-family="IBM Plex Sans">Condition notes</text>
+      <text x="481" y="146" text-anchor="middle" font-size="11" fill="#5a6275" font-family="IBM Plex Sans">Images</text>
+      <text x="481" y="186" text-anchor="middle" font-size="10" fill="#9ba3b0" font-family="IBM Plex Sans">Add or refine</text>
+
+      <!-- Arrow B→C -->
+      <line x1="546" y1="126" x2="572" y2="126" stroke="#1d6fa8" stroke-width="1.5" marker-end="url(#arr-blue)"/>
+
+      <!-- C. Create -->
+      <rect x="572" y="56" width="130" height="140" rx="6" fill="#fff" stroke="#b3d6ef" stroke-width="1"/>
+      <rect x="572" y="56" width="130" height="28" rx="6" fill="#0f2744"/>
+      <rect x="572" y="70" width="130" height="14" fill="#0f2744"/>
+      <text x="637" y="75" text-anchor="middle" font-size="11" font-weight="600" fill="white" font-family="IBM Plex Sans">C. Create New</text>
+      <text x="637" y="104" text-anchor="middle" font-size="11" fill="#5a6275" font-family="IBM Plex Sans">New observation</text>
+      <text x="637" y="120" text-anchor="middle" font-size="11" fill="#5a6275" font-family="IBM Plex Sans">no prior suspicion</text>
+      <text x="637" y="150" text-anchor="middle" font-size="11" fill="#5a6275" font-family="IBM Plex Sans">Voice + photo</text>
+      <text x="637" y="186" text-anchor="middle" font-size="10" fill="#9ba3b0" font-family="IBM Plex Sans">If required</text>
+
+      <!-- "outputs to InfraCloud" -->
+      <line x1="480" y1="220" x2="480" y2="258" stroke="#9ba3b0" stroke-width="1.5" marker-end="url(#arr)"/>
+      <rect x="360" y="260" width="240" height="40" rx="6" fill="#0f2744"/>
+      <text x="480" y="284" text-anchor="middle" font-size="13" font-weight="600" fill="white" font-family="IBM Plex Sans">InfraCloud — confirmed payload</text>
+    </svg>
+    <div class="diagram-caption">Fig 1. Two-phase inspection lifecycle. Phase 2 (on-site) is the focus of this system.</div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════
+     OPERATING MODES
+═══════════════════════════════════════════════════ -->
+<div class="section">
+  <div class="section-tag">Section 2</div>
+  <h2>Operating Modes</h2>
+  <p>The system must function in two modes, switching automatically based on connectivity. Mode 2 is always available as a fallback and safety net — no AI availability is required for field capture.</p>
+
+  <div class="diagram-wrap">
+    <svg width="100%" viewBox="0 0 740 240" xmlns="http://www.w3.org/2000/svg">
+      <!-- Mode 1 -->
+      <rect x="20" y="20" width="330" height="200" rx="8" fill="#e8f3fb" stroke="#1d6fa8" stroke-width="1.5"/>
+      <rect x="20" y="20" width="330" height="42" rx="8" fill="#1d6fa8"/>
+      <rect x="20" y="48" width="330" height="14" fill="#1d6fa8"/>
+      <text x="185" y="38" text-anchor="middle" font-size="10" font-weight="600" fill="rgba(255,255,255,0.7)" letter-spacing="1" font-family="IBM Plex Sans">MODE 1</text>
+      <text x="185" y="55" text-anchor="middle" font-size="13" font-weight="600" fill="white" font-family="IBM Plex Sans">AI-assisted field mode</text>
+
+      <text x="40" y="90" font-size="11" fill="#1c2230" font-family="IBM Plex Sans">Trigger</text>
+      <text x="140" y="90" font-size="11" fill="#5a6275" font-family="IBM Plex Sans">Network + AI pipeline available</text>
+      <line x1="40" y1="98" x2="340" y2="98" stroke="#b3d6ef" stroke-width="0.5"/>
+
+      <text x="40" y="116" font-size="11" fill="#1c2230" font-family="IBM Plex Sans">Capture</text>
+      <text x="140" y="116" font-size="11" fill="#5a6275" font-family="IBM Plex Sans">Audio recorded on device</text>
+      <line x1="40" y1="124" x2="340" y2="124" stroke="#b3d6ef" stroke-width="0.5"/>
+
+      <text x="40" y="142" font-size="11" fill="#1c2230" font-family="IBM Plex Sans">AI</text>
+      <text x="140" y="142" font-size="11" fill="#5a6275" font-family="IBM Plex Sans">STT + extraction in near-real time</text>
+      <line x1="40" y1="150" x2="340" y2="150" stroke="#b3d6ef" stroke-width="0.5"/>
+
+      <text x="40" y="168" font-size="11" fill="#1c2230" font-family="IBM Plex Sans">Review</text>
+      <text x="140" y="168" font-size="11" fill="#5a6275" font-family="IBM Plex Sans">Inspector confirms on-site</text>
+      <line x1="40" y1="176" x2="340" y2="176" stroke="#b3d6ef" stroke-width="0.5"/>
+
+      <text x="40" y="207" font-size="11" fill="#1d6fa8" font-weight="600" font-family="IBM Plex Sans">Fastest path to InfraCloud</text>
+
+      <!-- Divider + label -->
+      <text x="385" y="90" text-anchor="middle" font-size="10" fill="#9ba3b0" font-family="IBM Plex Sans">OR</text>
+      <line x1="385" y1="30" x2="385" y2="82" stroke="#dce0e8" stroke-dasharray="3 3" stroke-width="1"/>
+      <line x1="385" y1="98" x2="385" y2="210" stroke="#dce0e8" stroke-dasharray="3 3" stroke-width="1"/>
+
+      <!-- Mode 2 -->
+      <rect x="395" y="20" width="330" height="200" rx="8" fill="#f5f6f8" stroke="#9ba3b0" stroke-width="1.5"/>
+      <rect x="395" y="20" width="330" height="42" rx="8" fill="#3d4452"/>
+      <rect x="395" y="48" width="330" height="14" fill="#3d4452"/>
+      <text x="560" y="38" text-anchor="middle" font-size="10" font-weight="600" fill="rgba(255,255,255,0.7)" letter-spacing="1" font-family="IBM Plex Sans">MODE 2</text>
+      <text x="560" y="55" text-anchor="middle" font-size="13" font-weight="600" fill="white" font-family="IBM Plex Sans">Office review mode</text>
+
+      <text x="415" y="90" font-size="11" fill="#1c2230" font-family="IBM Plex Sans">Trigger</text>
+      <text x="510" y="90" font-size="11" fill="#5a6275" font-family="IBM Plex Sans">Offline or deferred processing</text>
+      <line x1="415" y1="98" x2="715" y2="98" stroke="#dce0e8" stroke-width="0.5"/>
+
+      <text x="415" y="116" font-size="11" fill="#1c2230" font-family="IBM Plex Sans">Capture</text>
+      <text x="510" y="116" font-size="11" fill="#5a6275" font-family="IBM Plex Sans">Audio stored locally, synced later</text>
+      <line x1="415" y1="124" x2="715" y2="124" stroke="#dce0e8" stroke-width="0.5"/>
+
+      <text x="415" y="142" font-size="11" fill="#1c2230" font-family="IBM Plex Sans">AI</text>
+      <text x="510" y="142" font-size="11" fill="#5a6275" font-family="IBM Plex Sans">Run / re-run pipeline in office</text>
+      <line x1="415" y1="150" x2="715" y2="150" stroke="#dce0e8" stroke-width="0.5"/>
+
+      <text x="415" y="168" font-size="11" fill="#1c2230" font-family="IBM Plex Sans">Review</text>
+      <text x="510" y="168" font-size="11" fill="#5a6275" font-family="IBM Plex Sans">Inspector reviews at desk</text>
+      <line x1="415" y1="176" x2="715" y2="176" stroke="#dce0e8" stroke-width="0.5"/>
+
+      <text x="415" y="207" font-size="11" fill="#3d4452" font-weight="600" font-family="IBM Plex Sans">Safety net — always available</text>
+    </svg>
+    <div class="diagram-caption">Fig 2. Two operating modes. The system switches automatically; Mode 2 is always the fallback.</div>
+  </div>
+
+  <div class="confirmed">Both modes lead to the same human-confirmed payload submitted to InfraCloud. AI suggestions are never auto-submitted under either mode.</div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════
+     FUNCTIONAL REQUIREMENTS
+═══════════════════════════════════════════════════ -->
+<div class="section">
+  <div class="section-tag">Section 3</div>
+  <h2>Functional Requirements</h2>
+  <p>Eight functional requirements define the system's capabilities. Those with unresolved design decisions are marked with an open decision indicator.</p>
+
+  <div class="fr-grid">
+    <div class="fr-card has-decision">
+      <div class="fr-number">FR1</div>
+      <div class="fr-title">Load inspection context ⚠</div>
+      <div class="fr-desc">Load active inspection and full suspicion list (IDs, locations, boundaries, existing attributes) on session start. Optionally render a lightweight 3D model for spatial context. Display progress: "12 of 45 suspicions validated."</div>
+    </div>
+    <div class="fr-card has-decision">
+      <div class="fr-number">FR2</div>
+      <div class="fr-title">Reference a suspicion ⚠</div>
+      <div class="fr-desc">Select suspicion → record voice → attach photos → advance. If the lightweight 3D model is available, selection can be spatial (tap on model); otherwise sequential or manual list. Tie-breaking logic is an open decision.</div>
+    </div>
+    <div class="fr-card has-decision">
+      <div class="fr-number">FR3</div>
+      <div class="fr-title">Create a new damage ⚠</div>
+      <div class="fr-desc">Initiate → voice description → attach photos → set location. Location capture method is an open decision.</div>
+    </div>
+    <div class="fr-card">
+      <div class="fr-number">FR4</div>
+      <div class="fr-title">Data storage & sync</div>
+      <div class="fr-desc">Store all audio and photos locally with offline-first architecture. Sync to cloud AI services when connectivity is restored.</div>
+    </div>
+    <div class="fr-card has-decision">
+      <div class="fr-number">FR5</div>
+      <div class="fr-title">AI extraction pipeline ⚠</div>
+      <div class="fr-desc">Run STT → field extraction → WSV catalog mapping on captured audio. Whether this runs inside InfraCloud or as a separate service is an open architectural decision.</div>
+    </div>
+    <div class="fr-card">
+      <div class="fr-number">FR6</div>
+      <div class="fr-title">Delta visualisation</div>
+      <div class="fr-desc">Side-by-side before/after comparison per field, with confidence scores. Low-confidence fields are highlighted. Boundaries and coordinates are never modified.</div>
+    </div>
+    <div class="fr-card">
+      <div class="fr-number">FR7</div>
+      <div class="fr-title">Manual validation</div>
+      <div class="fr-desc">Inspector reviews, adjusts incorrect attributes, and confirms. System sends structured update payload to InfraCloud. Never auto-submits.</div>
+    </div>
+    <div class="fr-card">
+      <div class="fr-number">FR8</div>
+      <div class="fr-title">Continuous learning</div>
+      <div class="fr-desc">Inspector corrections feed back into the AI pipeline for iterative accuracy improvement. GDPR compliance required before real recordings are used for training.</div>
+    </div>
+  </div>
+</div>
+
+<!-- FR1 Detail -->
+<div class="section">
+  <h3>FR1 in detail — Lightweight 3D model on device</h3>
+  <p>As part of loading the inspection context, the field app may pre-load a lightweight decimated version of the InfraCloud 3D model. This gives the inspector spatial awareness of suspicion locations on device — without a full browser session — and supports two downstream use cases: spatial suspicion selection in FR2, and approximate new damage positioning in FR3.</p>
+
+  <ul class="compact">
+    <li><strong>FR2 relevance:</strong> suspicion markers overlaid on the simplified mesh allow spatial tap-to-select, reducing reliance on list navigation when multiple suspicions cluster on the same wall section.</li>
+    <li><strong>FR3 relevance:</strong> inspector can tap the model to set an approximate location for a newly discovered damage, later refined to a precise coordinate during office review.</li>
+  </ul>
+
+  <div class="open-decision">
+    <div class="open-decision-label">Open decision — Feasibility of lightweight 3D rendering on mobile / tablet</div>
+    <p>A feasibility assessment is required before this can be scoped. Key open questions — all with direct timeline implications:</p>
+    <ul>
+      <li><strong>Hardware performance:</strong> InfraCloud models are GPU-intensive (sonar point clouds, photogrammetric meshes). An LOD or decimated variant must achieve acceptable frame rates within mobile memory and battery constraints for a full inspection shift.</li>
+      <li><strong>Data volume and offline pre-load:</strong> the model must be available on device before going on site. File sizes for harbour assets can be large — partial tile loading or local hotspot streaming must be assessed per asset type.</li>
+      <li><strong>Coordinate alignment:</strong> suspicion markers must render correctly against the model using InfraCloud's WGS84 coordinate system. This must be confirmed against InfraCloud's export capabilities.</li>
+      <li><strong>Timeline:</strong> 3D rendering on mobile is significant engineering effort. Current position — Iteration 2 delivers list-based selection; lightweight 3D rendering is deferred to Iteration 3 pending feasibility sign-off.</li>
+    </ul>
+  </div>
+</div>
+
+<!-- FR2 Detail -->
+<div class="section">
+  <h3>FR2 in detail — Suspicion selection and capture flow</h3>
+
+  <div class="diagram-wrap">
+    <svg width="100%" viewBox="0 0 740 120" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <marker id="arr2" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+          <path d="M2 1L8 5L2 9" fill="none" stroke="#1d6fa8" stroke-width="1.5" stroke-linecap="round"/>
+        </marker>
+      </defs>
+      <!-- Steps -->
+      <rect x="20" y="28" width="140" height="56" rx="6" fill="#e8f3fb" stroke="#1d6fa8" stroke-width="1"/>
+      <text x="90" y="50" text-anchor="middle" font-size="10" font-weight="600" fill="#1d6fa8" letter-spacing="0.5" font-family="IBM Plex Sans">STEP 1</text>
+      <text x="90" y="66" text-anchor="middle" font-size="12" font-weight="600" fill="#0f2744" font-family="IBM Plex Sans">Select suspicion</text>
+      <text x="90" y="78" text-anchor="middle" font-size="10" fill="#5a6275" font-family="IBM Plex Sans">3D spatial / list / sequential</text>
+
+      <line x1="160" y1="56" x2="188" y2="56" stroke="#1d6fa8" stroke-width="1.5" marker-end="url(#arr2)"/>
+
+      <rect x="188" y="28" width="140" height="56" rx="6" fill="#e8f3fb" stroke="#1d6fa8" stroke-width="1"/>
+      <text x="258" y="50" text-anchor="middle" font-size="10" font-weight="600" fill="#1d6fa8" letter-spacing="0.5" font-family="IBM Plex Sans">STEP 2</text>
+      <text x="258" y="66" text-anchor="middle" font-size="12" font-weight="600" fill="#0f2744" font-family="IBM Plex Sans">Record voice note</text>
+      <text x="258" y="78" text-anchor="middle" font-size="10" fill="#5a6275" font-family="IBM Plex Sans">Describe damage verbally</text>
+
+      <line x1="328" y1="56" x2="356" y2="56" stroke="#1d6fa8" stroke-width="1.5" marker-end="url(#arr2)"/>
+
+      <rect x="356" y="28" width="140" height="56" rx="6" fill="#e8f3fb" stroke="#1d6fa8" stroke-width="1"/>
+      <text x="426" y="50" text-anchor="middle" font-size="10" font-weight="600" fill="#1d6fa8" letter-spacing="0.5" font-family="IBM Plex Sans">STEP 3</text>
+      <text x="426" y="66" text-anchor="middle" font-size="12" font-weight="600" fill="#0f2744" font-family="IBM Plex Sans">Attach media</text>
+      <text x="426" y="78" text-anchor="middle" font-size="10" fill="#5a6275" font-family="IBM Plex Sans">Photos linked to record</text>
+
+      <line x1="496" y1="56" x2="524" y2="56" stroke="#1d6fa8" stroke-width="1.5" marker-end="url(#arr2)"/>
+
+      <rect x="524" y="28" width="140" height="56" rx="6" fill="#0f2744" stroke="#0f2744" stroke-width="1"/>
+      <text x="594" y="50" text-anchor="middle" font-size="10" font-weight="600" fill="rgba(255,255,255,0.6)" letter-spacing="0.5" font-family="IBM Plex Sans">STEP 4</text>
+      <text x="594" y="66" text-anchor="middle" font-size="12" font-weight="600" fill="white" font-family="IBM Plex Sans">Proceed</text>
+      <text x="594" y="78" text-anchor="middle" font-size="10" fill="rgba(255,255,255,0.55)" font-family="IBM Plex Sans">Next suspicion</text>
+
+      <!-- Non-blocking note -->
+      <text x="594" y="103" text-anchor="middle" font-size="10" fill="#9ba3b0" font-family="IBM Plex Sans">Non-blocking — always available immediately</text>
+    </svg>
+    <div class="diagram-caption">Fig 3. FR2 — Four-step suspicion handling flow. Step 4 is always non-blocking.</div>
+  </div>
+
+  <div class="open-decision">
+    <div class="open-decision-label">Open decision — Suspicion selection method</div>
+    <p>Three selection methods are under consideration. The primary method and tie-breaking logic must be decided before UX design begins. If the lightweight 3D model (FR1) is available on device, spatial selection becomes a fourth option — see FR1 feasibility assessment.</p>
+    <ul>
+      <li><strong>Sequential (primary candidate):</strong> system presents next suspicion by proximity. Requires tie-breaking rule for equidistant cases and phase-boundary switching logic.</li>
+      <li><strong>Manual UI selection:</strong> inspector picks from a list. Lower friction for adoption, but less efficient at scale.</li>
+      <li><strong>AR-based targeting:</strong> inspector points at the physical wall to select a record. Highest usability but highest implementation complexity.</li>
+    </ul>
+  </div>
+</div>
+
+<!-- FR3 Detail -->
+<div class="section">
+  <h3>FR3 in detail — New damage location capture</h3>
+  <p>When an inspector discovers a damage with no pre-existing suspicion, a new record must be created on-site. The location capture step has two candidate approaches. If the lightweight 3D model is available on device, a third option — tap-to-position on the model — becomes viable (see FR1).</p>
+
+  <div class="open-decision">
+    <div class="open-decision-label">Open decision — Location capture for new damages</div>
+    <ul>
+      <li><strong>Option A — Stationing reference (verbal):</strong> inspector narrates position (e.g. "mark 40, halfway to 50"); office reviewer places the point on the 3D viewer before submission. Concern: requires two-step UX if AI service is separate from the 3D viewer.</li>
+      <li><strong>Option B — Placeholder coordinate:</strong> AI service creates the record in InfraCloud with a "location pending" flag; engineer sets the precise coordinate in the InfraCloud viewer as a subsequent step. Recommended as the pragmatic MVP path.</li>
+    </ul>
+  </div>
+</div>
+
+<!-- FR5 + FR6 Detail -->
+<div class="section">
+  <h3>FR5 in detail — AI extraction pipeline</h3>
+
+  <div class="diagram-wrap">
+    <svg width="100%" viewBox="0 0 740 100" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <marker id="arr3" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+          <path d="M2 1L8 5L2 9" fill="none" stroke="#9ba3b0" stroke-width="1.5" stroke-linecap="round"/>
+        </marker>
+      </defs>
+      <rect x="20" y="24" width="110" height="48" rx="6" fill="#f5f6f8" stroke="#9ba3b0" stroke-width="1"/>
+      <text x="75" y="44" text-anchor="middle" font-size="11" font-weight="600" fill="#0f2744" font-family="IBM Plex Sans">Audio file</text>
+      <text x="75" y="59" text-anchor="middle" font-size="10" fill="#5a6275" font-family="IBM Plex Sans">WAV / MP3</text>
+
+      <line x1="130" y1="48" x2="152" y2="48" stroke="#9ba3b0" stroke-width="1.5" marker-end="url(#arr3)"/>
+
+      <rect x="152" y="24" width="110" height="48" rx="6" fill="#e8f3fb" stroke="#1d6fa8" stroke-width="1"/>
+      <text x="207" y="44" text-anchor="middle" font-size="11" font-weight="600" fill="#0f2744" font-family="IBM Plex Sans">Whisper STT</text>
+      <text x="207" y="59" text-anchor="middle" font-size="10" fill="#5a6275" font-family="IBM Plex Sans">German only · de</text>
+
+      <line x1="262" y1="48" x2="284" y2="48" stroke="#9ba3b0" stroke-width="1.5" marker-end="url(#arr3)"/>
+
+      <rect x="284" y="24" width="130" height="48" rx="6" fill="#e8f3fb" stroke="#1d6fa8" stroke-width="1"/>
+      <text x="349" y="44" text-anchor="middle" font-size="11" font-weight="600" fill="#0f2744" font-family="IBM Plex Sans">GPT-4o extract</text>
+      <text x="349" y="59" text-anchor="middle" font-size="10" fill="#5a6275" font-family="IBM Plex Sans">Intent + field mapping</text>
+
+      <line x1="414" y1="48" x2="436" y2="48" stroke="#9ba3b0" stroke-width="1.5" marker-end="url(#arr3)"/>
+
+      <rect x="436" y="24" width="130" height="48" rx="6" fill="#e8f3fb" stroke="#1d6fa8" stroke-width="1"/>
+      <text x="501" y="44" text-anchor="middle" font-size="11" font-weight="600" fill="#0f2744" font-family="IBM Plex Sans">WSV validation</text>
+      <text x="501" y="59" text-anchor="middle" font-size="10" fill="#5a6275" font-family="IBM Plex Sans">Catalog + cascade check</text>
+
+      <line x1="566" y1="48" x2="588" y2="48" stroke="#9ba3b0" stroke-width="1.5" marker-end="url(#arr3)"/>
+
+      <rect x="588" y="24" width="132" height="48" rx="6" fill="#0f2744" stroke="#0f2744" stroke-width="1"/>
+      <text x="654" y="44" text-anchor="middle" font-size="11" font-weight="600" fill="white" font-family="IBM Plex Sans">Structured payload</text>
+      <text x="654" y="59" text-anchor="middle" font-size="10" fill="rgba(255,255,255,0.6)" font-family="IBM Plex Sans">→ human review</text>
+    </svg>
+    <div class="diagram-caption">Fig 4. AI extraction pipeline — audio to structured InfraCloud damage record payload.</div>
+  </div>
+
+  <div class="open-decision">
+    <div class="open-decision-label">Open decision — AI pipeline placement</div>
+    <p>Should the AI pipeline run within InfraCloud or as a separate standalone service? This decision directly affects the FR3 location UX: if the pipeline runs within InfraCloud, the 3D viewer is accessible during review (Option A); if it's a separate service, a two-step UX is needed (Option B).</p>
+  </div>
+
+  <h3>FR6 — Delta visualisation</h3>
+  <p>After extraction, the system presents a before/after comparison for inspector review. Confidence scores are shown per field. Low-confidence fields are flagged but do not block submission.</p>
+
+  <div class="diagram-wrap">
+    <table class="delta-table" style="margin:0">
+      <thead>
+        <tr>
+          <th>Field</th>
+          <th>Before (existing record)</th>
+          <th>After (AI extracted)</th>
+          <th>Confidence</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr class="changed">
+          <td><strong>Damage Type</strong></td>
+          <td class="delta-before">—</td>
+          <td class="delta-after">Risse | Längsriss (trocken)</td>
+          <td class="delta-conf">0.94</td>
+        </tr>
+        <tr class="changed">
+          <td><strong>Class</strong></td>
+          <td class="delta-before">—</td>
+          <td class="delta-after">2</td>
+          <td class="delta-conf">0.91</td>
+        </tr>
+        <tr class="changed">
+          <td><strong>Length</strong></td>
+          <td class="delta-before">—</td>
+          <td class="delta-after">30 cm</td>
+          <td class="delta-conf">0.88</td>
+        </tr>
+        <tr class="changed">
+          <td><strong>Material</strong></td>
+          <td class="delta-before">Beton | Stahlbeton</td>
+          <td class="delta-after" style="color:#b52a2a">Metall | unlegierten Stahl ⚠ difference</td>
+          <td class="delta-conf low">0.61</td>
+        </tr>
+        <tr>
+          <td><strong>Boundary</strong></td>
+          <td class="delta-before">[polygon coordinates]</td>
+          <td class="delta-before">[unchanged — preserved]</td>
+          <td class="delta-conf">—</td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="diagram-caption">Fig 5. Example delta visualisation. Low-confidence fields and differences are highlighted for inspector review.</div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════
+     SYSTEM ARCHITECTURE
+═══════════════════════════════════════════════════ -->
+<div class="section">
+  <div class="section-tag">Section 4</div>
+  <h2>System Architecture</h2>
+  <p>The system is structured across three independent layers — field capture, AI processing, and office review — with InfraCloud acting as the system of record at both ends. Layers communicate asynchronously so that field work is never blocked by network or AI availability.</p>
+
+  <div class="diagram-wrap" style="padding:28px 24px">
+    <svg width="100%" viewBox="0 0 700 420" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <marker id="arr-a" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+          <path d="M2 1L8 5L2 9" fill="none" stroke="#9ba3b0" stroke-width="1.5" stroke-linecap="round"/>
+        </marker>
+        <marker id="arr-b" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+          <path d="M2 1L8 5L2 9" fill="none" stroke="#1d6fa8" stroke-width="1.5" stroke-linecap="round"/>
+        </marker>
+        <marker id="arr-g" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+          <path d="M2 1L8 5L2 9" fill="none" stroke="#1a6b41" stroke-width="1.5" stroke-linecap="round"/>
+        </marker>
+      </defs>
+
+      <!-- InfraCloud top -->
+      <rect x="200" y="10" width="300" height="56" rx="6" fill="#0f2744" stroke="#0f2744"/>
+      <text x="350" y="32" text-anchor="middle" font-size="10" font-weight="600" fill="rgba(255,255,255,0.5)" letter-spacing="1" font-family="IBM Plex Sans">SYSTEM OF RECORD</text>
+      <text x="350" y="52" text-anchor="middle" font-size="13" font-weight="600" fill="white" font-family="IBM Plex Sans">InfraCloud</text>
+
+      <!-- Read arrow down-left -->
+      <line x1="290" y1="66" x2="180" y2="122" stroke="#9ba3b0" stroke-width="1.5" stroke-dasharray="4 3" marker-end="url(#arr-a)"/>
+      <text x="204" y="98" text-anchor="middle" font-size="9" fill="#9ba3b0" font-family="IBM Plex Sans">Read (session start)</text>
+
+      <!-- Write arrow up-right -->
+      <line x1="530" y1="248" x2="434" y2="66" stroke="#1a6b41" stroke-width="1.5" marker-end="url(#arr-g)"/>
+      <text x="520" y="160" text-anchor="middle" font-size="9" fill="#1a6b41" font-family="IBM Plex Sans">Write (confirmed)</text>
+
+      <!-- Field box -->
+      <rect x="20" y="124" width="280" height="156" rx="6" fill="#e8f3fb" stroke="#1d6fa8" stroke-width="1.5"/>
+      <rect x="20" y="124" width="280" height="32" rx="6" fill="#1d6fa8"/>
+      <rect x="20" y="142" width="280" height="14" fill="#1d6fa8"/>
+      <text x="160" y="136" text-anchor="middle" font-size="9" font-weight="600" fill="rgba(255,255,255,0.7)" letter-spacing="1" font-family="IBM Plex Sans">FIELD LAYER</text>
+      <text x="160" y="150" text-anchor="middle" font-size="12" font-weight="600" fill="white" font-family="IBM Plex Sans">Field Companion App</text>
+      <text x="40" y="178" font-size="11" fill="#1c2230" font-family="IBM Plex Sans">· Inspection session + suspicion list</text>
+      <text x="40" y="196" font-size="11" fill="#1c2230" font-family="IBM Plex Sans">· Audio recording + photo capture</text>
+      <text x="40" y="214" font-size="11" fill="#1c2230" font-family="IBM Plex Sans">· Local storage — offline-first</text>
+      <text x="40" y="232" font-size="11" fill="#1c2230" font-family="IBM Plex Sans">· Manual fallback edits</text>
+      <text x="40" y="250" font-size="11" fill="#1c2230" font-family="IBM Plex Sans">· Sync manager</text>
+      <text x="40" y="270" font-size="10" fill="#1d6fa8" font-weight="600" font-family="IBM Plex Sans">Works without network</text>
+
+      <!-- AI box -->
+      <rect x="400" y="124" width="280" height="156" rx="6" fill="#f0faf4" stroke="#1a6b41" stroke-width="1.5"/>
+      <rect x="400" y="124" width="280" height="32" rx="6" fill="#1a6b41"/>
+      <rect x="400" y="142" width="280" height="14" fill="#1a6b41"/>
+      <text x="540" y="136" text-anchor="middle" font-size="9" font-weight="600" fill="rgba(255,255,255,0.7)" letter-spacing="1" font-family="IBM Plex Sans">AI / CLOUD LAYER</text>
+      <text x="540" y="150" text-anchor="middle" font-size="12" font-weight="600" fill="white" font-family="IBM Plex Sans">AI Processing Service</text>
+      <text x="420" y="178" font-size="11" fill="#1c2230" font-family="IBM Plex Sans">1.  Whisper STT (German · de)</text>
+      <text x="420" y="196" font-size="11" fill="#1c2230" font-family="IBM Plex Sans">2.  Intent classification</text>
+      <text x="420" y="214" font-size="11" fill="#1c2230" font-family="IBM Plex Sans">3.  Field extraction (GPT-4o)</text>
+      <text x="420" y="232" font-size="11" fill="#1c2230" font-family="IBM Plex Sans">4.  WSV catalog mapping</text>
+      <text x="420" y="250" font-size="11" fill="#1c2230" font-family="IBM Plex Sans">5.  Difference detection + scoring</text>
+      <text x="420" y="270" font-size="10" fill="#1a6b41" font-weight="600" font-family="IBM Plex Sans">Triggered when online; deferred if not</text>
+
+      <!-- Bidirectional arrow field ↔ AI -->
+      <line x1="300" y1="192" x2="400" y2="192" stroke="#9ba3b0" stroke-width="1.5" marker-end="url(#arr-a)"/>
+      <line x1="400" y1="212" x2="300" y2="212" stroke="#9ba3b0" stroke-width="1.5" marker-end="url(#arr-a)"/>
+      <text x="350" y="188" text-anchor="middle" font-size="9" fill="#9ba3b0" font-family="IBM Plex Sans">upload audio</text>
+      <text x="350" y="228" text-anchor="middle" font-size="9" fill="#9ba3b0" font-family="IBM Plex Sans">AI draft</text>
+
+      <!-- Review box -->
+      <rect x="160" y="316" width="380" height="88" rx="6" fill="#fff3e0" stroke="#c96a00" stroke-width="1.5"/>
+      <rect x="160" y="316" width="380" height="32" rx="6" fill="#c96a00"/>
+      <rect x="160" y="334" width="380" height="14" fill="#c96a00"/>
+      <text x="350" y="328" text-anchor="middle" font-size="9" font-weight="600" fill="rgba(255,255,255,0.7)" letter-spacing="1" font-family="IBM Plex Sans">OFFICE / REVIEW LAYER</text>
+      <text x="350" y="343" text-anchor="middle" font-size="12" font-weight="600" fill="white" font-family="IBM Plex Sans">Review Workspace</text>
+      <text x="180" y="368" font-size="11" fill="#1c2230" font-family="IBM Plex Sans">Transcript · Photos · Extracted attributes · Delta view (Before / After)</text>
+      <text x="180" y="386" font-size="11" fill="#1c2230" font-family="IBM Plex Sans">Confidence per field · Difference highlighting · Approve / Edit / Reject</text>
+      <text x="350" y="396" text-anchor="middle" font-size="10" fill="#c96a00" font-weight="600" font-family="IBM Plex Sans">Never auto-submits — human confirmation required</text>
+
+      <!-- Field → Review -->
+      <line x1="160" y1="300" x2="260" y2="316" stroke="#9ba3b0" stroke-width="1.5" stroke-dasharray="4 3" marker-end="url(#arr-a)"/>
+      <!-- AI → Review -->
+      <line x1="540" y1="300" x2="460" y2="316" stroke="#9ba3b0" stroke-width="1.5" stroke-dasharray="4 3" marker-end="url(#arr-a)"/>
+
+      <!-- Review → InfraCloud bottom (write arrow) -->
+      <line x1="350" y1="404" x2="350" y2="418" stroke="#1a6b41" stroke-width="1.5" marker-end="url(#arr-g)"/>
+      <text x="405" y="415" font-size="9" fill="#1a6b41" font-family="IBM Plex Sans">Confirmed payload → InfraCloud</text>
+    </svg>
+    <div class="diagram-caption">Fig 3. Three-layer architecture. Field and AI layers feed the office review workspace; only human-confirmed payloads are written back to InfraCloud.</div>
+  </div>
+
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:20px 0">
+    <div class="confirmed" style="margin:0">Offline-first — field app stores all audio and photos locally and syncs when connectivity is restored. No data is lost during outages.</div>
+    <div class="confirmed" style="margin:0">AI is assistive — the workflow never waits for or depends on AI processing. AI accelerates review but is not on the critical path.</div>
+    <div class="confirmed" style="margin:0">Human-in-the-loop — the review workspace requires explicit inspector approval before any data is written to InfraCloud.</div>
+    <div class="confirmed" style="margin:0">Separation of concerns — field app handles capture, AI service handles processing, InfraCloud remains the single system of record.</div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════
+     AI CAPABILITIES
+═══════════════════════════════════════════════════ -->
+<div class="section">
+  <div class="section-tag">Section 5</div>
+  <h2>AI Capabilities</h2>
+  <p>The AI pipeline goes beyond transcription. It must classify inspector intent, map natural German speech to structured WSV catalog fields, and detect differences between existing record values and newly captured voice input.</p>
+
+  <div class="confirmed">Language scope — Iteration 1: German only. All audio input, transcription, and field extraction targets German-language inspection recordings exclusively. English language support is explicitly out of scope for this iteration and will be addressed in a later phase alongside the Netherlands market expansion. The Whisper STT node is hardcoded to <span style="font-family:var(--mono);font-size:12px">language: de</span> and no language detection or fallback logic is included.</div>
+
+  <h3>Required intent classification</h3>
+  <table class="intent-table">
+    <thead>
+      <tr>
+        <th>Intent</th>
+        <th>Description</th>
+        <th>Example utterance (German)</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="intent-tag">VALIDATE_DAMAGE</span></td>
+        <td>Inspector confirms the suspicion is a real damage</td>
+        <td style="color:#5a6275;font-size:12px">"Schaden bestätigt, Längsriss, Klasse drei."</td>
+      </tr>
+      <tr>
+        <td><span class="intent-tag">REJECT_DAMAGE</span></td>
+        <td>Inspector marks the suspicion as incorrectly detected</td>
+        <td style="color:#5a6275;font-size:12px">"Das ist kein Schaden, bitte als fehlerhaft markieren."</td>
+      </tr>
+      <tr>
+        <td><span class="intent-tag">UPDATE_FIELD</span></td>
+        <td>Inspector corrects or overrides an existing attribute</td>
+        <td style="color:#5a6275;font-size:12px">"Das ist eigentlich Stahlkorrosion, kein Betonschaden."</td>
+      </tr>
+      <tr>
+        <td><span class="intent-tag">ADD_MEASUREMENT</span></td>
+        <td>Inspector provides a dimension value</td>
+        <td style="color:#5a6275;font-size:12px">"Länge dreißig Zentimeter, Breite zwei."</td>
+      </tr>
+      <tr>
+        <td><span class="intent-tag">CREATE_NEW_DAMAGE</span></td>
+        <td>Inspector describes a damage with no prior suspicion</td>
+        <td style="color:#5a6275;font-size:12px">"Neuer Schaden, Kantenabbruch, Schadensklasse zwei."</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h3>WSV catalog field mapping</h3>
+  <p>The inspector speaks German. Extracted values are mapped to the German WSV catalog strings stored in InfraCloud's backend. The AI must understand that spoken terms like "Längsriss trocken" map to <span style="font-family:var(--mono);font-size:12px;background:#f0f4f8;padding:1px 5px;">"Risse | Längsriss (trocken)"</span>, and that any steel corrosion type maps to <span style="font-family:var(--mono);font-size:12px;background:#f0f4f8;padding:1px 5px;">"Stahl | Verrostet"</span> regardless of the specific corrosion form described.</p>
+
+  <h3>Difference detection</h3>
+  <p>When a voice input differs from an existing record value, the system must identify the difference, surface it in the delta view, and propose an update — without auto-applying the change.</p>
+
+  <div class="diagram-wrap" style="padding:20px">
+    <svg width="100%" viewBox="0 0 700 106" xmlns="http://www.w3.org/2000/svg">
+      <rect x="20" y="20" width="190" height="66" rx="6" fill="#f5f6f8" stroke="#9ba3b0" stroke-width="1"/>
+      <text x="115" y="46" text-anchor="middle" font-size="10" fill="#5a6275" font-family="IBM Plex Sans">Existing record</text>
+      <text x="115" y="64" text-anchor="middle" font-size="12" font-weight="600" fill="#0f2744" font-family="IBM Plex Sans">Material = Beton | Stahlbeton</text>
+
+      <rect x="250" y="20" width="190" height="66" rx="6" fill="#e8f3fb" stroke="#1d6fa8" stroke-width="1"/>
+      <text x="345" y="46" text-anchor="middle" font-size="10" fill="#1d6fa8" font-family="IBM Plex Sans">Voice input (extracted)</text>
+      <text x="345" y="64" text-anchor="middle" font-size="12" font-weight="600" fill="#0f2744" font-family="IBM Plex Sans">"Das ist Stahlkorrosion"</text>
+
+      <text x="468" y="56" text-anchor="middle" font-size="18" fill="#c96a00" font-family="IBM Plex Sans">⚡</text>
+
+      <rect x="490" y="20" width="190" height="66" rx="6" fill="#fff3e0" stroke="#f5b656" stroke-width="1.5"/>
+      <text x="585" y="36" text-anchor="middle" font-size="10" fill="#c96a00" font-family="IBM Plex Sans">Proposed resolution</text>
+      <text x="585" y="52" text-anchor="middle" font-size="11" font-weight="600" fill="#0f2744" font-family="IBM Plex Sans">Update →</text>
+      <text x="585" y="68" text-anchor="middle" font-size="11" font-weight="600" fill="#0f2744" font-family="IBM Plex Sans">Metall | unlegierten Stahl</text>
+    </svg>
+    <div class="diagram-caption">Fig 6. Difference detection example — existing concrete material vs. spoken steel corrosion.</div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════
+     OPEN DECISIONS SUMMARY
+═══════════════════════════════════════════════════ -->
+<div class="section">
+  <div class="section-tag">Section 6</div>
+  <h2>Open Decisions</h2>
+  <p>The following design decisions must be resolved before implementation begins. Each has a stated impact on architecture, UX, or compliance.</p>
+
+  <div class="decisions-summary">
+    <div class="decision-row">
+      <div class="decision-num">1</div>
+      <div class="decision-body">
+        <span class="decision-title">Suspicion selection — primary method and tie-breaking</span>
+        <p class="decision-desc">Must choose between sequential (proximity-based), manual UI selection, and AR-based targeting as the primary mode. Sequential mode requires explicit tie-breaking for equidistant suspicions and phase-boundary switching logic.</p>
+      </div>
+      <div class="decision-impact">
+        <span class="impact-tag impact-high">High · UX</span>
+      </div>
+    </div>
+
+    <div class="decision-row">
+      <div class="decision-num">2</div>
+      <div class="decision-body">
+        <span class="decision-title">New damage location capture method</span>
+        <p class="decision-desc">Option A (stationing reference + 3D viewer placement) or Option B (placeholder coordinate + "location pending" flag). Option B recommended as the MVP path. Decision must align with FR5 architectural choice.</p>
+      </div>
+      <div class="decision-impact">
+        <span class="impact-tag impact-high">High · UX</span>
+      </div>
+    </div>
+
+    <div class="decision-row">
+      <div class="decision-num">3</div>
+      <div class="decision-body">
+        <span class="decision-title">AI pipeline placement — within InfraCloud or separate service</span>
+        <p class="decision-desc">Determines whether the 3D viewer is available during office review (inline = yes, separate = no). This directly drives the FR3 location UX decision above.</p>
+      </div>
+      <div class="decision-impact">
+        <span class="impact-tag impact-arch">High · Architecture</span>
+      </div>
+    </div>
+
+    <div class="decision-row">
+      <div class="decision-num">4</div>
+      <div class="decision-body">
+        <span class="decision-title">Skip/mandatory decision reconciliation</span>
+        <p class="decision-desc">Decisions are mandatory per suspicion, but UX must remain non-blocking. Proposed rule: "skip" is allowed mid-session; session cannot be marked complete if any suspicions remain in skipped state — inspector is warned at session close.</p>
+      </div>
+      <div class="decision-impact">
+        <span class="impact-tag impact-medium">Medium · UX</span>
+      </div>
+    </div>
+
+    <div class="decision-row">
+      <div class="decision-num">5</div>
+      <div class="decision-body">
+        <span class="decision-title">Lightweight 3D model rendering on mobile — feasibility assessment required</span>
+        <p class="decision-desc">Rendering a simplified InfraCloud 3D model on the field device would enable spatial suspicion selection and on-device damage positioning. Feasibility must be assessed across hardware performance, offline data volume, coordinate system alignment, and timeline impact before this can be scoped. Likely deferred to Iteration 3.</p>
+      </div>
+      <div class="decision-impact">
+        <span class="impact-tag impact-arch">High · Architecture</span>
+      </div>
+    </div>
+
+    <div class="decision-row">
+      <div class="decision-num">6</div>
+      <div class="decision-body">
+        <span class="decision-title">GDPR legal basis for FR8 continuous learning</span>
+        <p class="decision-desc">Voice recordings of named engineers are potentially identifiable personal data. Using them for model training requires explicit consent and a documented legal basis under GDPR Art. 6. Must be resolved before any real recordings are used for training.</p>
+      </div>
+      <div class="decision-impact">
+        <span class="impact-tag impact-high">High · Compliance</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════
+     NON-FUNCTIONAL REQUIREMENTS
+═══════════════════════════════════════════════════ -->
+<div class="section">
+  <div class="section-tag">Section 7</div>
+  <h2>Non-Functional Requirements</h2>
+
+  <ul class="nfr-list">
+    <li>
+      <div class="nfr-icon">
+        <svg viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="6" stroke="#1d6fa8" stroke-width="1.5"/><path d="M5 8l2 2 4-4" stroke="#1d6fa8" stroke-width="1.5" stroke-linecap="round"/></svg>
+      </div>
+      <div>
+        <span class="nfr-name">Offline-first field operation</span>
+        <p class="nfr-desc">Full data capture (audio, photos, decisions) without network connectivity. Atomic writes per capture event to support session crash recovery.</p>
+      </div>
+    </li>
+    <li>
+      <div class="nfr-icon">
+        <svg viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="6" stroke="#1d6fa8" stroke-width="1.5"/><path d="M5 8l2 2 4-4" stroke="#1d6fa8" stroke-width="1.5" stroke-linecap="round"/></svg>
+      </div>
+      <div>
+        <span class="nfr-name">Optional near-real-time AI assistance</span>
+        <p class="nfr-desc">When connectivity and pipeline performance allow, process audio in near-real time and surface field suggestions on-device during inspection.</p>
+      </div>
+    </li>
+    <li>
+      <div class="nfr-icon">
+        <svg viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="6" stroke="#1d6fa8" stroke-width="1.5"/><path d="M5 8l2 2 4-4" stroke="#1d6fa8" stroke-width="1.5" stroke-linecap="round"/></svg>
+      </div>
+      <div>
+        <span class="nfr-name">Deferred AI processing</span>
+        <p class="nfr-desc">If real-time processing is unavailable or incomplete, queue captured data for later processing without blocking field workflow. Both modes converge on the same confirmation flow.</p>
+      </div>
+    </li>
+    <li>
+      <div class="nfr-icon">
+        <svg viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="6" stroke="#1d6fa8" stroke-width="1.5"/><path d="M5 8l2 2 4-4" stroke="#1d6fa8" stroke-width="1.5" stroke-linecap="round"/></svg>
+      </div>
+      <div>
+        <span class="nfr-name">Non-blocking UX</span>
+        <p class="nfr-desc">Inspector must always be able to advance to the next suspicion or create a new damage record without waiting for AI processing to complete.</p>
+      </div>
+    </li>
+    <li>
+      <div class="nfr-icon">
+        <svg viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="6" stroke="#1d6fa8" stroke-width="1.5"/><path d="M5 8l2 2 4-4" stroke="#1d6fa8" stroke-width="1.5" stroke-linecap="round"/></svg>
+      </div>
+      <div>
+        <span class="nfr-name">Audio quality resilience</span>
+        <p class="nfr-desc">STT pipeline must handle outdoor conditions: wind, waves, boat engine noise. "Low confidence — please re-record" fallback required when transcript confidence falls below threshold.</p>
+      </div>
+    </li>
+    <li>
+      <div class="nfr-icon">
+        <svg viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="6" stroke="#1d6fa8" stroke-width="1.5"/><path d="M5 8l2 2 4-4" stroke="#1d6fa8" stroke-width="1.5" stroke-linecap="round"/></svg>
+      </div>
+      <div>
+        <span class="nfr-name">Session crash recovery</span>
+        <p class="nfr-desc">Local store must support atomic writes per capture event. In the event of device failure or app crash, the session must be fully recoverable without data loss.</p>
+      </div>
+    </li>
+  </ul>
+</div>
+
+<!-- ═══════════════════════════════════════════════════
+     OUT OF SCOPE
+═══════════════════════════════════════════════════ -->
+<div class="section">
+  <div class="section-tag">Section 8</div>
+  <h2>Out of Scope</h2>
+  <p>The following items are explicitly excluded from this proposal. They may be addressed in subsequent iterations.</p>
+
+  <div class="oos-item">Underwater inspection workflows — the diver-to-topside relay model requires a fundamentally different interaction pattern and is deferred to a later iteration.</div>
+  <div class="oos-item">English language support — all audio capture, transcription, and AI extraction in this iteration targets German-language inspection recordings only. English and Dutch language support will be introduced in a later iteration alongside international market expansion.</div>
+  <div class="oos-item">Authentication and authorisation — Keycloak integration, the InfraCloud user model, and role-based access rights are out of scope. The AI system inherits the existing InfraCloud session and permission model without modification.</div>
+  <div class="oos-item">Pre-inspection Phase 1 — the 3D model review, suspicion creation, coordinate setting, and boundary drawing remain unchanged and out of scope.</div>
+  <div class="oos-item">Real-time video analysis or AR damage overlay — AR-based suspicion selection is under consideration (Open Decision 1) but AR spatial overlay of damage boundaries is out of scope for this proposal.</div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════
+     FOOTER
+═══════════════════════════════════════════════════ -->
+<div style="margin-top:64px;padding-top:24px;border-top:1.5px solid var(--rule);display:flex;justify-content:space-between;align-items:center">
+  <div style="font-size:11px;color:var(--gray-400)">InfraCloud · Voice AI Inspection Assistant · Solution Proposal · March 2026</div>
+  <div style="font-size:11px;color:var(--gray-400)">Prepared by Elsa Bakiu · Draft for internal review</div>
+</div>
+
+</div><!-- /content -->
+</body>
+</html>

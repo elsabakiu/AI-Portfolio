@@ -1,6 +1,5 @@
 // InvestoraAI auth helpers
-// Passwords are SHA-256 hashed client-side before leaving the browser.
-// User records are stored in n8n's workflow static data (SQLite via Docker).
+// FastAPI is the source of truth for auth.
 // Only { username, userId, profile } is cached in localStorage for session rehydration.
 
 /** A manually entered portfolio position (v3). No cost basis in MVP. */
@@ -34,6 +33,7 @@ export interface Session {
   username: string;
   userId: string;
   profile: UserProfile;
+  token?: string;
 }
 
 export const INTEREST_OPTIONS = ["tech", "crypto", "energy", "forex", "commodities"] as const;
@@ -45,66 +45,81 @@ export const HORIZON_OPTIONS = ["short", "medium", "long"] as const;
 export const CONSTRAINT_OPTIONS = ["no_crypto", "ESG", "max_20pct"] as const;
 export const ASSET_OPTIONS = ["stocks", "ETFs", "crypto"] as const;
 
-const N8N_BASE = import.meta.env.VITE_N8N_BASE_URL;
+const API_BASE = (
+  (import.meta.env.VITE_API_BASE_URL as string | undefined) ??
+  "http://127.0.0.1:8000"
+).replace(/\/+$/, "");
 const SESSION_KEY = "investora_session";
-const HASH_SALT = "investora_2026";
-
-// --- Password hashing ---
-
-export async function hashPassword(password: string): Promise<string> {
-  const text = password + HASH_SALT;
-  const encoder = new TextEncoder();
-  const data = encoder.encode(text);
-  const hashBuffer = await crypto.subtle.digest("SHA-256", data);
-  const hashArray = Array.from(new Uint8Array(hashBuffer));
-  return hashArray.map((b) => b.toString(16).padStart(2, "0")).join("");
-}
-
-// --- n8n webhook API calls ---
+// --- Backend API calls ---
 
 export async function registerUser(
   username: string,
   password: string,
   profile: UserProfile
-): Promise<{ ok: boolean; error?: string; userId?: string }> {
-  const passwordHash = await hashPassword(password);
+): Promise<{ ok: boolean; error?: string; userId?: string; token?: string }> {
   const userId = crypto.randomUUID();
 
-  const res = await fetch(`${N8N_BASE}/investora/register`, {
+  const res = await fetch(`${API_BASE}/auth/register`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ username, passwordHash, userId, profile }),
+    body: JSON.stringify({ username, password, userId, profile }),
   });
 
-  return res.json();
+  return res.json() as Promise<{ ok: boolean; error?: string; userId?: string; token?: string }>;
 }
 
 export async function loginUser(
   username: string,
   password: string
-): Promise<{ ok: boolean; userId?: string; profile?: UserProfile; error?: string }> {
-  const passwordHash = await hashPassword(password);
-
-  const res = await fetch(`${N8N_BASE}/investora/login`, {
+): Promise<{ ok: boolean; userId?: string; profile?: UserProfile; token?: string; error?: string }> {
+  const res = await fetch(`${API_BASE}/auth/login`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ username, passwordHash }),
+    body: JSON.stringify({ username, password }),
   });
 
-  return res.json();
+  return res.json() as Promise<{ ok: boolean; userId?: string; profile?: UserProfile; token?: string; error?: string }>;
+}
+
+export async function getCurrentUser(
+  token: string
+): Promise<{ ok: boolean; userId?: string; username?: string; profile?: UserProfile; error?: string }> {
+  try {
+    const res = await fetch(`${API_BASE}/auth/me`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    if (!res.ok) {
+      return { ok: false, error: `Request failed with ${res.status}` };
+    }
+    const data = (await res.json()) as {
+      ok?: boolean;
+      userId?: string;
+      username?: string;
+      profile?: UserProfile;
+    };
+    return {
+      ok: data.ok === true,
+      userId: data.userId,
+      username: data.username,
+      profile: data.profile,
+    };
+  } catch {
+    return { ok: false, error: "Connection error" };
+  }
 }
 
 export async function updateUserProfile(
-  username: string,
+  userId: string,
   profile: UserProfile
 ): Promise<boolean> {
   try {
-    const res = await fetch(`${N8N_BASE}/investora/profile`, {
-      method: "POST",
+    const res = await fetch(`${API_BASE}/user/${userId}/profile`, {
+      method: "PUT",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ username, profile }),
+      body: JSON.stringify(profile),
     });
-    const data = await res.json();
+    if (!res.ok) return false;
+    const data = (await res.json()) as { ok?: boolean };
     return data.ok === true;
   } catch {
     return false;

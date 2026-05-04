@@ -1,0 +1,1058 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Investora AI — Case Study</title>
+<style>
+  :root {
+    --bg: #0c0d10;
+    --surface: #14161b;
+    --surface-2: #1a1d24;
+    --border: #262a33;
+    --text: #e7e9ee;
+    --muted: #8b93a1;
+    --accent: #4fd1c5;
+    --accent-soft: rgba(79, 209, 197, 0.12);
+    --warn: #eab308;
+    --warn-soft: rgba(234, 179, 8, 0.12);
+    --risk: #f87171;
+    --risk-soft: rgba(248, 113, 113, 0.1);
+    --todo: #fb923c;
+    --todo-soft: rgba(251, 146, 60, 0.12);
+  }
+  @media (prefers-color-scheme: light) {
+    :root {
+      --bg: #fafafa;
+      --surface: #ffffff;
+      --surface-2: #f4f5f7;
+      --border: #e4e6eb;
+      --text: #14161b;
+      --muted: #5b6270;
+      --accent: #0d9488;
+      --accent-soft: rgba(13, 148, 136, 0.08);
+      --warn: #b45309;
+      --warn-soft: rgba(180, 83, 9, 0.08);
+      --risk: #b91c1c;
+      --risk-soft: rgba(185, 28, 28, 0.06);
+      --todo: #c2410c;
+      --todo-soft: rgba(194, 65, 12, 0.08);
+    }
+  }
+
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", Inter, sans-serif;
+    font-size: 16px;
+    line-height: 1.65;
+    -webkit-font-smoothing: antialiased;
+  }
+  .mono {
+    font-family: ui-monospace, SFMono-Regular, "JetBrains Mono", Menlo, Consolas, monospace;
+  }
+
+  .wrap {
+    max-width: 880px;
+    margin: 0 auto;
+    padding: 64px 28px 120px;
+  }
+
+  /* ── Type ─────────────────────────────── */
+  .kicker {
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 12px;
+    font-family: ui-monospace, SFMono-Regular, "JetBrains Mono", Menlo, Consolas, monospace;
+  }
+  h1 {
+    font-size: clamp(28px, 4vw, 42px);
+    line-height: 1.1;
+    letter-spacing: -0.015em;
+    margin: 0 0 18px;
+  }
+  h2 {
+    font-size: 22px;
+    letter-spacing: -0.005em;
+    margin: 56px 0 12px;
+  }
+  h3 { font-size: 16px; margin: 24px 0 8px; }
+  p { margin: 0 0 16px; color: var(--text); }
+  p.lead { color: var(--muted); font-size: 17px; margin: 0 0 4px; line-height: 1.55; }
+
+  .thesis {
+    border-left: 2px solid var(--accent);
+    padding: 6px 0 6px 16px;
+    margin: 26px 0 0;
+    font-size: 16.5px;
+  }
+  .thesis em { color: var(--accent); font-style: normal; font-weight: 600; }
+
+  /* ── Context card ─────────────────────── */
+  .context {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 28px;
+    margin-top: 36px;
+  }
+  .context .grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 18px 28px;
+    margin-bottom: 22px;
+  }
+  .context .cell .label,
+  .context .line .label {
+    font-size: 10px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 4px;
+    font-family: ui-monospace, SFMono-Regular, "JetBrains Mono", Menlo, Consolas, monospace;
+  }
+  .context .cell .val { font-size: 14px; font-weight: 500; }
+  .context .line {
+    border-top: 1px dashed var(--border);
+    padding-top: 18px;
+    margin-top: 6px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+  }
+  .context .line .val { font-size: 15px; line-height: 1.5; }
+
+  .positioning {
+    margin-top: 20px;
+    padding-top: 18px;
+    border-top: 1px dashed var(--border);
+    font-size: 14px;
+    color: var(--muted);
+  }
+  .positioning strong { color: var(--text); font-weight: 600; }
+
+  .pills { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 22px; }
+  .pill {
+    display: inline-block;
+    padding: 4px 10px;
+    border-radius: 999px;
+    background: var(--accent-soft);
+    color: var(--accent);
+    border: 1px solid var(--accent);
+    font-size: 12px;
+    font-family: ui-monospace, SFMono-Regular, "JetBrains Mono", Menlo, Consolas, monospace;
+  }
+
+  /* ── Metrics strip ────────────────────── */
+  .metrics {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 10px;
+    margin-top: 14px;
+  }
+  .metric {
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 14px 16px;
+  }
+  .metric .n {
+    font-size: 22px;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    font-family: ui-monospace, SFMono-Regular, "JetBrains Mono", Menlo, Consolas, monospace;
+  }
+  .metric .l {
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+    font-family: ui-monospace, SFMono-Regular, "JetBrains Mono", Menlo, Consolas, monospace;
+    margin-top: 4px;
+  }
+
+  /* ── Principle / heuristic card ───────── */
+  .principle {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-left: 2px solid var(--accent);
+    border-radius: 6px;
+    padding: 18px 20px;
+    margin: 14px 0;
+  }
+  .principle .tag {
+    display: block;
+    font-size: 10px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--accent);
+    font-family: ui-monospace, SFMono-Regular, "JetBrains Mono", Menlo, Consolas, monospace;
+    margin-bottom: 6px;
+  }
+  .principle .headline {
+    font-size: 16px;
+    font-weight: 600;
+    line-height: 1.4;
+    margin-bottom: 8px;
+  }
+  .principle .applied {
+    color: var(--muted);
+    font-size: 14.5px;
+    line-height: 1.6;
+  }
+
+  /* ── Pipeline list ────────────────────── */
+  .pipeline {
+    display: grid;
+    gap: 8px;
+    margin: 14px 0 0;
+    counter-reset: nodecounter;
+  }
+  .pipeline .step {
+    display: grid;
+    grid-template-columns: 38px 1fr;
+    gap: 14px;
+    padding: 12px 16px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    align-items: start;
+  }
+  .pipeline .step .num {
+    font-family: ui-monospace, SFMono-Regular, "JetBrains Mono", Menlo, Consolas, monospace;
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    color: var(--accent);
+    background: var(--accent-soft);
+    border: 1px solid var(--accent);
+    border-radius: 4px;
+    padding: 4px 0;
+    text-align: center;
+    font-weight: 600;
+  }
+  .pipeline .step .name {
+    font-family: ui-monospace, SFMono-Regular, "JetBrains Mono", Menlo, Consolas, monospace;
+    font-size: 13px;
+    color: var(--text);
+    margin-bottom: 4px;
+    font-weight: 600;
+  }
+  .pipeline .step .desc {
+    font-size: 14px;
+    color: var(--muted);
+    line-height: 1.55;
+  }
+  .pipeline .step.llm { border-left: 2px solid var(--accent); }
+  .pipeline .step.llm .name::after {
+    content: " · LLM";
+    color: var(--accent);
+    font-weight: 600;
+  }
+  .pipeline .step.io { border-left: 2px solid var(--warn); }
+
+  /* ── Schema cards ─────────────────────── */
+  .schema {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+    margin-top: 14px;
+  }
+  .schema .tbl {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 14px 16px;
+  }
+  .schema .tbl .name {
+    font-family: ui-monospace, SFMono-Regular, "JetBrains Mono", Menlo, Consolas, monospace;
+    font-size: 13px;
+    color: var(--accent);
+    margin-bottom: 4px;
+    font-weight: 600;
+  }
+  .schema .tbl .desc { font-size: 13.5px; color: var(--muted); line-height: 1.55; }
+  .schema .tbl .key {
+    font-size: 11px;
+    color: var(--muted);
+    margin-top: 6px;
+    font-family: ui-monospace, SFMono-Regular, "JetBrains Mono", Menlo, Consolas, monospace;
+    letter-spacing: 0.04em;
+  }
+
+  /* ── Outcomes split ───────────────────── */
+  .split {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-top: 16px;
+  }
+  .split > div {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 18px 20px;
+  }
+  .split h3 { margin-top: 0; }
+  .split .heading-shipped { color: var(--accent); }
+  .split .heading-refused { color: var(--warn); }
+  .split ul { margin: 10px 0 0; padding-left: 20px; }
+  .split li { margin-bottom: 10px; font-size: 15px; line-height: 1.55; }
+  .split li strong { color: var(--text); }
+
+  /* ── Endpoint cards ───────────────────── */
+  .endpoints {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    margin-top: 14px;
+  }
+  .endpoint {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 10px 14px;
+    font-size: 13px;
+    line-height: 1.5;
+  }
+  .endpoint .method {
+    display: inline-block;
+    font-family: ui-monospace, SFMono-Regular, "JetBrains Mono", Menlo, Consolas, monospace;
+    font-size: 10.5px;
+    color: var(--accent);
+    background: var(--accent-soft);
+    border: 1px solid var(--accent);
+    border-radius: 3px;
+    padding: 1px 6px;
+    margin-right: 6px;
+    letter-spacing: 0.06em;
+  }
+  .endpoint .path {
+    font-family: ui-monospace, SFMono-Regular, "JetBrains Mono", Menlo, Consolas, monospace;
+    font-size: 12.5px;
+    color: var(--text);
+  }
+  .endpoint .note {
+    color: var(--muted);
+    font-size: 12.5px;
+    margin-top: 4px;
+  }
+
+  /* ── Diagram container ────────────────── */
+  .diagram {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 22px 20px;
+    margin: 20px 0 8px;
+    overflow-x: auto;
+  }
+  .diagram-caption {
+    font-size: 12.5px;
+    color: var(--muted);
+    margin-top: 14px;
+    font-style: italic;
+  }
+  .arch-diagram { width: 100%; height: auto; display: block; margin: 0 auto; }
+  .arch-diagram .node rect { fill: var(--surface-2); stroke: var(--border); stroke-width: 1.5; }
+  .arch-diagram .node-main rect { fill: var(--surface); stroke: var(--border); stroke-width: 2; }
+  .arch-diagram .node-accent rect { fill: var(--accent-soft); stroke: var(--accent); stroke-width: 1.5; }
+  .arch-diagram .t-title { font-size: 14px; font-weight: 600; text-anchor: middle; fill: var(--text); }
+  .arch-diagram .t-subtitle { font-size: 10px; text-anchor: middle; fill: var(--muted); letter-spacing: 0.08em; text-transform: uppercase; }
+  .arch-diagram .t-body { font-size: 12px; text-anchor: middle; fill: var(--text); font-family: ui-monospace, SFMono-Regular, "JetBrains Mono", Menlo, Consolas, monospace; }
+  .arch-diagram .t-llm { fill: var(--accent); font-weight: 700; letter-spacing: 0.04em; }
+  .arch-diagram .t-footer { font-size: 10.5px; text-anchor: middle; fill: var(--muted); font-style: italic; }
+  .arch-diagram .divider { stroke: var(--border); stroke-width: 1; stroke-dasharray: 2 3; }
+  .arch-diagram .arrow { fill: none; stroke: var(--muted); stroke-width: 1.5; }
+  .arch-diagram .arrow-head { fill: var(--muted); }
+  .arch-diagram .arrow-label { font-size: 10px; fill: var(--accent); text-anchor: middle; font-family: ui-monospace, SFMono-Regular, "JetBrains Mono", Menlo, Consolas, monospace; letter-spacing: 0.1em; text-transform: uppercase; }
+
+  /* ── Reflection items ─────────────────── */
+  .reflect { display: grid; gap: 12px; margin-top: 12px; }
+  .reflect .item {
+    background: var(--surface-2);
+    border-radius: 8px;
+    padding: 14px 18px;
+    border: 1px solid var(--border);
+  }
+  .reflect .item .label {
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--muted);
+    font-family: ui-monospace, SFMono-Regular, "JetBrains Mono", Menlo, Consolas, monospace;
+    margin-bottom: 6px;
+  }
+
+  @media (max-width: 720px) {
+    .wrap { padding: 40px 20px 80px; }
+    .context .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .context .line { grid-template-columns: 1fr; }
+    .split, .schema, .endpoints { grid-template-columns: 1fr; }
+    .metrics { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  }
+</style>
+</head>
+<body>
+<main class="wrap">
+
+  <!-- ── 1. CONTEXT CARD ─────────────────────────────────────────── -->
+  <header>
+    <div class="kicker">Case Study · AI Product Engineering</div>
+    <h1>Investora AI</h1>
+    <p class="lead">A personalized investment-signal engine that turns market, fundamentals, and news data into a small, ranked list of weekly priorities for retail investors.</p>
+    <p class="thesis">The core idea is unglamorous: <em>most of the work is deterministic Python</em>. The LLM is one step in a 17-node graph, called only when something has to be framed in natural language. Everything else — scoring, ranking, anomaly detection, personalization, mismatch detection — happens in code that can be tested with a numeric diff.</p>
+  </header>
+
+  <section class="context">
+    <div class="grid">
+      <div class="cell">
+        <div class="label">Domain</div>
+        <div class="val">Consumer fintech · retail investing</div>
+      </div>
+      <div class="cell">
+        <div class="label">Surface</div>
+        <div class="val">Web dashboard · email digest · Telegram alerts</div>
+      </div>
+      <div class="cell">
+        <div class="label">Cadence</div>
+        <div class="val">Weekly full · daily fast · on-demand</div>
+      </div>
+      <div class="cell">
+        <div class="label">Origin</div>
+        <div class="val">Built for myself — I am the user</div>
+      </div>
+    </div>
+
+    <div class="line">
+      <div>
+        <div class="label">What it does</div>
+        <div class="val">Runs a 17-stage analysis pipeline over a configurable ticker universe, scores every name on quality and momentum, detects volume spikes and score deltas, retrieves prior-week evidence from a vector store, asks the LLM for a structured framing, ranks the resulting signals against each user's profile, and delivers the result as a personalized dashboard, an email digest, and Telegram alerts.</div>
+      </div>
+      <div>
+        <div class="label">How it does it</div>
+        <div class="val">FastAPI exposes the orchestration. LangGraph runs the pipeline. SQLite holds users, profiles, watchlists, alerts, runs, signals, bundles, and an API-call budget. n8n schedules the runs and fans out the deliveries. The frontend is React + TypeScript, fed entirely by typed JSON contracts.</div>
+      </div>
+    </div>
+
+    <div class="positioning">
+      <strong>Positioning —</strong> Not Bloomberg (too much). Not Robinhood-style cards (too generic). Not Seeking Alpha (too retail-analyst). The unoccupied space is <em>profile-aware, signal-level, weekly-cadence</em> — and that's the slot Investora is built for.
+    </div>
+
+    <div class="pills">
+      <span class="pill">React 18 + TS</span>
+      <span class="pill">Vite</span>
+      <span class="pill">React Query</span>
+      <span class="pill">Tailwind + shadcn/ui</span>
+      <span class="pill">FastAPI</span>
+      <span class="pill">LangGraph</span>
+      <span class="pill">Pydantic + Zod</span>
+      <span class="pill">SQLite (WAL)</span>
+      <span class="pill">OpenAI</span>
+      <span class="pill">Pinecone (RAG)</span>
+      <span class="pill">yfinance · Finnhub · FMP · Marketstack</span>
+      <span class="pill">n8n</span>
+      <span class="pill">Render + Vercel</span>
+      <span class="pill">Sentry</span>
+    </div>
+
+    <div class="metrics">
+      <div class="metric">
+        <div class="n mono">17</div>
+        <div class="l">pipeline nodes</div>
+      </div>
+      <div class="metric">
+        <div class="n mono">8</div>
+        <div class="l">SQLite tables</div>
+      </div>
+      <div class="metric">
+        <div class="n mono">4</div>
+        <div class="l">live data providers</div>
+      </div>
+      <div class="metric">
+        <div class="n mono">6</div>
+        <div class="l">n8n workflows</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── 2. THE PROBLEM ──────────────────────────────────────────── -->
+  <section>
+    <div class="kicker">01 · Problem framing</div>
+    <h2>The problem Investora is built around</h2>
+    <p>A retail investor with a watchlist, a job, and an opinion does not have an information problem. They have a <em>prioritization</em> problem. The signals exist; they are just buried under a feed designed to maximize attention. Twitter shouts. Bloomberg drowns. Robinhood flattens everything to one-line momentum cards. Seeking Alpha gives long-form theses with no connection to what you actually hold.</p>
+
+    <p>The user need that fell out of that observation, in plain language: <em>"On a Sunday evening, give me three things from my watchlist worth thinking about this week, plus one or two opportunities I would not have found on my own — and tell me when something I already hold has stopped fitting the profile I gave you."</em></p>
+
+    <p>That sentence is the spec. Every architectural decision below either serves it or gets cut.</p>
+
+    <div class="principle">
+      <span class="tag">Founding constraint</span>
+      <div class="headline">Calibrated relevance, not accuracy. Friction over flattery.</div>
+      <div class="applied">A recommender that only confirms what the user already believes is a confirmation-bias engine. Investora's most distinctive feature — <em>mismatch alerts</em> — exists to tell users when their holdings have drifted away from their stated profile. No user asks for this. It is the feature the product is most opinionated about.</div>
+    </div>
+  </section>
+
+  <!-- ── 3. WHAT IT DOES ─────────────────────────────────────────── -->
+  <section>
+    <div class="kicker">02 · Capabilities</div>
+    <h2>What Investora does (the user-visible surface)</h2>
+    <p>What the user actually sees, in the order they encounter it:</p>
+
+    <div class="principle">
+      <span class="tag">Capability · 01</span>
+      <div class="headline">Onboarding that captures the constraints, not just the preferences.</div>
+      <div class="applied">A new user registers, then walks through risk tolerance (low / medium / high plus a 0-100 slider), interests (tech / crypto / energy / forex / commodities), time horizon (short / medium / long), constraints (<span class="mono">no_crypto</span>, <span class="mono">ESG</span>, <span class="mono">max_20pct</span>), preferred asset classes, base currency, and an optional Telegram chat ID. None of these are decorative — every field changes how downstream signals are scored and filtered.</div>
+    </div>
+
+    <div class="principle">
+      <span class="tag">Capability · 02</span>
+      <div class="headline">A personalized weekly bundle, split into three buckets.</div>
+      <div class="applied">After each run, the user's dashboard shows a <em>UserReportBundle</em>: portfolio pulse (1-day and 1-week watchlist performance, market regime, risk-alignment verdict), top conviction (the three highest-fit signals across every bucket), watchlist signals (sorted by urgency then fit), discovery signals (opportunities outside the watchlist, gated on confidence + profile fit), and mismatch alerts (high-severity signals that clash with the user's risk tolerance). Each signal carries a <em>fit score</em>, an <em>action frame</em> (Review, Monitor, Trim Risk), an urgency level, a narrative, and a list of risk flags.</div>
+    </div>
+
+    <div class="principle">
+      <span class="tag">Capability · 03</span>
+      <div class="headline">Live market data on demand — no run required.</div>
+      <div class="applied">Independent of the analysis pipeline, the app exposes always-on market endpoints: NYSE open/closed status, real-time quotes for arbitrary tickers, OHLCV charts (1D / 5D / 1M / 3M / 6M / 1Y), a merged intraday + fundamentals snapshot, recent news headlines, top gainers/losers from a ticker set, ticker autocomplete search, and a 2–3 sentence cached AI view per ticker. These are what the dashboard, the Watchlist page, and the per-ticker Stock Analysis page consume.</div>
+    </div>
+
+    <div class="principle">
+      <span class="tag">Capability · 04</span>
+      <div class="headline">User-defined price alerts that fire independent of the agent loop.</div>
+      <div class="applied">Users create alerts of three types: <span class="mono">price_above</span>, <span class="mono">price_below</span>, <span class="mono">daily_move</span>. They are checked inside the LangGraph pipeline (not as a separate cron) so they share the same data fetch as the analysis run. When triggered, they post to an n8n webhook for delivery. Alert state (active / triggered / disabled) is persisted in SQLite and editable from the Alerts page.</div>
+    </div>
+
+    <div class="principle">
+      <span class="tag">Capability · 05</span>
+      <div class="headline">A live progress stream — no black-box runs.</div>
+      <div class="applied">When the user clicks <em>Run Analysis</em>, the request hits <span class="mono">/run-analysis-stream</span> and the graph starts in a background thread. Each completed node is pushed to the browser as a Server-Sent Event. The dashboard renders a progress bar and the current stage name (<em>Compute Scores</em>, <em>Synthesize Evidence</em>, etc.). When the pipeline finishes, the React Query cache for the dashboard, run history, and personalized signals is invalidated automatically. The user sees the new bundle without a refresh.</div>
+    </div>
+
+    <div class="principle">
+      <span class="tag">Capability · 06</span>
+      <div class="headline">Push delivery — Telegram for urgency, email for the weekly digest.</div>
+      <div class="applied">Two delivery channels, deliberately different. Telegram is reserved for <em>high-urgency</em> signals from the personalized bundle, formatted as Markdown with a colored direction emoji and an action frame. The weekly email digest is HTML, fired only on the Monday-morning full run, gated per-user on a <span class="mono">weekly_email_digest</span> profile flag. Both go through n8n webhooks; both fail soft.</div>
+    </div>
+  </section>
+
+  <!-- ── 4. ARCHITECTURE ─────────────────────────────────────────── -->
+  <section>
+    <div class="kicker">03 · System architecture</div>
+    <h2>How the pieces fit together</h2>
+    <p>The system has four planes and one orchestration boundary. The reasoning plane runs the analysis. The data plane holds users, profiles, runs, signals, and bundles. The serving plane is the FastAPI app that exposes both the agent endpoints and the always-on market endpoints. The delivery plane is n8n. The orchestration boundary is the typed JSON contract between Python (Pydantic) and TypeScript (Zod) — the same shape on both sides, validated on both sides.</p>
+
+    <div class="diagram">
+      <svg viewBox="0 0 820 460" class="arch-diagram" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Investora AI system architecture">
+        <defs>
+          <marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+            <path d="M0,0 L10,5 L0,10 Z" class="arrow-head" />
+          </marker>
+        </defs>
+
+        <!-- Frontend -->
+        <g class="node">
+          <rect x="20" y="40" width="170" height="100" rx="8" />
+          <text x="105" y="72" class="t-title">React UI</text>
+          <text x="105" y="92" class="t-subtitle">Dashboard · Watchlist</text>
+          <text x="105" y="108" class="t-subtitle">Stock · Alerts · Profile</text>
+          <text x="105" y="128" class="t-body">Vite · TS · Zod</text>
+        </g>
+
+        <!-- FastAPI -->
+        <g class="node node-main">
+          <rect x="220" y="20" width="200" height="160" rx="10" />
+          <text x="320" y="52" class="t-title">FastAPI</text>
+          <text x="320" y="72" class="t-subtitle">REST + SSE</text>
+          <line x1="240" y1="86" x2="400" y2="86" class="divider" />
+          <text x="320" y="106" class="t-body">/auth · /user/*</text>
+          <text x="320" y="124" class="t-body">/run-analysis(-stream)</text>
+          <text x="320" y="142" class="t-body">/market/*</text>
+          <text x="320" y="160" class="t-footer">correlation IDs · run limiter</text>
+        </g>
+
+        <!-- LangGraph pipeline -->
+        <g class="node node-accent">
+          <rect x="450" y="20" width="200" height="160" rx="10" />
+          <text x="550" y="52" class="t-title">LangGraph</text>
+          <text x="550" y="72" class="t-subtitle">17 nodes · cached singleton</text>
+          <line x1="470" y1="86" x2="630" y2="86" class="divider" />
+          <text x="550" y="106" class="t-body">ReAct planner loop</text>
+          <text x="550" y="124" class="t-body t-llm">★ synthesize · 1 LLM call</text>
+          <text x="550" y="142" class="t-body">personalize · mismatch</text>
+          <text x="550" y="160" class="t-footer">node_timings · metrics</text>
+        </g>
+
+        <!-- MCP tools -->
+        <g class="node">
+          <rect x="680" y="20" width="120" height="160" rx="8" />
+          <text x="740" y="52" class="t-title">MCP tools</text>
+          <text x="740" y="72" class="t-subtitle">data plane</text>
+          <line x1="690" y1="86" x2="790" y2="86" class="divider" />
+          <text x="740" y="104" class="t-body">market</text>
+          <text x="740" y="120" class="t-body">fundamentals</text>
+          <text x="740" y="136" class="t-body">news</text>
+          <text x="740" y="152" class="t-body">RAG · Pinecone</text>
+          <text x="740" y="170" class="t-footer">mock · live</text>
+        </g>
+
+        <!-- SQLite -->
+        <g class="node">
+          <rect x="220" y="220" width="200" height="100" rx="8" />
+          <text x="320" y="252" class="t-title">SQLite (WAL)</text>
+          <text x="320" y="272" class="t-subtitle">8 tables</text>
+          <text x="320" y="294" class="t-body">users · profiles · watchlist</text>
+          <text x="320" y="310" class="t-body">runs · signals · bundles · budget</text>
+        </g>
+
+        <!-- Delivery -->
+        <g class="node">
+          <rect x="450" y="220" width="350" height="100" rx="8" />
+          <text x="625" y="252" class="t-title">n8n</text>
+          <text x="625" y="272" class="t-subtitle">orchestration + delivery</text>
+          <text x="625" y="294" class="t-body">cron-weekly · cron-daily · run-monitor</text>
+          <text x="625" y="312" class="t-body">telegram-alerts · weekly-email · auth</text>
+        </g>
+
+        <!-- External outputs -->
+        <g class="node">
+          <rect x="220" y="360" width="180" height="70" rx="8" />
+          <text x="310" y="388" class="t-title">Telegram</text>
+          <text x="310" y="410" class="t-subtitle">high-urgency signals</text>
+        </g>
+        <g class="node">
+          <rect x="420" y="360" width="180" height="70" rx="8" />
+          <text x="510" y="388" class="t-title">Email digest</text>
+          <text x="510" y="410" class="t-subtitle">Monday weekly run</text>
+        </g>
+        <g class="node">
+          <rect x="620" y="360" width="180" height="70" rx="8" />
+          <text x="710" y="388" class="t-title">Dashboard</text>
+          <text x="710" y="410" class="t-subtitle">React Query cache</text>
+        </g>
+
+        <!-- Arrows -->
+        <path d="M 190 90 L 215 90" class="arrow" marker-end="url(#arr)" />
+        <text x="202" y="80" class="arrow-label">REST + SSE</text>
+
+        <path d="M 420 90 L 445 90" class="arrow" marker-end="url(#arr)" />
+        <text x="432" y="80" class="arrow-label">invoke</text>
+
+        <path d="M 650 90 L 675 90" class="arrow" marker-end="url(#arr)" />
+        <text x="662" y="80" class="arrow-label">tool calls</text>
+
+        <path d="M 320 180 L 320 215" class="arrow" marker-end="url(#arr)" />
+        <path d="M 550 180 L 550 215" class="arrow" marker-end="url(#arr)" />
+        <text x="555" y="200" class="arrow-label">persist</text>
+
+        <path d="M 625 320 L 625 355" class="arrow" marker-end="url(#arr)" />
+        <text x="635" y="342" class="arrow-label">webhooks</text>
+
+        <path d="M 320 320 L 320 355" class="arrow" marker-end="url(#arr)" />
+        <path d="M 320 360 L 220 130" class="arrow" stroke-dasharray="3 3" marker-end="url(#arr)" />
+      </svg>
+      <div class="diagram-caption">The reasoning pipeline writes to SQLite. Delivery reads from SQLite via n8n webhooks. Delivery failures never propagate back upstream — they are caught and logged at the graph node level.</div>
+    </div>
+
+    <h3>Frontend</h3>
+    <p>Single-page React app built with Vite. Routing is split between public pages (Landing, Login, Register, Terms, Privacy, Disclaimer) and a protected shell wrapping Dashboard, Watchlist, Stock Analysis, Alerts, Strategy, and Profile. Code-splitting is used for every protected route. State is held in three places: a <span class="mono">UserContext</span> for session and watchlist, React Query for everything fetched, and <span class="mono">localStorage</span> for the cached session payload (rehydrated on mount, validated against <span class="mono">/auth/me</span> when a token is present). Visual identity is dark navy with electric cyan and neon green accents — a fintech-terminal aesthetic, not a Robinhood pastel one.</p>
+
+    <h3>Backend</h3>
+    <p>FastAPI with three middleware layers: a CORS layer that allows configured origins plus any localhost port for dev, a correlation-ID middleware that assigns a UUID to every request and echoes it back in <span class="mono">X-Correlation-ID</span>, and a redaction filter on logging so secrets never appear in stdout. The app boots a small set of long-lived services on import — <span class="mono">AnalysisService</span>, <span class="mono">PersonalizationService</span>, <span class="mono">NotificationService</span> — backed by repository classes that mediate every SQLite read and write.</p>
+
+    <h3>Endpoints (selected)</h3>
+    <div class="endpoints">
+      <div class="endpoint"><span class="method">POST</span><span class="path">/auth/register</span><div class="note">Create user, hash password (PBKDF2), persist profile, return token.</div></div>
+      <div class="endpoint"><span class="method">POST</span><span class="path">/auth/login</span><div class="note">Verify password, return signed token + profile.</div></div>
+      <div class="endpoint"><span class="method">POST</span><span class="path">/run-analysis-stream</span><div class="note">SSE stream of node-completion events for one run.</div></div>
+      <div class="endpoint"><span class="method">POST</span><span class="path">/run-weekly</span><div class="note">Cron-only. Bearer-secret-gated full run.</div></div>
+      <div class="endpoint"><span class="method">GET</span><span class="path">/user/{id}/dashboard</span><div class="note">Latest UserReportBundle for one user.</div></div>
+      <div class="endpoint"><span class="method">GET</span><span class="path">/user/{id}/personalized-signals</span><div class="note">Lightweight bundle — watchlist + discovery only.</div></div>
+      <div class="endpoint"><span class="method">PUT</span><span class="path">/user/{id}/watchlist</span><div class="note">Replace user watchlist.</div></div>
+      <div class="endpoint"><span class="method">CRUD</span><span class="path">/user/{id}/alerts</span><div class="note">Manage user-defined price alerts.</div></div>
+      <div class="endpoint"><span class="method">GET</span><span class="path">/market/quotes · /chart · /snapshot · /news · /search · /top-movers</span><div class="note">yfinance-backed live market data.</div></div>
+      <div class="endpoint"><span class="method">GET</span><span class="path">/market/ai-view/{ticker}</span><div class="note">2–3 sentence GPT-4o-mini summary, 1-hour in-memory cache.</div></div>
+      <div class="endpoint"><span class="method">GET</span><span class="path">/run-history · /ticker-history · /latest-report</span><div class="note">Read paths into the persisted run/signal store.</div></div>
+      <div class="endpoint"><span class="method">GET</span><span class="path">/debug/metrics</span><div class="note">Per-node timings + provider call counts.</div></div>
+    </div>
+  </section>
+
+  <!-- ── 5. THE PIPELINE ─────────────────────────────────────────── -->
+  <section>
+    <div class="kicker">04 · The reasoning pipeline</div>
+    <h2>The 17-node LangGraph pipeline, walked end-to-end</h2>
+    <p>The graph is compiled once per process, cached as a singleton, and executed per run with a recursion limit. State is a <span class="mono">TypedDict</span> threaded through every node. Every node is wrapped in a timer that records its duration both into the run state and into a global metrics snapshot, so node-level latency is observable from <span class="mono">/debug/metrics</span> without any external tracer.</p>
+
+    <p>The first three nodes form a classic ReAct loop — a planner picks the next data action, an executor runs it, the planner replans — until every (ticker, action) pair has been satisfied. The planner is an LLM call when running live and a deterministic first-pending picker when running against mocks. Nodes 4 onward are linear.</p>
+
+    <div class="pipeline">
+      <div class="step">
+        <div class="num">01</div>
+        <div>
+          <div class="name">init_state</div>
+          <div class="desc">Generate run ID and run date. Resolve the ticker universe (request override → mock universe file → <span class="mono">STOCK_UNIVERSE</span> env → 10-ticker default). Load every user profile from SQLite, collect their watchlists, and ask the budget manager to prioritize the universe so user-watchlist tickers are processed first when the daily API budget is tight. Initialize the empty buckets in graph state.</div>
+        </div>
+      </div>
+      <div class="step llm">
+        <div class="num">02</div>
+        <div>
+          <div class="name">plan_next_action</div>
+          <div class="desc">Compute every (ticker, action) pair still missing. In mock mode, pick the first one. In live mode, send the pending list to the OpenAI Responses API with a strict instruction to return JSON of the form <span class="mono">{ticker, action, reason}</span>. Validate the choice against the pending set. If the planner errors, fall back to the first pending pair. When nothing is pending, return action=<span class="mono">compute</span> and exit the loop.</div>
+        </div>
+      </div>
+      <div class="step io">
+        <div class="num">03</div>
+        <div>
+          <div class="name">execute_tool_action</div>
+          <div class="desc">Run one MCP tool — market, fundamentals, or news — for the selected ticker. The market tool batches when possible; fundamentals and news fan out under a thread pool with a configurable parallelism. Every call is gated by the budget manager (per-provider, per-day cap) and writes back into <span class="mono">per_ticker_data</span>. Failures land in <span class="mono">errors</span> and the ticker into <span class="mono">failed_tickers</span>. Loop returns to plan_next_action.</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="num">04</div>
+        <div>
+          <div class="name">compute_scores</div>
+          <div class="desc">For every eligible ticker (has both market and news data), compute a quality score from fundamentals (profitability, balance-sheet health, growth) and a momentum score from the 5-trading-day price return. Normalize both to a 0–10 range across the universe. Combine them into an overall score using a configurable quality/momentum weighting (defaults to roughly 55/45). Persist scores into graph state.</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="num">05</div>
+        <div>
+          <div class="name">detect_anomalies</div>
+          <div class="desc">Compare the current run against the previous run loaded from the event store. Flag two anomaly classes: volume spikes (current volume materially above the rolling average) and score deltas (a ticker whose overall score moved meaningfully versus the prior run). Anomalies become first-class signal events with their own severity.</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="num">06</div>
+        <div>
+          <div class="name">retrieve_rag_context</div>
+          <div class="desc">For each ticker in the evidence target set (top-N by score, plus any user-watchlisted ticker that fell outside top-N), embed a query like "<span class="mono">{TICKER} catalysts, trend confirmation, risk factors</span>" with OpenAI embeddings, then query Pinecone with a ticker filter and a recency cutoff. Results land in <span class="mono">per_ticker_rag_context</span>. Skipped entirely on fast-mode runs.</div>
+        </div>
+      </div>
+      <div class="step llm">
+        <div class="num">07</div>
+        <div>
+          <div class="name">synthesize_evidence</div>
+          <div class="desc">For each evidence-target ticker, build a structured bundle (price summary, fundamentals percentages, last 5 headlines, RAG matches, scores) and ask the synthesis model for a JSON response with <span class="mono">quality_narrative</span>, <span class="mono">momentum_narrative</span>, <span class="mono">news_catalyst</span>, and <span class="mono">risk_factors</span>. The system prompt bans buy/sell language. Calls fan out under a thread pool. Skipped on fast-mode runs.</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="num">08</div>
+        <div>
+          <div class="name">emit_signals</div>
+          <div class="desc">Build the canonical SignalEvent list from scores plus per-ticker synthesis, then merge in the anomaly events from node 05 (deduping by ID). Each event carries ticker, signal_type, direction, severity, confidence, score, narrative, route, and run linkage.</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="num">09</div>
+        <div>
+          <div class="name">personalize_signals</div>
+          <div class="desc">For every loaded user profile, build a UserReportBundle. Each signal is rated against the user along three axes (watchlist relevance, profile fit, risk mismatch) and combined into a fit score. Signals are routed to the watchlist or discovery bucket; discovery is gated on minimum confidence + profile fit + fit score thresholds. Mismatch alerts are emitted when a high-severity signal fires for a low-risk user. Bundles are persisted immediately to <span class="mono">user_report_bundles</span>.</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="num">10</div>
+        <div>
+          <div class="name">check_user_alerts</div>
+          <div class="desc">Walk every active user-defined alert in the <span class="mono">user_alerts</span> table, compare the threshold against the freshly fetched market data for that ticker, and collect the triggers. Marks fired alerts in SQLite and accumulates a <span class="mono">triggered_user_alerts</span> list for delivery.</div>
+        </div>
+      </div>
+      <div class="step io">
+        <div class="num">11</div>
+        <div>
+          <div class="name">post_alerts</div>
+          <div class="desc">For each user with a Telegram chat ID and notifications enabled, dedupe and forward the high-urgency signals from their bundle to the <span class="mono">ALERT_WEBHOOK_URL</span> n8n endpoint. Triggered user-defined alerts go to a separate webhook. Both fail soft — exceptions are caught, recorded into the run's <span class="mono">errors</span>, and the pipeline continues.</div>
+        </div>
+      </div>
+      <div class="step io">
+        <div class="num">12</div>
+        <div>
+          <div class="name">post_candidates</div>
+          <div class="desc">Only fires on weekly full runs (<span class="mono">trigger_weekly_digest=true, scope=full</span>). For each user with the weekly-digest flag set and a non-empty email, build a weekly digest payload from their bundle and forward it to the <span class="mono">CANDIDATE_WEBHOOK_URL</span>.</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="num">13</div>
+        <div>
+          <div class="name">assemble_report_json</div>
+          <div class="desc">Build the typed ReportPayload — top opportunities, strategy breakdown, insights, data sources, system metadata, anomaly signals, tool errors. This is the legacy report shape served by <span class="mono">/latest-report</span> and consumed by the Strategy page and the email digest pipeline.</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="num">14</div>
+        <div>
+          <div class="name">assemble_markdown</div>
+          <div class="desc">Render the JSON report as Markdown for the email digest path. Pure formatting — no recomputation.</div>
+        </div>
+      </div>
+      <div class="step io">
+        <div class="num">15</div>
+        <div>
+          <div class="name">post_to_n8n</div>
+          <div class="desc">POST the full JSON report to <span class="mono">N8N_WEBHOOK_URL</span> for archival and downstream automation. Skipped when the run was started with <span class="mono">no_post=true</span> or when <span class="mono">SKIP_N8N_POST</span> is set.</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="num">16</div>
+        <div>
+          <div class="name">persist_report</div>
+          <div class="desc">Write the JSON report to <span class="mono">data/reports/{run_date}.json</span>. The file-based history is what <span class="mono">/latest-report</span> reads.</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="num">17</div>
+        <div>
+          <div class="name">persist_snapshot</div>
+          <div class="desc">Insert one row into <span class="mono">analysis_runs</span> and one row per signal into <span class="mono">signal_events</span>. Then post a small <em>monitor event</em> (run status, error count, signal count) to the n8n run-monitor webhook so a failed weekly run can page somewhere.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="principle">
+      <span class="tag">Design note</span>
+      <div class="headline">One LLM call line, two LLM call sites.</div>
+      <div class="applied">There are exactly two places the pipeline reaches for an LLM: the planner (one call per loop iteration to pick the next data action) and the synthesizer (one call per evidence-target ticker to produce the structured narrative). Everything else — scoring, anomaly detection, fit calculation, ranking, mismatch detection, bundle assembly — is deterministic Python that can be regression-tested with a numeric diff. Cost and latency are predictable; the LLM's job is framing, not arithmetic.</div>
+    </div>
+  </section>
+
+  <!-- ── 6. SCORING & PERSONALIZATION ────────────────────────────── -->
+  <section>
+    <div class="kicker">05 · Scoring, ranking, personalization</div>
+    <h2>How a raw signal becomes a personalized recommendation</h2>
+
+    <h3>Quality score</h3>
+    <p>A composite of three fundamentals dimensions: profitability (return on equity, operating margin), balance-sheet health (debt-to-equity, lower is better), and growth (revenue growth and EPS growth). Each component is bounded into a 0–10 range, then blended with fixed weights — profitability is given the most weight, balance-sheet and growth roughly equal. Missing inputs default to a neutral 5.0, so a ticker is never penalized for absent fundamentals data; it just doesn't get a high score.</p>
+
+    <h3>Momentum score</h3>
+    <p>The 5-trading-day return of the closing price. Strictly price-based — no implied-volatility, no relative-strength, nothing fancy. The intent is for the score to be cheap to compute, easy to explain, and resistant to provider drift. After the raw return is computed, scores are min-max normalized across the universe so the ranking is always interpretable as "best of this week's run."</p>
+
+    <h3>Overall score</h3>
+    <p>A weighted blend of quality and momentum. The default weighting biases slightly toward quality, which expresses the product's intentional preference for medium-horizon over swing-trade signals. The weights are configurable from the environment so they can be tuned without a code change.</p>
+
+    <h3>Personalization fit</h3>
+    <p>Each emitted signal is rescored per-user along three axes:</p>
+    <ul>
+      <li><strong>Watchlist relevance</strong> — binary. Either the ticker is on the user's watchlist or it isn't. Watchlist signals get the highest priority, always.</li>
+      <li><strong>Profile fit</strong> — qualitative match between the signal's metadata (asset class, sector, themes) and the user's stated interests, preferred asset classes, and time horizon. A signal in a sector the user marked as an interest scores higher; a signal whose asset class is on the user's preferred list scores higher; a momentum signal for a user with a short horizon scores higher and a momentum signal for a user with a long horizon scores lower. Hard constraints (e.g. <span class="mono">no_crypto</span>) zero the fit out completely — these are enforced in code, not in the prompt.</li>
+      <li><strong>Risk mismatch</strong> — a penalty applied when the signal severity is high but the user's stated risk tolerance is low. This is what feeds the mismatch-alerts surface.</li>
+    </ul>
+    <p>The three axes combine into a single <em>fit score</em> in roughly the 0–1 range — watchlist relevance and profile fit pull it up, risk mismatch pulls it down. Watchlist signals are sorted by urgency then fit; discovery signals are sorted by fit alone, and gated on minimum confidence + profile fit + fit score thresholds before they are shown to the user. The thresholds live in environment variables so they can be tuned without a deploy.</p>
+
+    <h3>Action frame</h3>
+    <p>Every signal carries one of three labels: <em>Trim Risk</em> (held in watchlist, severe, direction down), <em>Review</em> (held in watchlist, severe), or <em>Monitor</em> (everything else). The frame is what the dashboard surfaces — not "buy" or "sell." The product's stance is that users are responsible for the trade; Investora is responsible for the prioritization.</p>
+
+    <h3>Market regime &amp; risk alignment</h3>
+    <p>Two derived verdicts that sit at the top of the dashboard. <em>Market regime</em> is computed from the average momentum across the universe — Risk-On, Neutral, or Risk-Off. <em>Risk alignment</em> is computed from the user's watchlist — when a low-risk user holds a watchlist whose average overall score is unusually high, the dashboard surfaces an "Off-Profile" or "Caution" verdict. Both are deterministic.</p>
+  </section>
+
+  <!-- ── 7. DATA LAYER ───────────────────────────────────────────── -->
+  <section>
+    <div class="kicker">06 · Data layer</div>
+    <h2>What gets stored, and where</h2>
+    <p>State lives in a single SQLite file at <span class="mono">langgraph/data/investora.db</span>, opened in WAL mode with foreign keys on. Eight tables, all created idempotently from one DDL block on first connect. SQLite was a deliberate MVP-stage choice — it's portable, fast, and the schema is intentionally simple enough to migrate to Postgres without a rewrite when the user count justifies it.</p>
+
+    <div class="schema">
+      <div class="tbl">
+        <div class="name">users</div>
+        <div class="desc">Account credentials. PBKDF2-SHA256 password hashes with a per-user salt; usernames are normalized lowercase and uniquely indexed.</div>
+        <div class="key">PK user_id · UNIQUE username</div>
+      </div>
+      <div class="tbl">
+        <div class="name">user_profiles</div>
+        <div class="desc">A single JSON blob per user, holding risk tolerance, interests, horizon, constraints, preferred asset classes, base currency, digest preferences, Telegram chat ID, and any manually entered positions.</div>
+        <div class="key">PK user_id · profile_json</div>
+      </div>
+      <div class="tbl">
+        <div class="name">user_watchlists</div>
+        <div class="desc">One row per user; the tickers are stored as a JSON array of uppercase strings. Read by every analysis run during init_state and joined into profile loads via a single LEFT JOIN to avoid an N+1 read.</div>
+        <div class="key">PK user_id · tickers_json</div>
+      </div>
+      <div class="tbl">
+        <div class="name">user_alerts</div>
+        <div class="desc">User-defined price alerts. Each row carries a ticker, a condition (<span class="mono">price_above</span> / <span class="mono">price_below</span> / <span class="mono">daily_move</span>), a numeric threshold, a status, and timestamps.</div>
+        <div class="key">PK id · idx user_id · idx status</div>
+      </div>
+      <div class="tbl">
+        <div class="name">analysis_runs</div>
+        <div class="desc">One row per pipeline execution: scope (full / fast), tickers run, score map, failed tickers, error count. The historical record that the dashboard, the strategy page, and the run-history dropdown all read from.</div>
+        <div class="key">PK run_id · run_date</div>
+      </div>
+      <div class="tbl">
+        <div class="name">signal_events</div>
+        <div class="desc">The atomic output unit of a run. One row per signal with ticker, type (quality / momentum / news_catalyst / risk_flag / volume_spike / score_delta), direction, severity, confidence, score, narrative, and route. Indexed for ticker-history lookups by ticker + date.</div>
+        <div class="key">PK id · FK run_id · idx ticker+date</div>
+      </div>
+      <div class="tbl">
+        <div class="name">user_report_bundles</div>
+        <div class="desc">Per-user, per-run snapshots — the JSON blob the dashboard renders. Stored as the bundle is built (in node 09) so a partial pipeline failure later in the run still leaves the user's dashboard correct.</div>
+        <div class="key">PK (user_id, run_id) · idx user_id+date</div>
+      </div>
+      <div class="tbl">
+        <div class="name">api_budget_log</div>
+        <div class="desc">Per-day, per-provider call counter. The budget manager increments this on every external call; when a per-day cap is hit, subsequent calls are skipped and the affected tickers are marked failed for the run. Prevents a runaway loop from blowing through a free-tier quota.</div>
+        <div class="key">PK (date, provider)</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── 8. INTEGRATIONS & DELIVERY ──────────────────────────────── -->
+  <section>
+    <div class="kicker">07 · Integrations & delivery</div>
+    <h2>External systems and the n8n boundary</h2>
+
+    <h3>Data providers</h3>
+    <p>Four live providers, each with a deterministic mock counterpart toggled by <span class="mono">USE_MOCK_DATA</span>. <em>Marketstack</em> and <em>yfinance</em> back market data; yfinance covers the always-on dashboard endpoints (quotes, charts, snapshots, search, top-movers) and Marketstack covers the pipeline's batch market fetch. <em>Financial Modeling Prep</em> backs fundamentals. <em>Finnhub</em> backs news. <em>Pinecone</em> backs RAG retrieval; the embeddings come from OpenAI's <span class="mono">text-embedding-3-small</span>. <em>OpenAI</em> drives the planner, the synthesizer, the embeddings, and the on-demand AI-view summaries on the Stock Analysis page.</p>
+
+    <h3>n8n workflows</h3>
+    <p>Six workflows, each a small JSON export under <span class="mono">n8n/</span>:</p>
+    <div class="endpoints">
+      <div class="endpoint"><span class="path">cron-weekly-full.json</span><div class="note">Monday 06:00 UTC. POSTs <span class="mono">/run-weekly</span> with a Bearer secret. Triggers the full digest path.</div></div>
+      <div class="endpoint"><span class="path">cron-daily-fast.json</span><div class="note">Daily fast run. Skips synthesis; refreshes scores, anomalies, and personalized bundles.</div></div>
+      <div class="endpoint"><span class="path">telegram-alerts.json</span><div class="note">Receives the alert webhook payload, splits it per-user, formats a Markdown message, sends to Telegram.</div></div>
+      <div class="endpoint"><span class="path">weekly-candidates-email.json</span><div class="note">Receives the weekly digest payload and renders the HTML email per user.</div></div>
+      <div class="endpoint"><span class="path">run-monitor.json</span><div class="note">Receives the post-run monitor event. Pages on errors and high failure counts.</div></div>
+      <div class="endpoint"><span class="path">auth.json</span><div class="note">Legacy auth flow workflow, kept for reference.</div></div>
+    </div>
+    <p style="margin-top: 16px;">The pattern is consistent: the Python pipeline never talks directly to Telegram or to an SMTP server. It talks to a webhook. n8n owns the credential, the formatting, and the retry. If a webhook URL is unset, the corresponding delivery silently no-ops — the analysis still completes. This is the single most important reliability decision in the system.</p>
+
+    <h3>Deployment</h3>
+    <p>Backend on <em>Render</em> (Python service, autoscaling off, env vars injected from the dashboard). Frontend on <em>Vercel</em> (Vite static build, SPA rewrite). The full deployment config is checked in under <span class="mono">deployment/render.yaml</span> and <span class="mono">deployment/vercel.json</span>. Sentry is wired on both ends, opt-in via DSN — initialization failures are swallowed so a broken DSN never crashes the server.</p>
+  </section>
+
+  <!-- ── 9. RELIABILITY ──────────────────────────────────────────── -->
+  <section>
+    <div class="kicker">08 · Reliability and observability</div>
+    <h2>What protects the pipeline from itself</h2>
+
+    <p>A weekly cron job that touches four external providers, an LLM, a vector store, and three webhooks has a lot of failure modes. The reliability stack is small but specific:</p>
+
+    <div class="principle">
+      <span class="tag">Reliability · 01</span>
+      <div class="headline">Deterministic mock mode for every provider.</div>
+      <div class="applied">Every MCP tool has a mock counterpart. Setting <span class="mono">USE_MOCK_DATA=true</span> flips the entire pipeline to deterministic fixtures, including a 100-ticker S&amp;P-100 mock universe with sector metadata. Tests, local dev, and CI all run end-to-end without touching a single paid API.</div>
+    </div>
+
+    <div class="principle">
+      <span class="tag">Reliability · 02</span>
+      <div class="headline">Per-provider, per-day API budget.</div>
+      <div class="applied">A budget manager intercepts every provider call, increments a counter in <span class="mono">api_budget_log</span>, and refuses calls that would breach the daily cap. Watchlist tickers are prioritized in the universe order so a budget-starved run still produces a useful dashboard for paying users. When the budget runs out mid-run, affected tickers are added to <span class="mono">failed_tickers</span> rather than crashing the run.</div>
+    </div>
+
+    <div class="principle">
+      <span class="tag">Reliability · 03</span>
+      <div class="headline">Run limiter to bound concurrency.</div>
+      <div class="applied">A single in-process semaphore caps concurrent runs at a configurable limit, with a bounded queue and a wait timeout. New requests get a 429 with a structured message when the queue is full. Prevents a click-mash on the dashboard's <em>Run Analysis</em> button from spawning a thundering herd of OpenAI calls.</div>
+    </div>
+
+    <div class="principle">
+      <span class="tag">Reliability · 04</span>
+      <div class="headline">Delivery isolation — every outbound call fails soft.</div>
+      <div class="applied">Every <span class="mono">post_*</span> node wraps its HTTP call in a try/except, catches every exception, appends to the run's <span class="mono">errors</span>, and continues. A failing Telegram webhook does not break the email digest; a failing email digest does not break the persisted dashboard. The reasoning layer never knows whether delivery succeeded.</div>
+    </div>
+
+    <div class="principle">
+      <span class="tag">Observability · 01</span>
+      <div class="headline">Per-node timings and provider call counts, exposed.</div>
+      <div class="applied">Every node is wrapped in a timer that records duration both into the run state and into a global metrics snapshot. <span class="mono">/debug/metrics</span> returns the full snapshot — node timings, provider call counts, recent run summaries — without an external tracer. Cheap, in-process, and good enough for the current scale.</div>
+    </div>
+
+    <div class="principle">
+      <span class="tag">Observability · 02</span>
+      <div class="headline">Correlation IDs and a redaction filter on logs.</div>
+      <div class="applied">Every request gets a UUID echoed back in <span class="mono">X-Correlation-ID</span>. The redaction filter is installed on the root logger before any provider call, so API keys and user passwords never appear in a structured log line — even when an exception trace would otherwise leak them.</div>
+    </div>
+
+    <div class="principle">
+      <span class="tag">Observability · 03</span>
+      <div class="headline">Contract tests on the user-facing endpoints.</div>
+      <div class="applied">The test suite under <span class="mono">langgraph/tests/</span> covers the mock fast-path graph integration plus three contract tests: <span class="mono">/run-analysis-stream</span>, <span class="mono">/user/{id}/dashboard</span>, and <span class="mono">/user/{id}/personalized-signals</span>. The same shape is validated again on the frontend with Zod, so a Python-side schema change can't ship silently.</div>
+    </div>
+  </section>
+
+  <!-- ── 10. KNOWN LIMITATIONS ───────────────────────────────────── -->
+  <section>
+    <div class="kicker">09 · Where the seams are</div>
+    <h2>Known limitations — what would break first at 10× scale</h2>
+
+    <div class="split">
+      <div>
+        <h3 class="heading-shipped">What works today</h3>
+        <ul>
+          <li>End-to-end weekly + daily cron pipeline running against live providers.</li>
+          <li>Personalized dashboards, watchlist signals, discovery signals, mismatch alerts.</li>
+          <li>Streaming run progress to the UI via Server-Sent Events.</li>
+          <li>User-defined price alerts checked inside the same pipeline as analysis.</li>
+          <li>Telegram + email delivery via n8n webhooks, with soft-fail isolation.</li>
+          <li>Mock-mode parity — every provider has a deterministic stand-in.</li>
+          <li>Typed report contract — Pydantic on the server, Zod on the client, both validated.</li>
+        </ul>
+      </div>
+      <div>
+        <h3 class="heading-refused">Known gaps</h3>
+        <ul>
+          <li><strong>SQLite single-writer ceiling.</strong> WAL helps, but the database is one file. Above a few concurrent writers, queue contention will start to show. The schema is intentionally simple enough to migrate to Postgres without a rewrite.</li>
+          <li><strong>Synthesis quality is provider-bound.</strong> When OpenAI is slow or rate-limited, full runs degrade gracefully (skip_synthesis fallback) but the user-visible quality drops. There is no second-source LLM.</li>
+          <li><strong>No formal eval harness.</strong> No held-out user-labelled "was this signal useful?" dataset. There is no measurement of whether mismatch alerts actually improve user outcomes — that test is designed and not yet run.</li>
+          <li><strong>Frontend bundle size.</strong> The initial JS payload is large; per-route code-splitting is in place but further chunking would help time-to-interactive.</li>
+          <li><strong>Compliance hardening.</strong> The advisory disclaimer banner is shown on every page, but the product is not yet hardened to the standard a regulated advisory would meet.</li>
+          <li><strong>No real-time path.</strong> Not a limitation — a deliberate refusal. Real-time pushes retail investors toward overtrading. Investora's cadence is daily and weekly, by design.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── 11. ROADMAP ─────────────────────────────────────────────── -->
+  <section>
+    <div class="kicker">10 · Where this goes</div>
+    <h2>Roadmap — 30 / 60 / 90 days</h2>
+
+    <div class="reflect">
+      <div class="item">
+        <div class="label">Next 30 days · adoption + decision quality</div>
+        Tighten the first-week activation loop. The current onboarding asks for risk profile, interests, and a Telegram chat ID before the first run; the <em>time to first useful insight</em> is what the next iteration will optimize against. Define and track product KPIs for decision quality — relevance, confidence, follow-through — and tighten signal framing so users can compare opportunities with less cognitive effort.
+      </div>
+      <div class="item">
+        <div class="label">Next 60 days · product-market fit signals</div>
+        Strengthen personalization depth using behavior feedback loops — what users keep, dismiss, or act on. Improve alert usefulness with better prioritization and cadence controls. Validate retention hypotheses by cohort: new users vs. repeat weekly users.
+      </div>
+      <div class="item">
+        <div class="label">Next 90 days · scale + commercial readiness</div>
+        Expand from single-user workflows toward advisor / team use cases. Introduce portfolio-level narratives and scenario views for higher-value decision contexts. Prepare a production-readiness package focused on reliability, governance, and stakeholder reporting — including the move to Postgres and the first iteration of a formal eval harness.
+      </div>
+    </div>
+  </section>
+
+  <!-- ── 12. CARRY-FORWARD ──────────────────────────────────────── -->
+  <section>
+    <div class="kicker">11 · Transferable lessons</div>
+    <h2>What I carry forward to the next AI product</h2>
+
+    <div class="reflect">
+      <div class="item">
+        <div class="label">Schema discipline beats prompt discipline</div>
+        Typed contracts (Pydantic + Zod, the same shape on both sides) did more for quality than any prompt improvement. Once the output shape was guaranteed, the UI became deterministic, the evals became diffable, and the prompts became swappable. This is the rule I will not relitigate.
+      </div>
+      <div class="item">
+        <div class="label">Use the LLM for the thing only an LLM can do</div>
+        Investora has 17 nodes and 2 LLM call sites. Scoring, ranking, anomaly detection, fit calculation, mismatch detection — all deterministic Python. The LLM frames; it does not arithmetic. Cost and latency become predictable; regression testing becomes a numeric diff, not an LLM-as-judge loop.
+      </div>
+      <div class="item">
+        <div class="label">Constraints live at the product layer, not the prompt</div>
+        "No crypto," "ESG only," "max 20% position" are enforced in deterministic Python before any LLM call. Prompt-layer constraints are soft suggestions; product-layer constraints are guarantees — which is the thing the user signed up for.
+      </div>
+      <div class="item">
+        <div class="label">The reasoning layer must survive a broken delivery layer</div>
+        Every outbound call in Investora is wrapped, caught, and logged — never raised. If Telegram is down, the report is still written and visible in the dashboard. Graceful degradation was wired in before any outage, not after. Probabilistic pipelines have more failure points than deterministic ones, and each has to be decided on, not discovered.
+      </div>
+      <div class="item">
+        <div class="label">Friction over flattery is a product opinion, not a UX one</div>
+        Mismatch alerts are the explicit wager. A confirmation-bias system would be more engaging in the short run. Investora is betting against engagement because engagement is the wrong metric for a financial product — people who feel validated over-trade, and over-trading destroys retail returns.
+      </div>
+    </div>
+  </section>
+
+</main>
+</body>
+</html>

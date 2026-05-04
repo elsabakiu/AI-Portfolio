@@ -1,0 +1,54 @@
+{
+  "case_id": "TC035",
+  "scenario": "Add external expert remark, pure enrichment with no conflict",
+  "description": "Inspector deliberately updates the record to request an external expert assessment. Remark field goes from null to 'Engage external institute', which is enrichment not a conflict. Clean audio. No conflicts.",
+  "tags": ["update", "clean_audio", "enrichment", "remark", "no_conflict"],
+  "difficulty": "medium",
+  "audio": {"noise_profile": "clean", "snr_db": 999},
+  "split": "dev",
+  "input": {
+    "suspicion_id": "TC035",
+    "transcript": "Der Schaden sieht komplizierter aus als zunächst angenommen. Ich empfehle, ein externes Institut hinzuzuziehen für eine genauere Beurteilung. Bitte Bemerkung setzen auf externes Institut beauftragen.",
+    "existing_record": {
+      "Suspicion ID": "TC035",
+      "Asset": "Magdeburg Elbekai",
+      "Part": "Ufermauer",
+      "Object Part Category": "Außenwand",
+      "Main Component Category": "Uferwand",
+      "Status": "Damage",
+      "Material": "Beton | Spannbeton",
+      "Damage Type": "Bewehrung | Lochkorrosion",
+      "Class": "3",
+      "Length": "45",
+      "Width": "20",
+      "Depth": null,
+      "Quantity": "isolated",
+      "Location Longitudinal": "km 327+400",
+      "Location Cross Section": "wasserseitig",
+      "Location Height": "MThw",
+      "Damage description": "Lochkorrosion an der Bewehrung der Ufermauer",
+      "Remark": null,
+      "Note": null,
+      "Longitude": 11.6388,
+      "Latitude": 52.1294,
+      "Height [m+NHN]": 57.1
+    }
+  },
+  "gold": {
+    "intent": "UPDATE_FIELD",
+    "fields": {
+      "Remark": {
+        "value": "Engage external institute",
+        "source_type": "stated",
+        "evidence_span": "externes Institut hinzuzuziehen",
+        "is_critical": false
+      }
+    },
+    "conflicts": [],
+    "catalog_valid": true
+  },
+  "benchmark": {
+    "expected_warning_stages": [],
+    "expected_audio_quality": "good"
+  }
+}

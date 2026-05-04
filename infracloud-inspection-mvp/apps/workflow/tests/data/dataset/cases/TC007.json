@@ -1,0 +1,66 @@
+{
+  "case_id": "TC007",
+  "scenario": "VALIDATE_DAMAGE",
+  "description": "Inspector confirms weathering (Verwitterung) on a limestone masonry wall at Lübeck Stadthafen. Crowd noise from nearby workers. The existing record has no class; inspector derives Class 2 from visual severity.",
+  "tags": [
+    "masonry",
+    "weathering"
+  ],
+  "difficulty": "medium",
+  "audio": {
+    "noise_profile": "crowd",
+    "snr_db": 10
+  },
+  "split": "dev",
+  "input": {
+    "suspicion_id": "TC007",
+    "transcript": "Lübeck Stadthafen, Kammerwand Ost, Feld 5. Verwitterung am Mauerwerk, Kalksandstein. Das ist deutlich sichtbar, ich würde Klasse 2 vergeben — Oberfläche ist aufgeraut aber noch strukturell in Ordnung. Schaden wird bestätigt.",
+    "existing_record": {
+      "Suspicion ID": "TC007",
+      "Asset": "Lübeck Stadthafen",
+      "Part": "Kammerwand Ost",
+      "Object Part Category": "Betonkonstruktion",
+      "Main Component Category": "Kaikonstruktion",
+      "Status": "Suspicion",
+      "Material": "Mauerwerk | Kalksandstein",
+      "Damage Type": "Mauerwerk | Verwitterung",
+      "Class": null,
+      "Length": null,
+      "Width": null,
+      "Depth": null,
+      "Quantity": "general",
+      "Location Longitudinal": "Kammerwand Ost",
+      "Location Cross Section": "Feld 5",
+      "Location Height": null,
+      "Damage description": null,
+      "Remark": null,
+      "Note": null,
+      "Longitude": 9.994,
+      "Latitude": 54.323,
+      "Height [m+NHN]": 1.5
+    }
+  },
+  "gold": {
+    "intent": "VALIDATE_DAMAGE",
+    "fields": {
+      "Class": {
+        "value": "2",
+        "source_type": "stated",
+        "evidence_span": "ich würde Klasse 2 vergeben",
+        "is_critical": true
+      },
+      "Status": {
+        "value": "Damage",
+        "source_type": "stated",
+        "evidence_span": "Schaden wird bestätigt",
+        "is_critical": true
+      }
+    },
+    "conflicts": [],
+    "catalog_valid": true
+  },
+  "benchmark": {
+    "expected_warning_stages": [],
+    "expected_audio_quality": "degraded"
+  }
+}

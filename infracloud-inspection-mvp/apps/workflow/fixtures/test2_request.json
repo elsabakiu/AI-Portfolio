@@ -1,0 +1,10 @@
+{
+  "suspicion_id": "14402",
+  "existing_record": {
+    "ID": 14402,
+    "Status": "Suspicion",
+    "Material": "Steine | Geotextil",
+    "Damage Type": "Formänderung | Abgesackt"
+  },
+  "transcript_override": "Das ist kein Schaden. Bitte als fehlerhaft erkannt markieren."
+}

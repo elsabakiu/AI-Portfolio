@@ -1,0 +1,85 @@
+{
+  "case_id": "TC003",
+  "scenario": "VALIDATE_DAMAGE",
+  "description": "Inspector confirms a wet spot on a spun concrete pile at Bremen Weserkai. Wave noise present. Inspector provides explicit dimensions (length and width) that are absent from the existing record.",
+  "tags": [
+    "wet_spot",
+    "spun_concrete",
+    "dimensions"
+  ],
+  "difficulty": "medium",
+  "audio": {
+    "noise_profile": "waves",
+    "snr_db": 12
+  },
+  "split": "dev",
+  "input": {
+    "suspicion_id": "TC003",
+    "transcript": "Bremen Weserkai, Pfahlreihe 3, Pfahl Nummer 8. Feuchte Stelle am Schleuderbeton, ungefähr 40 mal 25 Zentimeter, also Länge 0,4 Meter, Breite 0,25 Meter. Material Schleuderbeton ist korrekt. Klasse 2 bestätige ich.",
+    "existing_record": {
+      "Suspicion ID": "TC003",
+      "Asset": "Bremen Weserkai",
+      "Part": "Pfahlreihe 3",
+      "Object Part Category": "Betonkonstruktion",
+      "Main Component Category": "Kaikonstruktion",
+      "Status": "Suspicion",
+      "Material": "Beton | Schleuderbeton",
+      "Damage Type": "Beton | Feuchte Stelle",
+      "Class": "2",
+      "Length": null,
+      "Width": null,
+      "Depth": null,
+      "Quantity": "isolated",
+      "Location Longitudinal": "Pfahlreihe 3",
+      "Location Cross Section": "Pfahl 8",
+      "Location Height": null,
+      "Damage description": null,
+      "Remark": null,
+      "Note": null,
+      "Longitude": 9.994,
+      "Latitude": 54.323,
+      "Height [m+NHN]": 1.5
+    }
+  },
+  "gold": {
+    "intent": "VALIDATE_DAMAGE",
+    "fields": {
+      "Length": {
+        "value": "0.4",
+        "source_type": "stated",
+        "evidence_span": "Länge 0,4 Meter",
+        "is_critical": false
+      },
+      "Width": {
+        "value": "250",
+        "source_type": "stated",
+        "evidence_span": "Breite 0,25 Meter",
+        "is_critical": false
+      },
+      "Material": {
+        "value": "Beton | Schleuderbeton",
+        "source_type": "stated",
+        "evidence_span": "Material Schleuderbeton ist korrekt",
+        "is_critical": false
+      },
+      "Class": {
+        "value": "2",
+        "source_type": "stated",
+        "evidence_span": "Klasse 2 bestätige ich",
+        "is_critical": true
+      },
+      "Status": {
+        "value": "Damage",
+        "source_type": "inferred",
+        "evidence_span": "Klasse 2 bestätige ich",
+        "is_critical": true
+      }
+    },
+    "conflicts": [],
+    "catalog_valid": true
+  },
+  "benchmark": {
+    "expected_warning_stages": [],
+    "expected_audio_quality": "degraded"
+  }
+}

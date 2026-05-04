@@ -1,0 +1,66 @@
+{
+  "case_id": "TC040",
+  "scenario": "CREATE_NEW",
+  "description": "Inspector notes new steel corrosion but cannot take measurements from the current position. Only material and damage type are provided. Light wind noise present.",
+  "tags": ["create_new", "corrosion", "steel", "minimal_details", "wind_light"],
+  "difficulty": "easy",
+  "audio": {"noise_profile": "wind_light", "snr_db": 15},
+  "split": "dev",
+  "input": {
+    "suspicion_id": "TC040",
+    "transcript": "Neuer Schaden, noch nicht im System. An der Stahlspundwand, Abschnitt 3. Material unlegierten Stahl, Schaden ist Verrostung. Kann gerade nicht messen, Zugang ist eingeschränkt. Bitte neu erfassen.",
+    "existing_record": {
+      "Suspicion ID": "TC040",
+      "Asset": "Kiel Förde Spundwand",
+      "Part": "Spundwand",
+      "Object Part Category": "Oberfläche",
+      "Main Component Category": "Wand",
+      "Status": null,
+      "Material": null,
+      "Damage Type": null,
+      "Class": null,
+      "Length": null,
+      "Width": null,
+      "Depth": null,
+      "Quantity": null,
+      "Location Longitudinal": null,
+      "Location Cross Section": null,
+      "Location Height": null,
+      "Damage description": null,
+      "Remark": null,
+      "Note": null,
+      "Longitude": null,
+      "Latitude": null,
+      "Height [m+NHN]": null
+    }
+  },
+  "gold": {
+    "intent": "CREATE_NEW",
+    "fields": {
+      "Status": {
+        "value": "Damage",
+        "source_type": "inferred",
+        "evidence_span": "Neuer Schaden",
+        "is_critical": true
+      },
+      "Material": {
+        "value": "Metall | unlegierten Stahl",
+        "source_type": "stated",
+        "evidence_span": "Material unlegierten Stahl",
+        "is_critical": true
+      },
+      "Damage Type": {
+        "value": "Stahl | Verrostet",
+        "source_type": "stated",
+        "evidence_span": "Schaden ist Verrostung",
+        "is_critical": true
+      }
+    },
+    "conflicts": [],
+    "catalog_valid": true
+  },
+  "benchmark": {
+    "expected_warning_stages": [],
+    "expected_audio_quality": "good"
+  }
+}

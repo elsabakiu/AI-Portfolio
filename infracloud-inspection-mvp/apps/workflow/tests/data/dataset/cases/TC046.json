@@ -1,0 +1,66 @@
+{
+  "case_id": "TC046",
+  "scenario": "EDGE_CASE",
+  "description": "Inspector uses hedging language throughout, expressing uncertainty about both damage type and class. Values must be extracted as inferred with is_critical=false. Crowd noise present.",
+  "tags": ["edge_case", "hedging", "uncertainty", "inferred_fields", "crowd"],
+  "difficulty": "hard",
+  "audio": {"noise_profile": "crowd", "snr_db": 10},
+  "split": "test",
+  "input": {
+    "suspicion_id": "TC046",
+    "transcript": "Ich glaube es könnte ein Längsriss sein, bin mir aber nicht hundert Prozent sicher. Vielleicht Klasse zwei. Das Material ist Stahlbeton, das ist klar.",
+    "existing_record": {
+      "Suspicion ID": "TC046",
+      "Asset": "Bremerhaven Kaje Nord",
+      "Part": "Kaimauer",
+      "Object Part Category": "Oberfläche",
+      "Main Component Category": "Wand",
+      "Status": "Suspicion",
+      "Material": "Beton | Stahlbeton",
+      "Damage Type": null,
+      "Class": null,
+      "Length": null,
+      "Width": null,
+      "Depth": null,
+      "Quantity": null,
+      "Location Longitudinal": "km 1+780",
+      "Location Cross Section": "wasserseitig",
+      "Location Height": "MThw",
+      "Damage description": "Möglicher Riss an der Kaimauer",
+      "Remark": null,
+      "Note": null,
+      "Longitude": 8.5737,
+      "Latitude": 53.5359,
+      "Height [m+NHN]": 1.8
+    }
+  },
+  "gold": {
+    "intent": "VALIDATE_DAMAGE",
+    "fields": {
+      "Damage Type": {
+        "value": "Risse | Längsriss (trocken)",
+        "source_type": "inferred",
+        "evidence_span": "Ich glaube es könnte ein Längsriss sein",
+        "is_critical": false
+      },
+      "Class": {
+        "value": "2",
+        "source_type": "inferred",
+        "evidence_span": "Vielleicht Klasse zwei",
+        "is_critical": false
+      },
+      "Material": {
+        "value": "Beton | Stahlbeton",
+        "source_type": "stated",
+        "evidence_span": "Das Material ist Stahlbeton, das ist klar",
+        "is_critical": false
+      }
+    },
+    "conflicts": [],
+    "catalog_valid": true
+  },
+  "benchmark": {
+    "expected_warning_stages": [],
+    "expected_audio_quality": "degraded"
+  }
+}

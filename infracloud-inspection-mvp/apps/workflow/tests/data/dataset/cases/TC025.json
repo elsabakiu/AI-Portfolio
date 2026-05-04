@@ -1,0 +1,61 @@
+{
+  "case_id": "TC025",
+  "scenario": "Class upgrade from 2 to 3, single field conflict",
+  "description": "Inspector reports that the crack has widened significantly since the last inspection and upgrades the severity class from 2 to 3. Light wind noise. Single field conflict on Class.",
+  "tags": ["update", "wind_light", "class_upgrade", "single_conflict"],
+  "difficulty": "easy",
+  "audio": {"noise_profile": "wind_light", "snr_db": 15},
+  "split": "dev",
+  "input": {
+    "suspicion_id": "TC025",
+    "transcript": "Der Längsriss hat sich seit der letzten Begehung deutlich verbreitert. Die Breite liegt jetzt bei über einem Millimeter, das ist Klasse drei. Ich korrigiere die Klasse von zwei auf drei.",
+    "existing_record": {
+      "Suspicion ID": "TC025",
+      "Asset": "Köln Deutzer Hafen",
+      "Part": "Kaimauer",
+      "Object Part Category": "Außenwand",
+      "Main Component Category": "Uferwand",
+      "Status": "Damage",
+      "Material": "Beton | Stahlbeton",
+      "Damage Type": "Risse | Längsriss (trocken)",
+      "Class": "2",
+      "Length": "80",
+      "Width": "0.5",
+      "Depth": null,
+      "Quantity": "isolated",
+      "Location Longitudinal": "km 688+400",
+      "Location Cross Section": "wasserseitig",
+      "Location Height": "MThw",
+      "Damage description": "Längsriss an der Kaimauerfläche",
+      "Remark": null,
+      "Note": null,
+      "Longitude": 6.9787,
+      "Latitude": 50.9364,
+      "Height [m+NHN]": 42.3
+    }
+  },
+  "gold": {
+    "intent": "UPDATE_FIELD",
+    "fields": {
+      "Class": {
+        "value": "3",
+        "source_type": "stated",
+        "evidence_span": "das ist Klasse drei",
+        "is_critical": true
+      }
+    },
+    "conflicts": [
+      {
+        "field": "Class",
+        "existing_value": "2",
+        "correct_value": "3",
+        "direction": "correction"
+      }
+    ],
+    "catalog_valid": true
+  },
+  "benchmark": {
+    "expected_warning_stages": [],
+    "expected_audio_quality": "degraded"
+  }
+}

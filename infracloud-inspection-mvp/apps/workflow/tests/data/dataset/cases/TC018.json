@@ -1,0 +1,54 @@
+{
+  "case_id": "TC018",
+  "scenario": "Rejection after noting prior repair",
+  "description": "Inspector notes a previously repaired area, observes the repair is holding well, and rejects the current suspicion as the damage has been successfully addressed.",
+  "tags": ["reject", "clean_audio", "prior_repair"],
+  "difficulty": "medium",
+  "audio": {"noise_profile": "clean", "snr_db": 999},
+  "split": "test",
+  "input": {
+    "suspicion_id": "TC018",
+    "transcript": "Ich sehe hier eine Reparaturstelle aus der letzten Inspektion. Die Ausbesserung ist tadellos, kein neuer Schaden. Die Instandsetzung hat gut gehalten, Verdacht gegenstandslos.",
+    "existing_record": {
+      "Suspicion ID": "TC018",
+      "Asset": "Bremen Weserkai",
+      "Part": "Spundwand",
+      "Object Part Category": "Steg",
+      "Main Component Category": "Spundwand",
+      "Status": "Suspicion",
+      "Material": "Metall | unlegierten Stahl",
+      "Damage Type": "Stahl | Verrostet",
+      "Class": "2",
+      "Length": "15",
+      "Width": null,
+      "Depth": null,
+      "Quantity": "isolated",
+      "Location Longitudinal": "km 2+100",
+      "Location Cross Section": "wasserseitig",
+      "Location Height": "MTnw",
+      "Damage description": "Verdacht auf erneute Rostbildung an zuvor reparierter Stelle",
+      "Remark": "See last monitoring",
+      "Note": null,
+      "Longitude": 8.8017,
+      "Latitude": 53.0753,
+      "Height [m+NHN]": 0.8
+    }
+  },
+  "gold": {
+    "intent": "REJECT_DAMAGE",
+    "fields": {
+      "Status": {
+        "value": "Incorrectly detected",
+        "source_type": "stated",
+        "evidence_span": "kein neuer Schaden",
+        "is_critical": true
+      }
+    },
+    "conflicts": [],
+    "catalog_valid": true
+  },
+  "benchmark": {
+    "expected_warning_stages": [],
+    "expected_audio_quality": "good"
+  }
+}

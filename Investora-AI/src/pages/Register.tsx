@@ -52,7 +52,7 @@ const Register = () => {
       await login(normalizedEmail, password);
       navigate("/dashboard");
     } catch {
-      setError("Connection error. Is n8n running?");
+      setError("Connection error. Check that the API is running.");
     } finally {
       setLoading(false);
     }

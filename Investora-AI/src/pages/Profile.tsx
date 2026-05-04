@@ -27,11 +27,6 @@ import {
   type Position,
 } from "@/lib/auth";
 
-const N8N_BASE = (
-  (import.meta.env.VITE_N8N_BASE_URL as string | undefined) ??
-  "https://ai-experiementation.app.n8n.cloud/webhook"
-).replace(/\/+$/, "");
-
 // ── Helpers ────────────────────────────────────────────────────────────────
 
 const INTEREST_LABELS: Record<string, string> = {
@@ -198,7 +193,7 @@ export default function Profile() {
       } else {
         toast({
           title: "Save failed",
-          description: "Could not reach n8n. Check it's running.",
+          description: "Could not save profile. Please try again.",
           variant: "destructive",
         });
       }

@@ -1,0 +1,78 @@
+{
+  "case_id": "TC049",
+  "scenario": "EDGE_CASE",
+  "description": "Inspector states measurements without units — 'dreißig' and 'zwei' — requiring the pipeline to infer units (assumed cm and mm respectively). Class is stated explicitly as two. Wave noise present.",
+  "tags": ["edge_case", "unit_ambiguity", "inferred_units", "validate_damage", "waves"],
+  "difficulty": "medium",
+  "audio": {"noise_profile": "waves", "snr_db": 12},
+  "split": "dev",
+  "input": {
+    "suspicion_id": "TC049",
+    "transcript": "Längsriss bestätigt, trocken. Länge dreißig, Breite etwa zwei. Klasse zwei.",
+    "existing_record": {
+      "Suspicion ID": "TC049",
+      "Asset": "Elbe Deichlinie",
+      "Part": "Deckwerk",
+      "Object Part Category": "Oberfläche",
+      "Main Component Category": "Böschung",
+      "Status": "Suspicion",
+      "Material": "Beton | Stahlbeton",
+      "Damage Type": null,
+      "Class": null,
+      "Length": null,
+      "Width": null,
+      "Depth": null,
+      "Quantity": null,
+      "Location Longitudinal": "km 12+550",
+      "Location Cross Section": "wasserseitig",
+      "Location Height": "MThw",
+      "Damage description": "Verdacht auf Längsriss an der Böschungsdecke",
+      "Remark": null,
+      "Note": null,
+      "Longitude": 9.8821,
+      "Latitude": 53.5241,
+      "Height [m+NHN]": 3.1
+    }
+  },
+  "gold": {
+    "intent": "VALIDATE_DAMAGE",
+    "fields": {
+      "Status": {
+        "value": "Damage",
+        "source_type": "inferred",
+        "evidence_span": "Längsriss bestätigt",
+        "is_critical": true
+      },
+      "Damage Type": {
+        "value": "Risse | Längsriss (trocken)",
+        "source_type": "stated",
+        "evidence_span": "Längsriss bestätigt, trocken",
+        "is_critical": true
+      },
+      "Length": {
+        "value": "30",
+        "source_type": "inferred",
+        "evidence_span": "Länge dreißig",
+        "is_critical": false
+      },
+      "Width": {
+        "value": "2",
+        "source_type": "inferred",
+        "evidence_span": "Breite etwa zwei",
+        "is_critical": false
+      },
+      "Class": {
+        "value": "2",
+        "source_type": "stated",
+        "evidence_span": "Klasse zwei",
+        "is_critical": true
+      }
+    },
+    "conflicts": [],
+    "catalog_valid": true
+  },
+  "benchmark": {
+    "expected_warning_stages": [],
+    "expected_audio_quality": "degraded"
+  }
+}

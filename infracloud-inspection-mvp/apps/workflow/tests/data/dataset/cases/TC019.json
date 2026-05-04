@@ -1,0 +1,54 @@
+{
+  "case_id": "TC019",
+  "scenario": "Rejection with hesitation then confirmation of no damage",
+  "description": "Inspector initially hesitates, suggesting there might be something, but upon closer look confirms there is nothing to see. Wave noise present. Hesitation pattern challenges intent extraction.",
+  "tags": ["reject", "waves", "hesitation", "ambiguous_start"],
+  "difficulty": "hard",
+  "audio": {"noise_profile": "waves", "snr_db": 12},
+  "split": "dev",
+  "input": {
+    "suspicion_id": "TC019",
+    "transcript": "Ich dachte... nein, hier ist wirklich nichts zu sehen. Kurz hatte ich den Eindruck einer Verfärbung, aber das ist nur der Lichteinfall vom Wasser. Kein Schaden, fehlerhafter Verdacht.",
+    "existing_record": {
+      "Suspicion ID": "TC019",
+      "Asset": "Bremerhaven Südhafen",
+      "Part": "Leitwerk",
+      "Object Part Category": "Oberfläche",
+      "Main Component Category": "Böschung",
+      "Status": "Suspicion",
+      "Material": "Beton | Stahlbeton",
+      "Damage Type": "Beton | Feuchte Stelle",
+      "Class": "1",
+      "Length": null,
+      "Width": null,
+      "Depth": null,
+      "Quantity": "isolated",
+      "Location Longitudinal": "km 1+450",
+      "Location Cross Section": "wasserseitig",
+      "Location Height": "MThw",
+      "Damage description": "Verdacht auf Feuchtigkeitsfleck an der Betonoberfläche",
+      "Remark": null,
+      "Note": null,
+      "Longitude": 8.5737,
+      "Latitude": 53.5359,
+      "Height [m+NHN]": 2.1
+    }
+  },
+  "gold": {
+    "intent": "REJECT_DAMAGE",
+    "fields": {
+      "Status": {
+        "value": "Incorrectly detected",
+        "source_type": "stated",
+        "evidence_span": "hier ist wirklich nichts zu sehen",
+        "is_critical": true
+      }
+    },
+    "conflicts": [],
+    "catalog_valid": true
+  },
+  "benchmark": {
+    "expected_warning_stages": [],
+    "expected_audio_quality": "degraded"
+  }
+}

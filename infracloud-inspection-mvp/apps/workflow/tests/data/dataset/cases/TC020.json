@@ -1,0 +1,54 @@
+{
+  "case_id": "TC020",
+  "scenario": "Explicit 'fehlerhaft erkannt' phrase used",
+  "description": "Inspector explicitly uses the German term 'fehlerhaft erkannt' which directly maps to the status value 'Incorrectly detected'. Clean audio makes this a clear intent extraction case.",
+  "tags": ["reject", "clean_audio", "explicit_phrase", "keyword_match"],
+  "difficulty": "easy",
+  "audio": {"noise_profile": "clean", "snr_db": 999},
+  "split": "test",
+  "input": {
+    "suspicion_id": "TC020",
+    "transcript": "Ich stehe jetzt an Position km zwei plus dreihundert, linkes Ufer. Die verdächtige Stelle wurde fehlerhaft erkannt, es handelt sich um eine natürliche Steinstruktur. Schaden nicht bestätigt.",
+    "existing_record": {
+      "Suspicion ID": "TC020",
+      "Asset": "Duisburg Rheinkai",
+      "Part": "Deckwerk",
+      "Object Part Category": "Oberfläche",
+      "Main Component Category": "Böschung",
+      "Status": "Suspicion",
+      "Material": "Steine | Kies",
+      "Damage Type": "Formänderung | Abgesackt",
+      "Class": "2",
+      "Length": null,
+      "Width": null,
+      "Depth": null,
+      "Quantity": "isolated",
+      "Location Longitudinal": "km 2+300",
+      "Location Cross Section": "landseitig",
+      "Location Height": "GOK",
+      "Damage description": "Verdacht auf Absackung im Kiesdeckwerk",
+      "Remark": null,
+      "Note": null,
+      "Longitude": 6.7281,
+      "Latitude": 51.4556,
+      "Height [m+NHN]": 28.3
+    }
+  },
+  "gold": {
+    "intent": "REJECT_DAMAGE",
+    "fields": {
+      "Status": {
+        "value": "Incorrectly detected",
+        "source_type": "stated",
+        "evidence_span": "fehlerhaft erkannt",
+        "is_critical": true
+      }
+    },
+    "conflicts": [],
+    "catalog_valid": true
+  },
+  "benchmark": {
+    "expected_warning_stages": [],
+    "expected_audio_quality": "good"
+  }
+}

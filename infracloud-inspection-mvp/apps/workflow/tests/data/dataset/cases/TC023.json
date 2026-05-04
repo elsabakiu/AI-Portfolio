@@ -1,0 +1,54 @@
+{
+  "case_id": "TC023",
+  "scenario": "Rejection, optical artifact (dirt or stain)",
+  "description": "Inspector identifies a stain or dirt mark on the surface that was misinterpreted as structural damage by the detection system. Clean audio. Inspector is certain it is not damage.",
+  "tags": ["reject", "clean_audio", "optical_artifact", "stain"],
+  "difficulty": "medium",
+  "audio": {"noise_profile": "clean", "snr_db": 999},
+  "split": "test",
+  "input": {
+    "suspicion_id": "TC023",
+    "transcript": "Was hier als Schaden markiert wurde, ist lediglich ein Schmutzfleck auf der Betonoberfläche. Ich habe die Stelle abgewischt und darunter ist der Beton völlig intakt. Kein Schaden, fehlerhaft erkannt.",
+    "existing_record": {
+      "Suspicion ID": "TC023",
+      "Asset": "Mannheim Rheinkai",
+      "Part": "Kaimauer",
+      "Object Part Category": "Oberfläche",
+      "Main Component Category": "Uferwand",
+      "Status": "Suspicion",
+      "Material": "Beton | Stahlbeton",
+      "Damage Type": "Beton | Rostfahnen",
+      "Class": "1",
+      "Length": null,
+      "Width": null,
+      "Depth": null,
+      "Quantity": "isolated",
+      "Location Longitudinal": "km 424+100",
+      "Location Cross Section": "wasserseitig",
+      "Location Height": "MThw",
+      "Damage description": "Verdacht auf Rostfahnen an der Kaioberfläche",
+      "Remark": null,
+      "Note": null,
+      "Longitude": 8.4681,
+      "Latitude": 49.4839,
+      "Height [m+NHN]": 96.2
+    }
+  },
+  "gold": {
+    "intent": "REJECT_DAMAGE",
+    "fields": {
+      "Status": {
+        "value": "Incorrectly detected",
+        "source_type": "stated",
+        "evidence_span": "ist lediglich ein Schmutzfleck",
+        "is_critical": true
+      }
+    },
+    "conflicts": [],
+    "catalog_valid": true
+  },
+  "benchmark": {
+    "expected_warning_stages": [],
+    "expected_audio_quality": "good"
+  }
+}

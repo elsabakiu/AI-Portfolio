@@ -1,0 +1,73 @@
+{
+  "case_id": "TC009",
+  "scenario": "VALIDATE_DAMAGE",
+  "description": "Inspector confirms settlement (Abgesackt) of a geotextile riprap section at Magdeburg Elbekai. Wave noise present. Inspector clarifies the exact location within the section, adding detail absent from the existing record.",
+  "tags": [
+    "settlement",
+    "geotextile",
+    "location"
+  ],
+  "difficulty": "medium",
+  "audio": {
+    "noise_profile": "waves",
+    "snr_db": 12
+  },
+  "split": "dev",
+  "input": {
+    "suspicion_id": "TC009",
+    "transcript": "Magdeburg Elbekai, Böschungsabschnitt 6. Das Geotextil ist abgesackt, genauer gesagt im Bereich der Uferlinie, etwa 3 Meter vom nördlichen Ende. Klasse 2, Menge allgemein. Steine mit Geotextil, stimmt. Ich bestätige den Schaden.",
+    "existing_record": {
+      "Suspicion ID": "TC009",
+      "Asset": "Magdeburg Elbekai",
+      "Part": "Böschungsabschnitt 6",
+      "Object Part Category": "Betonkonstruktion",
+      "Main Component Category": "Kaikonstruktion",
+      "Status": "Suspicion",
+      "Material": "Steine | Geotextil",
+      "Damage Type": "Formänderung | Abgesackt",
+      "Class": "2",
+      "Length": null,
+      "Width": null,
+      "Depth": null,
+      "Quantity": "general",
+      "Location Longitudinal": "Böschungsabschnitt 6",
+      "Location Cross Section": null,
+      "Location Height": null,
+      "Damage description": null,
+      "Remark": null,
+      "Note": null,
+      "Longitude": 9.994,
+      "Latitude": 54.323,
+      "Height [m+NHN]": 1.5
+    }
+  },
+  "gold": {
+    "intent": "VALIDATE_DAMAGE",
+    "fields": {
+      "field": {
+        "value": "Uferlinie, ~3 m vom nördlichen Ende",
+        "source_type": "stated",
+        "evidence_span": "im Bereich der Uferlinie, etwa 3 Meter vom nördlichen Ende",
+        "is_critical": false
+      },
+      "Class": {
+        "value": "2",
+        "source_type": "stated",
+        "evidence_span": "Klasse 2",
+        "is_critical": true
+      },
+      "Status": {
+        "value": "Damage",
+        "source_type": "stated",
+        "evidence_span": "Ich bestätige den Schaden",
+        "is_critical": true
+      }
+    },
+    "conflicts": [],
+    "catalog_valid": true
+  },
+  "benchmark": {
+    "expected_warning_stages": [],
+    "expected_audio_quality": "degraded"
+  }
+}

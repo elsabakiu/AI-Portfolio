@@ -68,6 +68,16 @@ CREATE TABLE IF NOT EXISTS user_profiles (
     updated_at   TEXT NOT NULL
 );
 
+CREATE TABLE IF NOT EXISTS users (
+    user_id       TEXT PRIMARY KEY,
+    username      TEXT NOT NULL UNIQUE,
+    password_hash TEXT NOT NULL,
+    created_at    TEXT NOT NULL,
+    updated_at    TEXT NOT NULL
+);
+
+CREATE INDEX IF NOT EXISTS idx_users_username ON users(username);
+
 CREATE TABLE IF NOT EXISTS user_report_bundles (
     user_id     TEXT NOT NULL,
     run_id      TEXT NOT NULL,
@@ -447,6 +457,49 @@ def load_all_profile_jsons_with_watchlists() -> List[Dict[str, Any]]:
         data["_watchlist"] = json.loads(r["watchlist_json"] or "[]")
         result.append(data)
     return result
+
+
+# ---------------------------------------------------------------------------
+# User auth helpers (Phase 1)
+# ---------------------------------------------------------------------------
+
+def create_user(user_id: str, username: str, password_hash: str) -> None:
+    """Insert a new user record."""
+    from datetime import datetime, timezone
+
+    normalized_username = username.strip().lower()
+    now = datetime.now(timezone.utc).isoformat()
+    with _conn() as con:
+        con.execute(
+            """
+            INSERT INTO users (user_id, username, password_hash, created_at, updated_at)
+            VALUES (?, ?, ?, ?, ?)
+            """,
+            (user_id, normalized_username, password_hash, now, now),
+        )
+
+
+def load_user_by_username(username: str) -> Optional[Dict[str, Any]]:
+    """Return a user record by normalized username, or None."""
+    normalized_username = username.strip().lower()
+    with _conn() as con:
+        row = con.execute(
+            """
+            SELECT user_id, username, password_hash, created_at, updated_at
+            FROM users
+            WHERE username = ?
+            """,
+            (normalized_username,),
+        ).fetchone()
+    if row is None:
+        return None
+    return {
+        "user_id": row["user_id"],
+        "username": row["username"],
+        "password_hash": row["password_hash"],
+        "created_at": row["created_at"],
+        "updated_at": row["updated_at"],
+    }
 
 
 # ---------------------------------------------------------------------------

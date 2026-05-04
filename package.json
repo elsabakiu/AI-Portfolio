@@ -1,0 +1,11 @@
+{
+  "name": "ai-portfolio",
+  "private": true,
+  "scripts": {
+    "dev": "npm --prefix infracloud-inspection-mvp run dev",
+    "dev:investora": "npm --prefix investora-ai run dev",
+    "dev:inspection": "npm --prefix infracloud-inspection-mvp run dev",
+    "build:investora": "npm --prefix investora-ai run build",
+    "build:inspection": "npm --prefix infracloud-inspection-mvp run build"
+  }
+}

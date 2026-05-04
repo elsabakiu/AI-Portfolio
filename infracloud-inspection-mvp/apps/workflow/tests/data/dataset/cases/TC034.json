@@ -1,0 +1,97 @@
+{
+  "case_id": "TC034",
+  "scenario": "Multi-conflict: material, damage type, class, and quantity all corrected",
+  "description": "Inspector corrects four fields simultaneously. The structure was misidentified in all key characterisation fields. Material, Damage Type, Class, and Quantity all change. Mixed noise, difficult audio.",
+  "tags": ["update", "mixed_noise", "multi_conflict", "four_conflicts"],
+  "difficulty": "hard",
+  "audio": {"noise_profile": "mixed", "snr_db": 4},
+  "split": "dev",
+  "input": {
+    "suspicion_id": "TC034",
+    "transcript": "Das ist alles falsch dokumentiert. Kein Stahlbeton, hier haben wir unlegiertes Stahl. Keine Feuchte Stelle, das ist massiver Rost. Die Klasse muss auf drei, nicht eins. Und der Schaden ist flächendeckend, also allgemein, nicht isoliert.",
+    "existing_record": {
+      "Suspicion ID": "TC034",
+      "Asset": "Mannheim Rheinkai",
+      "Part": "Spundwand",
+      "Object Part Category": "Steg",
+      "Main Component Category": "Spundwand",
+      "Status": "Damage",
+      "Material": "Beton | Stahlbeton",
+      "Damage Type": "Beton | Feuchte Stelle",
+      "Class": "1",
+      "Length": "80",
+      "Width": "40",
+      "Depth": null,
+      "Quantity": "isolated",
+      "Location Longitudinal": "km 425+200",
+      "Location Cross Section": "wasserseitig",
+      "Location Height": "MTnw",
+      "Damage description": "Feuchtigkeitserscheinung an der Wandfläche",
+      "Remark": null,
+      "Note": null,
+      "Longitude": 8.4712,
+      "Latitude": 49.4801,
+      "Height [m+NHN]": 95.6
+    }
+  },
+  "gold": {
+    "intent": "UPDATE_FIELD",
+    "fields": {
+      "Material": {
+        "value": "Metall | unlegierten Stahl",
+        "source_type": "stated",
+        "evidence_span": "haben wir unlegiertes Stahl",
+        "is_critical": true
+      },
+      "Damage Type": {
+        "value": "Stahl | Verrostet",
+        "source_type": "stated",
+        "evidence_span": "das ist massiver Rost",
+        "is_critical": true
+      },
+      "Class": {
+        "value": "3",
+        "source_type": "stated",
+        "evidence_span": "Klasse muss auf drei",
+        "is_critical": true
+      },
+      "Quantity": {
+        "value": "general",
+        "source_type": "stated",
+        "evidence_span": "flächendeckend, also allgemein",
+        "is_critical": false
+      }
+    },
+    "conflicts": [
+      {
+        "field": "Material",
+        "existing_value": "Beton | Stahlbeton",
+        "correct_value": "Metall | unlegierten Stahl",
+        "direction": "correction"
+      },
+      {
+        "field": "Damage Type",
+        "existing_value": "Beton | Feuchte Stelle",
+        "correct_value": "Stahl | Verrostet",
+        "direction": "correction"
+      },
+      {
+        "field": "Class",
+        "existing_value": "1",
+        "correct_value": "3",
+        "direction": "correction"
+      },
+      {
+        "field": "Quantity",
+        "existing_value": "isolated",
+        "correct_value": "general",
+        "direction": "correction"
+      }
+    ],
+    "catalog_valid": true
+  },
+  "benchmark": {
+    "expected_warning_stages": [],
+    "expected_audio_quality": "partial"
+  }
+}

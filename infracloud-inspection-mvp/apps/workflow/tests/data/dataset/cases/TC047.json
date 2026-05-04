@@ -1,0 +1,72 @@
+{
+  "case_id": "TC047",
+  "scenario": "EDGE_CASE",
+  "description": "Inspector mentions Glasfaser as material, which is not a valid WSV catalog value. The material field cannot be updated with an invalid value. Class and Length are valid and should be extracted. Clean audio.",
+  "tags": ["edge_case", "invalid_catalog", "material_not_found", "catalog_validation", "clean_audio"],
+  "difficulty": "hard",
+  "audio": {"noise_profile": "clean", "snr_db": 999},
+  "split": "dev",
+  "input": {
+    "suspicion_id": "TC047",
+    "transcript": "Das Material ist Glasfaser, kein Beton. Schaden bestätigt, Klasse zwei, Länge dreißig Zentimeter.",
+    "existing_record": {
+      "Suspicion ID": "TC047",
+      "Asset": "Kiel Nordhafen",
+      "Part": "Kaimauer",
+      "Object Part Category": "Oberfläche",
+      "Main Component Category": "Wand",
+      "Status": "Suspicion",
+      "Material": "Beton | Stahlbeton",
+      "Damage Type": "Beton | Feuchte Stelle",
+      "Class": null,
+      "Length": null,
+      "Width": null,
+      "Depth": null,
+      "Quantity": null,
+      "Location Longitudinal": "km 4+910",
+      "Location Cross Section": "wasserseitig",
+      "Location Height": "MThw",
+      "Damage description": "Verdacht auf Feuchtigkeitsfleck",
+      "Remark": null,
+      "Note": null,
+      "Longitude": 10.1345,
+      "Latitude": 54.3271,
+      "Height [m+NHN]": 1.5
+    }
+  },
+  "gold": {
+    "intent": "UPDATE_FIELD",
+    "fields": {
+      "Material": {
+        "value": null,
+        "source_type": "inferred",
+        "evidence_span": "Das Material ist Glasfaser",
+        "is_critical": true
+      },
+      "Status": {
+        "value": "Damage",
+        "source_type": "stated",
+        "evidence_span": "Schaden bestätigt",
+        "is_critical": true
+      },
+      "Class": {
+        "value": "2",
+        "source_type": "stated",
+        "evidence_span": "Klasse zwei",
+        "is_critical": true
+      },
+      "Length": {
+        "value": "30",
+        "source_type": "stated",
+        "evidence_span": "Länge dreißig Zentimeter",
+        "is_critical": false
+      }
+    },
+    "conflicts": [],
+    "catalog_valid": false
+  },
+  "benchmark": {
+    "expected_warning_stages": ["validate_catalog"],
+    "expected_audio_quality": "good"
+  }
+}

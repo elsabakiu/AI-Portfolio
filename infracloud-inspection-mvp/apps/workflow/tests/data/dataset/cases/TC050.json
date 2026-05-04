@@ -1,0 +1,72 @@
+{
+  "case_id": "TC050",
+  "scenario": "EDGE_CASE",
+  "description": "Inspector describes two separate damages in a single utterance. Intent is UNSURE because the pipeline cannot determine which damage to record. Gold fields cover only the first damage (Längsriss at Achse 3). Mixed noise.",
+  "tags": ["edge_case", "multiple_damages", "ambiguous_intent", "unsure", "mixed"],
+  "difficulty": "hard",
+  "audio": {"noise_profile": "mixed", "snr_db": 4},
+  "split": "test",
+  "input": {
+    "suspicion_id": "TC050",
+    "transcript": "An Achse drei gibt es einen Längsriss, trocken, Klasse zwei, etwa zwanzig Zentimeter lang. Und etwa fünf Meter weiter an Achse vier sehe ich eine feuchte Stelle, würde ich als Klasse eins einordnen.",
+    "existing_record": {
+      "Suspicion ID": "TC050",
+      "Asset": "Kiel Nordhafen",
+      "Part": "Kaimauer",
+      "Object Part Category": "Oberfläche",
+      "Main Component Category": "Wand",
+      "Status": "Suspicion",
+      "Material": "Beton | Stahlbeton",
+      "Damage Type": null,
+      "Class": null,
+      "Length": null,
+      "Width": null,
+      "Depth": null,
+      "Quantity": null,
+      "Location Longitudinal": "Achse 3",
+      "Location Cross Section": null,
+      "Location Height": null,
+      "Damage description": "Verdacht auf Schaden an Achse 3",
+      "Remark": null,
+      "Note": null,
+      "Longitude": 10.1345,
+      "Latitude": 54.3271,
+      "Height [m+NHN]": null
+    }
+  },
+  "gold": {
+    "intent": "UNSURE",
+    "fields": {
+      "Status": {
+        "value": "Damage",
+        "source_type": "stated",
+        "evidence_span": "An Achse drei gibt es einen Längsriss",
+        "is_critical": true
+      },
+      "Damage Type": {
+        "value": "Risse | Längsriss (trocken)",
+        "source_type": "stated",
+        "evidence_span": "Längsriss, trocken",
+        "is_critical": true
+      },
+      "Class": {
+        "value": "2",
+        "source_type": "stated",
+        "evidence_span": "Klasse zwei",
+        "is_critical": true
+      },
+      "Length": {
+        "value": "20",
+        "source_type": "stated",
+        "evidence_span": "etwa zwanzig Zentimeter lang",
+        "is_critical": false
+      }
+    },
+    "conflicts": [],
+    "catalog_valid": true
+  },
+  "benchmark": {
+    "expected_warning_stages": [],
+    "expected_audio_quality": "partial"
+  }
+}

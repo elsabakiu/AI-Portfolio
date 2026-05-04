@@ -5,6 +5,7 @@ import {
   setSession,
   clearSession,
   loginUser,
+  getCurrentUser,
   updateUserProfile,
   type Session,
   type UserProfile,
@@ -56,14 +57,51 @@ export function UserProvider({ children }: { children: ReactNode }) {
 
   // Rehydrate session from localStorage on mount (no network call needed)
   useEffect(() => {
-    const session = getSession();
-    setUser(session);
-    setIsLoading(false);
-    if (session?.userId && session.profile) {
-      mirrorProfileToBackend(session.userId, session.profile).catch(() => {
-        /* non-critical — silent */
-      });
-    }
+    const restoreSession = async () => {
+      const session = getSession();
+      if (!session) {
+        setUser(null);
+        setIsLoading(false);
+        return;
+      }
+
+      // New backend-issued sessions can be validated and refreshed from FastAPI.
+      if (session.token) {
+        const current = await getCurrentUser(session.token);
+        if (current.ok && current.userId && current.username && current.profile) {
+          const hydrated: Session = {
+            userId: current.userId,
+            username: current.username,
+            profile: current.profile,
+            token: session.token,
+          };
+          setSession(hydrated);
+          setUser(hydrated);
+          mirrorProfileToBackend(hydrated.userId, hydrated.profile).catch(() => {
+            /* non-critical — silent */
+          });
+          setIsLoading(false);
+          return;
+        }
+
+        clearSession();
+        setUser(null);
+        setIsLoading(false);
+        return;
+      }
+
+      // Legacy local-only sessions are kept during the migration window so
+      // existing users are not forcibly logged out on upgrade.
+      setUser(session);
+      setIsLoading(false);
+      if (session.userId && session.profile) {
+        mirrorProfileToBackend(session.userId, session.profile).catch(() => {
+          /* non-critical — silent */
+        });
+      }
+    };
+
+    void restoreSession();
   }, []);
 
   // Load watchlist whenever the logged-in user changes
@@ -104,7 +142,12 @@ export function UserProvider({ children }: { children: ReactNode }) {
   const login = async (username: string, password: string) => {
     const result = await loginUser(username, password);
     if (result.ok && result.userId && result.profile) {
-      const session: Session = { username, userId: result.userId, profile: result.profile };
+      const session: Session = {
+        username,
+        userId: result.userId,
+        profile: result.profile,
+        token: result.token,
+      };
       setSession(session);
       setUser(session);
       mirrorProfileToBackend(session.userId, session.profile).catch(() => {
@@ -123,16 +166,15 @@ export function UserProvider({ children }: { children: ReactNode }) {
 
   const updateProfile = async (profile: UserProfile) => {
     if (!user) return false;
-    const ok = await updateUserProfile(user.username, profile);
-    // Mirror to FastAPI SQLite so the LangGraph PersonalizationNode can read it.
-    // Fire-and-forget — a failure here is non-critical (n8n is the source of truth).
-    mirrorProfileToBackend(user.userId, profile).catch(() => {
-      /* non-critical — swallow silently */
-    });
+    const ok = await updateUserProfile(user.userId, profile);
     if (ok) {
       const updated: Session = { ...user, profile };
       setSession(updated);
       setUser(updated);
+      // Keep the mirror cache in sync so the rehydration mirror skips this profile.
+      const hash = profileHash(profile);
+      mirroredHashesRef.current[user.userId] = hash;
+      localStorage.setItem(`investora_profile_mirror_hash_${user.userId}`, hash);
     }
     return ok;
   };

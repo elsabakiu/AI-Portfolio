@@ -1,0 +1,67 @@
+{
+  "case_id": "TC037",
+  "scenario": "Crack width measurement leads to class conflict from 1 to 3",
+  "description": "Inspector measures the crack width at 2.5mm on site. This measured value implies a derived class of 3, which conflicts with the existing class of 1. Heavy wind noise makes this a challenging audio case.",
+  "tags": ["update", "wind_heavy", "class_conflict", "derived_value", "measurement"],
+  "difficulty": "hard",
+  "audio": {"noise_profile": "wind_heavy", "snr_db": 6},
+  "split": "dev",
+  "input": {
+    "suspicion_id": "TC037",
+    "transcript": "Rissbreite jetzt mit dem Rissbreitenmessgerät erfasst: zwei Komma fünf Millimeter. Das entspricht Klasse drei. Die eingetragene Klasse eins stimmt nicht, muss auf drei korrigiert werden.",
+    "existing_record": {
+      "Suspicion ID": "TC037",
+      "Asset": "Rostock Stadthafen",
+      "Part": "Ufermauer",
+      "Object Part Category": "Außenwand",
+      "Main Component Category": "Uferwand",
+      "Status": "Damage",
+      "Material": "Beton | Stahlbeton",
+      "Damage Type": "Risse | Längsriss (trocken)",
+      "Class": "1",
+      "Length": "55",
+      "Width": null,
+      "Depth": null,
+      "Quantity": "isolated",
+      "Location Longitudinal": "km 2+080",
+      "Location Cross Section": "wasserseitig",
+      "Location Height": "MThw",
+      "Damage description": "Längsriss mit unbekannter Rissbreite",
+      "Remark": null,
+      "Note": null,
+      "Longitude": 12.1398,
+      "Latitude": 54.0901,
+      "Height [m+NHN]": 0.9
+    }
+  },
+  "gold": {
+    "intent": "UPDATE_FIELD",
+    "fields": {
+      "Width": {
+        "value": "2.5",
+        "source_type": "stated",
+        "evidence_span": "zwei Komma fünf Millimeter",
+        "is_critical": false
+      },
+      "Class": {
+        "value": "3",
+        "source_type": "derived",
+        "evidence_span": "Das entspricht Klasse drei",
+        "is_critical": true
+      }
+    },
+    "conflicts": [
+      {
+        "field": "Class",
+        "existing_value": "1",
+        "correct_value": "3",
+        "direction": "correction"
+      }
+    ],
+    "catalog_valid": true
+  },
+  "benchmark": {
+    "expected_warning_stages": [],
+    "expected_audio_quality": "partial"
+  }
+}

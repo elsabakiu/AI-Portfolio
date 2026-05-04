@@ -1,0 +1,89 @@
+{
+  "case_id": "TC048",
+  "scenario": "EDGE_CASE",
+  "description": "Inspector opens with 'Schaden bestätigt' suggesting VALIDATE_DAMAGE, but immediately corrects both material and damage type from the existing record. Conflicts on Material and Damage Type override the validation opener, resulting in UPDATE_FIELD intent. Heavy wind noise.",
+  "tags": ["edge_case", "ambiguous_intent", "conflict_override", "update_field", "wind_heavy"],
+  "difficulty": "hard",
+  "audio": {"noise_profile": "wind_heavy", "snr_db": 6},
+  "split": "test",
+  "input": {
+    "suspicion_id": "TC048",
+    "transcript": "Schaden bestätigt. Aber das Material ist nicht Stahlbeton, das ist Mörtel. Und der Schadenstyp ist nicht Feuchte Stelle, sondern abgerissen. Klasse zwei. Länge zwanzig Zentimeter.",
+    "existing_record": {
+      "Suspicion ID": "TC048",
+      "Asset": "Hamburg Kaianlage",
+      "Part": "Kaimauer",
+      "Object Part Category": "Oberfläche",
+      "Main Component Category": "Wand",
+      "Status": "Suspicion",
+      "Material": "Beton | Stahlbeton",
+      "Damage Type": "Beton | Feuchte Stelle",
+      "Class": "2",
+      "Length": null,
+      "Width": null,
+      "Depth": null,
+      "Quantity": null,
+      "Location Longitudinal": "km 6+200",
+      "Location Cross Section": "wasserseitig",
+      "Location Height": "MThw",
+      "Damage description": "Verdacht auf Feuchtigkeitsfleck an der Kaimauer",
+      "Remark": null,
+      "Note": null,
+      "Longitude": 9.9937,
+      "Latitude": 53.5444,
+      "Height [m+NHN]": 2.0
+    }
+  },
+  "gold": {
+    "intent": "UPDATE_FIELD",
+    "fields": {
+      "Status": {
+        "value": "Damage",
+        "source_type": "stated",
+        "evidence_span": "Schaden bestätigt",
+        "is_critical": true
+      },
+      "Material": {
+        "value": "Beton | Mörtel",
+        "source_type": "stated",
+        "evidence_span": "das ist Mörtel",
+        "is_critical": true
+      },
+      "Damage Type": {
+        "value": "Allgemein | Abgerissen",
+        "source_type": "stated",
+        "evidence_span": "sondern abgerissen",
+        "is_critical": true
+      },
+      "Class": {
+        "value": "2",
+        "source_type": "stated",
+        "evidence_span": "Klasse zwei",
+        "is_critical": true
+      },
+      "Length": {
+        "value": "20",
+        "source_type": "stated",
+        "evidence_span": "Länge zwanzig Zentimeter",
+        "is_critical": false
+      }
+    },
+    "conflicts": [
+      {
+        "field": "Material",
+        "existing_value": "Beton | Stahlbeton",
+        "new_value": "Beton | Mörtel"
+      },
+      {
+        "field": "Damage Type",
+        "existing_value": "Beton | Feuchte Stelle",
+        "new_value": "Allgemein | Abgerissen"
+      }
+    ],
+    "catalog_valid": true
+  },
+  "benchmark": {
+    "expected_warning_stages": [],
+    "expected_audio_quality": "partial"
+  }
+}

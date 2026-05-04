@@ -1,0 +1,79 @@
+{
+  "case_id": "TC024",
+  "scenario": "Material correction concrete to unalloyed steel with damage type cascade",
+  "description": "Inspector corrects the material from reinforced concrete to unalloyed steel, which cascades to a change in damage type from wet spot to rust. Class remains at 2. Clean audio.",
+  "tags": ["update", "clean_audio", "material_correction", "damage_type_cascade"],
+  "difficulty": "medium",
+  "audio": {"noise_profile": "clean", "snr_db": 999},
+  "split": "dev",
+  "input": {
+    "suspicion_id": "TC024",
+    "transcript": "Das hier ist kein Stahlbeton, das ist eine Stahlkonstruktion aus unlegiertem Stahl. Der Schaden ist auch kein Feuchtefleck sondern Verrostung. Klasse bleibt bei zwei, aber Material und Schadenstyp müssen korrigiert werden.",
+    "existing_record": {
+      "Suspicion ID": "TC024",
+      "Asset": "Magdeburg Elbekai",
+      "Part": "Spundwand",
+      "Object Part Category": "Steg",
+      "Main Component Category": "Spundwand",
+      "Status": "Damage",
+      "Material": "Beton | Stahlbeton",
+      "Damage Type": "Beton | Feuchte Stelle",
+      "Class": "2",
+      "Length": "30",
+      "Width": "5",
+      "Depth": null,
+      "Quantity": "isolated",
+      "Location Longitudinal": "km 326+800",
+      "Location Cross Section": "wasserseitig",
+      "Location Height": "MThw",
+      "Damage description": "Feuchte Stelle an der Wandoberfläche",
+      "Remark": null,
+      "Note": null,
+      "Longitude": 11.6411,
+      "Latitude": 52.1277,
+      "Height [m+NHN]": 56.8
+    }
+  },
+  "gold": {
+    "intent": "UPDATE_FIELD",
+    "fields": {
+      "Material": {
+        "value": "Metall | unlegierten Stahl",
+        "source_type": "stated",
+        "evidence_span": "das ist eine Stahlkonstruktion aus unlegiertem Stahl",
+        "is_critical": true
+      },
+      "Damage Type": {
+        "value": "Stahl | Verrostet",
+        "source_type": "stated",
+        "evidence_span": "kein Feuchtefleck sondern Verrostung",
+        "is_critical": true
+      },
+      "Class": {
+        "value": "2",
+        "source_type": "stated",
+        "evidence_span": "Klasse bleibt bei zwei",
+        "is_critical": false
+      }
+    },
+    "conflicts": [
+      {
+        "field": "Material",
+        "existing_value": "Beton | Stahlbeton",
+        "correct_value": "Metall | unlegierten Stahl",
+        "direction": "correction"
+      },
+      {
+        "field": "Damage Type",
+        "existing_value": "Beton | Feuchte Stelle",
+        "correct_value": "Stahl | Verrostet",
+        "direction": "correction"
+      }
+    ],
+    "catalog_valid": true
+  },
+  "benchmark": {
+    "expected_warning_stages": [],
+    "expected_audio_quality": "good"
+  }
+}

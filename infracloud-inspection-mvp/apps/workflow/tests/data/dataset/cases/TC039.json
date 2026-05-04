@@ -1,0 +1,96 @@
+{
+  "case_id": "TC039",
+  "scenario": "CREATE_NEW",
+  "description": "Inspector discovers a new dry longitudinal crack not previously recorded. Provides full details including material, damage type, class, length, width, and quantity. Clean audio.",
+  "tags": ["create_new", "crack", "concrete", "full_details", "clean_audio"],
+  "difficulty": "easy",
+  "audio": {"noise_profile": "clean", "snr_db": 999},
+  "split": "dev",
+  "input": {
+    "suspicion_id": "TC039",
+    "transcript": "Ich habe hier einen neuen Schaden gefunden, der noch nicht erfasst ist. An der Kaianlage Abschnitt 7, Feld 12, wasserseitig. Längsriss, trocken. Material ist Stahlbeton. Klasse 2. Länge 25 Zentimeter, Breite 1,8 Millimeter. Einzelschaden, isoliert. Bitte als neuen Eintrag anlegen.",
+    "existing_record": {
+      "Suspicion ID": "TC039",
+      "Asset": "Hamburg Kaianlage",
+      "Part": "Kaimauer",
+      "Object Part Category": "Oberfläche",
+      "Main Component Category": "Wand",
+      "Status": null,
+      "Material": null,
+      "Damage Type": null,
+      "Class": null,
+      "Length": null,
+      "Width": null,
+      "Depth": null,
+      "Quantity": null,
+      "Location Longitudinal": null,
+      "Location Cross Section": null,
+      "Location Height": null,
+      "Damage description": null,
+      "Remark": null,
+      "Note": null,
+      "Longitude": null,
+      "Latitude": null,
+      "Height [m+NHN]": null
+    }
+  },
+  "gold": {
+    "intent": "CREATE_NEW",
+    "fields": {
+      "Status": {
+        "value": "Damage",
+        "source_type": "inferred",
+        "evidence_span": "neuen Schaden gefunden",
+        "is_critical": true
+      },
+      "Material": {
+        "value": "Beton | Stahlbeton",
+        "source_type": "stated",
+        "evidence_span": "Material ist Stahlbeton",
+        "is_critical": true
+      },
+      "Damage Type": {
+        "value": "Risse | Längsriss (trocken)",
+        "source_type": "stated",
+        "evidence_span": "Längsriss, trocken",
+        "is_critical": true
+      },
+      "Class": {
+        "value": "2",
+        "source_type": "stated",
+        "evidence_span": "Klasse 2",
+        "is_critical": true
+      },
+      "Length": {
+        "value": "25",
+        "source_type": "stated",
+        "evidence_span": "Länge 25 Zentimeter",
+        "is_critical": false
+      },
+      "Width": {
+        "value": "1.8",
+        "source_type": "stated",
+        "evidence_span": "Breite 1,8 Millimeter",
+        "is_critical": false
+      },
+      "Quantity": {
+        "value": "isolated",
+        "source_type": "stated",
+        "evidence_span": "Einzelschaden, isoliert",
+        "is_critical": false
+      },
+      "Location Cross Section": {
+        "value": "wasserseitig",
+        "source_type": "stated",
+        "evidence_span": "wasserseitig",
+        "is_critical": false
+      }
+    },
+    "conflicts": [],
+    "catalog_valid": true
+  },
+  "benchmark": {
+    "expected_warning_stages": [],
+    "expected_audio_quality": "good"
+  }
+}

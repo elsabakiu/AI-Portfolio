@@ -1,0 +1,81 @@
+{
+  "case_id": "TC015",
+  "scenario": "VALIDATE_DAMAGE",
+  "description": "Inspector confirms a measurement anomaly flag (Maßangabe zu groß) on a gravel revetment at Duisburg Rheinkai. Wave noise. The existing record says 'zu klein' but inspector states the value is too large — a direct conflict requiring resolution.",
+  "tags": [
+    "gravel",
+    "measurement_anomaly"
+  ],
+  "difficulty": "medium",
+  "audio": {
+    "noise_profile": "waves",
+    "snr_db": 12
+  },
+  "split": "dev",
+  "input": {
+    "suspicion_id": "TC015",
+    "transcript": "Duisburg Rheinkai, Böschung Nord, Feld 11. Kies, Geotextil. Die Maßangabe ist zu groß, nicht zu klein wie im System steht — der gemessene Bereich überschreitet die Sollfläche deutlich. Klasse 2. Schaden bestätigt.",
+    "existing_record": {
+      "Suspicion ID": "TC015",
+      "Asset": "Duisburg Rheinkai",
+      "Part": "Böschung Nord",
+      "Object Part Category": "Betonkonstruktion",
+      "Main Component Category": "Kaikonstruktion",
+      "Status": "Suspicion",
+      "Material": "Steine | Kies",
+      "Damage Type": "Maßangabe | Zu klein",
+      "Class": "2",
+      "Length": null,
+      "Width": null,
+      "Depth": null,
+      "Quantity": "general",
+      "Location Longitudinal": "Böschung Nord",
+      "Location Cross Section": "Feld 11",
+      "Location Height": null,
+      "Damage description": null,
+      "Remark": null,
+      "Note": null,
+      "Longitude": 9.994,
+      "Latitude": 54.323,
+      "Height [m+NHN]": 1.5
+    }
+  },
+  "gold": {
+    "intent": "VALIDATE_DAMAGE",
+    "fields": {
+      "Damage Type": {
+        "value": "Maßangabe | Zu groß",
+        "source_type": "stated",
+        "evidence_span": "Die Maßangabe ist zu groß, nicht zu klein wie im System steht",
+        "is_critical": true
+      },
+      "Class": {
+        "value": "2",
+        "source_type": "stated",
+        "evidence_span": "Klasse 2",
+        "is_critical": true
+      },
+      "Status": {
+        "value": "Damage",
+        "source_type": "stated",
+        "evidence_span": "Schaden bestätigt",
+        "is_critical": true
+      }
+    },
+    "conflicts": [
+      {
+        "field": "Damage Type",
+        "existing_value": "Maßangabe | Zu klein",
+        "correct_value": "Maßangabe | Zu groß",
+        "direction": "correction"
+      }
+    ],
+    "catalog_valid": true
+  },
+  "benchmark": {
+    "expected_warning_stages": [
+      "damage_type_conflict"
+    ],
+    "expected_audio_quality": "degraded"
+  }
+}

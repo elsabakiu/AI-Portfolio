@@ -1,0 +1,140 @@
+<style>
+*{box-sizing:border-box}
+.wrap{font-size:12px;display:flex;flex-direction:column;gap:10px;padding:2px 0}
+.iter{border-radius:9px;border:0.5px solid;overflow:hidden}
+.i1{border-color:var(--color-border-secondary)}
+.i2{border-color:var(--color-border-info)}
+.i3{border-color:var(--color-border-success)}
+.hdr{padding:10px 14px;display:flex;align-items:center;justify-content:space-between;gap:8px}
+.i1 .hdr{background:var(--color-background-secondary)}
+.i2 .hdr{background:var(--color-background-info)}
+.i3 .hdr{background:var(--color-background-success)}
+.htitle{font-weight:500;font-size:13px}
+.i1 .htitle{color:var(--color-text-primary)}
+.i2 .htitle{color:var(--color-text-info)}
+.i3 .htitle{color:var(--color-text-success)}
+.hbadge{font-size:10px;font-weight:500;padding:2px 8px;border-radius:20px;white-space:nowrap}
+.i1 .hbadge{background:var(--color-background-primary);color:var(--color-text-secondary);border:0.5px solid var(--color-border-secondary)}
+.i2 .hbadge{background:var(--color-background-primary);color:var(--color-text-info);border:0.5px solid var(--color-border-info)}
+.i3 .hbadge{background:var(--color-background-primary);color:var(--color-text-success);border:0.5px solid var(--color-border-success)}
+.body{padding:10px 14px;background:var(--color-background-primary);display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:8px}
+.section{display:flex;flex-direction:column;gap:4px}
+.slabel{font-size:10px;font-weight:500;text-transform:uppercase;letter-spacing:.4px;color:var(--color-text-tertiary);margin-bottom:2px}
+.comp{border-radius:5px;padding:5px 9px;border:0.5px solid;background:var(--color-background-secondary)}
+.ct{display:block;font-weight:500;font-size:11px;line-height:1.4}
+.cs{display:block;font-size:11px;color:var(--color-text-secondary);margin-top:1px;line-height:1.4}
+.out{border-radius:5px;padding:4px 9px;border:0.5px dashed var(--color-border-tertiary)}
+.out .ct{color:var(--color-text-tertiary)}
+.out .cs{color:var(--color-text-tertiary)}
+.deliverable{margin-top:8px;grid-column:1/-1;border-radius:5px;padding:7px 10px;border:0.5px solid}
+.i1 .deliverable{background:var(--color-background-secondary);border-color:var(--color-border-secondary)}
+.i2 .deliverable{background:var(--color-background-info);border-color:var(--color-border-info)}
+.i3 .deliverable{background:var(--color-background-success);border-color:var(--color-border-success)}
+.dlt{font-size:10px;font-weight:500;text-transform:uppercase;letter-spacing:.4px}
+.i1 .dlt{color:var(--color-text-secondary)}
+.i2 .dlt{color:var(--color-text-info)}
+.i3 .dlt{color:var(--color-text-success)}
+.dls{font-size:11px;margin-top:2px}
+.i1 .dls{color:var(--color-text-primary)}
+.i2 .dls{color:var(--color-text-info)}
+.i3 .dls{color:var(--color-text-success)}
+.arr{text-align:center;color:var(--color-text-tertiary);font-size:16px;line-height:1;padding:0}
+</style>
+
+<div class="wrap">
+
+<div class="iter i1">
+  <div class="hdr">
+    <span class="htitle">Iteration 1 — Proof of concept</span>
+    <span class="hbadge">LangGraph · synthetic data · no field app</span>
+  </div>
+  <div class="body">
+    <div class="section">
+      <div class="slabel">In scope</div>
+      <div class="comp"><span class="ct">LangGraph API trigger</span><span class="cs">Accepts base64 audio file (simulated field recording) via HTTP POST</span></div>
+      <div class="comp"><span class="ct">Whisper STT node</span><span class="cs">OpenAI Whisper API · German · returns raw transcript</span></div>
+      <div class="comp"><span class="ct">LLM extraction node</span><span class="cs">GPT-4o · structured prompt → JSON: damage type · class · length · width · status · intent</span></div>
+      <div class="comp"><span class="ct">WSV catalog validation</span><span class="cs">Check extracted fields against valid WSV catalog values · flag out-of-catalog outputs</span></div>
+      <div class="comp"><span class="ct">Structured JSON output</span><span class="cs">Simulates InfraCloud damage record update payload</span></div>
+    </div>
+    <div class="section">
+      <div class="slabel">Out of scope</div>
+      <div class="out"><span class="ct">Field mobile app</span></div>
+      <div class="out"><span class="ct">Offline storage</span></div>
+      <div class="out"><span class="ct">Real InfraCloud API integration</span></div>
+      <div class="out"><span class="ct">Delta visualisation UI</span></div>
+      <div class="out"><span class="ct">Photo capture and association</span></div>
+      <div class="out"><span class="ct">Session management</span></div>
+      <div class="out"><span class="ct">Mode 1 / Mode 2 switching</span></div>
+      <div class="deliverable">
+        <div class="dlt">Deliverable</div>
+        <div class="dls">LangGraph workflow service + screen recording demo. German audio clip → correctly structured damage record JSON. Validates that the core STT → extraction → WSV validation pipeline works end-to-end.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="arr">↓</div>
+
+<div class="iter i2">
+  <div class="hdr">
+    <span class="htitle">Iteration 2 — Field MVP</span>
+    <span class="hbadge">FR1 · FR2 · FR3 · FR4 · FR5 · FR6 · FR7</span>
+  </div>
+  <div class="body">
+    <div class="section">
+      <div class="slabel">In scope</div>
+      <div class="comp"><span class="ct">FR1 — Inspection context loader</span><span class="cs">Reads active inspection + suspicion list from InfraCloud API · progress tracker</span></div>
+      <div class="comp"><span class="ct">FR2 — Field capture (sequential)</span><span class="cs">Sequential suspicion selection · voice recording · photo attach · session window association · proceed to next</span></div>
+      <div class="comp"><span class="ct">FR3 — New damage creation</span><span class="cs">Voice description · photo attach · placeholder coordinate + "location pending" flag pushed to InfraCloud</span></div>
+      <div class="comp"><span class="ct">FR4 — Offline-first store</span><span class="cs">Atomic writes per capture event · crash recovery · sync on reconnect · Mode 1 / Mode 2 switching</span></div>
+      <div class="comp"><span class="ct">FR5 — AI pipeline (cloud)</span><span class="cs">STT → intent classifier → LLM extractor → conflict detector · LangGraph service promoted to production workflow</span></div>
+      <div class="comp"><span class="ct">FR6 — Delta visualisation</span><span class="cs">Before / after per field · per-field confidence · low-confidence highlight · coordinates preserved</span></div>
+      <div class="comp"><span class="ct">FR7 — Manual validation + API write</span><span class="cs">Inspector confirms · never auto-submit · structured payload → InfraCloud API</span></div>
+    </div>
+    <div class="section">
+      <div class="slabel">Out of scope</div>
+      <div class="out"><span class="ct">AR-based suspicion selection</span></div>
+      <div class="out"><span class="ct">Continuous learning loop (FR8)</span></div>
+      <div class="out"><span class="ct">3D viewer embedded in review</span></div>
+      <div class="out"><span class="ct">Automated review flow</span></div>
+      <div class="out"><span class="ct">Multi-language (English / NL)</span></div>
+      <div class="out"><span class="ct">WSV catalog reference images in UI</span></div>
+      <div class="deliverable">
+        <div class="dlt">Deliverable</div>
+        <div class="dls">Functional field app (offline-capable) + office review UI. Covers the full FR1–FR7 loop: load → capture → AI extract → delta review → confirm write to InfraCloud. Pilotable with one real inspection team.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="arr">↓</div>
+
+<div class="iter i3">
+  <div class="hdr">
+    <span class="htitle">Iteration 3 — Full system</span>
+    <span class="hbadge">FR8 · AR targeting · automation · multi-language</span>
+  </div>
+  <div class="body">
+    <div class="section">
+      <div class="slabel">In scope</div>
+      <div class="comp"><span class="ct">FR8 — Continuous learning</span><span class="cs">Inspector corrections fed back into AI pipeline · GDPR consent + legal basis documented · iterative model improvement</span></div>
+      <div class="comp"><span class="ct">AR-based suspicion selection</span><span class="cs">Point at physical wall → select corresponding record via AR glasses (RealWear / Magic Leap) · GPS + IMU anchoring</span></div>
+      <div class="comp"><span class="ct">3D viewer in office review</span><span class="cs">Location resolution for new damages ("location pending") done inline — no two-step UX</span></div>
+      <div class="comp"><span class="ct">Progressive automation</span><span class="cs">As extraction accuracy improves, guided review flow reduces required clicks · high-confidence fields pre-accepted</span></div>
+      <div class="comp"><span class="ct">Multi-language support</span><span class="cs">English · German · Dutch (Netherlands expansion)</span></div>
+      <div class="comp"><span class="ct">WSV reference images in UI</span><span class="cs">Classification guidance embedded at point of review · example photos per damage type and class</span></div>
+    </div>
+    <div class="section">
+      <div class="slabel">Deferred / out of scope</div>
+      <div class="out"><span class="ct">Underwater inspection workflow</span><span class="cs">Diver-topside relay model · out of scope for all iterations</span></div>
+      <div class="out"><span class="ct">WSVPrüf direct API submission</span><span class="cs">Handled by InfraCloud roadmap — external dependency</span></div>
+      <div class="deliverable">
+        <div class="dlt">Deliverable</div>
+        <div class="dls">Production-ready system with AR field capture, learning loop, full multi-language support, and 3D-viewer-integrated location resolution. Suitable for commercial deployment across all WSV inspection teams.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</div>

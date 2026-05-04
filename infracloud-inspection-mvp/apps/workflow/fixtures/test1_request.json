@@ -1,0 +1,14 @@
+{
+  "suspicion_id": "14401",
+  "existing_record": {
+    "ID": 14401,
+    "Status": "Suspicion",
+    "Material": "Beton | Stahlbeton",
+    "Damage Type": null
+  },
+  "audio": {
+    "filename": "14401.wav",
+    "content_type": "audio/wav",
+    "base64": ""
+  }
+}

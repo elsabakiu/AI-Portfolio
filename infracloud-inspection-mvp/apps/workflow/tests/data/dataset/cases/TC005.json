@@ -1,0 +1,81 @@
+{
+  "case_id": "TC005",
+  "scenario": "VALIDATE_DAMAGE",
+  "description": "Inspector confirms edge breakage (Kantenabbruch) at Duisburg Rheinkai with light wind noise. Inspector specifies quantity as 'one piece', overriding the existing 'general' entry.",
+  "tags": [
+    "edge_breakage",
+    "quantity"
+  ],
+  "difficulty": "medium",
+  "audio": {
+    "noise_profile": "wind_light",
+    "snr_db": 15
+  },
+  "split": "dev",
+  "input": {
+    "suspicion_id": "TC005",
+    "transcript": "Duisburg Rheinkai, Abschnitt 2, Kante Süd. Kantenabbruch ist bestätigt, das ist aber nur ein einzelnes Stück, nicht flächig. Stahlbeton, Klasse 2. Schaden ist real.",
+    "existing_record": {
+      "Suspicion ID": "TC005",
+      "Asset": "Duisburg Rheinkai",
+      "Part": "Abschnitt 2",
+      "Object Part Category": "Betonkonstruktion",
+      "Main Component Category": "Kaikonstruktion",
+      "Status": "Suspicion",
+      "Material": "Beton | Stahlbeton",
+      "Damage Type": "Beton | Kantenabbruch",
+      "Class": "2",
+      "Length": null,
+      "Width": null,
+      "Depth": null,
+      "Quantity": "general",
+      "Location Longitudinal": "Abschnitt 2",
+      "Location Cross Section": "Kante Süd",
+      "Location Height": null,
+      "Damage description": null,
+      "Remark": null,
+      "Note": null,
+      "Longitude": 9.994,
+      "Latitude": 54.323,
+      "Height [m+NHN]": 1.5
+    }
+  },
+  "gold": {
+    "intent": "VALIDATE_DAMAGE",
+    "fields": {
+      "Quantity": {
+        "value": "one piece",
+        "source_type": "stated",
+        "evidence_span": "nur ein einzelnes Stück, nicht flächig",
+        "is_critical": false
+      },
+      "Status": {
+        "value": "Damage",
+        "source_type": "stated",
+        "evidence_span": "Schaden ist real",
+        "is_critical": true
+      },
+      "Class": {
+        "value": "2",
+        "source_type": "stated",
+        "evidence_span": "Klasse 2",
+        "is_critical": true
+      }
+    },
+    "conflicts": [
+      {
+        "field": "Quantity",
+        "existing_value": "general",
+        "correct_value": "one piece",
+        "direction": "correction"
+      }
+    ],
+    "catalog_valid": true
+  },
+  "benchmark": {
+    "expected_warning_stages": [
+      "quantity_conflict"
+    ],
+    "expected_audio_quality": "good"
+  }
+}

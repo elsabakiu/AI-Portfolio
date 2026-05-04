@@ -1,0 +1,61 @@
+{
+  "case_id": "TC026",
+  "scenario": "Class downgrade from 3 to 1, single field conflict",
+  "description": "Inspector re-evaluates the damage on site and determines the crack is much smaller than previously recorded. Class is downgraded from 3 to 1. Clean audio. Single conflict.",
+  "tags": ["update", "clean_audio", "class_downgrade", "single_conflict"],
+  "difficulty": "easy",
+  "audio": {"noise_profile": "clean", "snr_db": 999},
+  "split": "test",
+  "input": {
+    "suspicion_id": "TC026",
+    "transcript": "Bei der Vor-Ort-Kontrolle ist der Riss deutlich kleiner als dokumentiert. Die Rissbreite beträgt unter null Komma zwei Millimeter, also Klasse eins. Die Klasse war überschätzt, ich setze sie auf eins zurück.",
+    "existing_record": {
+      "Suspicion ID": "TC026",
+      "Asset": "Rostock Stadthafen",
+      "Part": "Ufermauer",
+      "Object Part Category": "Außenwand",
+      "Main Component Category": "Uferwand",
+      "Status": "Damage",
+      "Material": "Beton | Stahlbeton",
+      "Damage Type": "Risse | Längsriss (trocken)",
+      "Class": "3",
+      "Length": "40",
+      "Width": "1.2",
+      "Depth": null,
+      "Quantity": "isolated",
+      "Location Longitudinal": "km 1+200",
+      "Location Cross Section": "wasserseitig",
+      "Location Height": "MThw",
+      "Damage description": "Längsriss mit größerer Rissbreite",
+      "Remark": null,
+      "Note": null,
+      "Longitude": 12.1440,
+      "Latitude": 54.0887,
+      "Height [m+NHN]": 0.5
+    }
+  },
+  "gold": {
+    "intent": "UPDATE_FIELD",
+    "fields": {
+      "Class": {
+        "value": "1",
+        "source_type": "stated",
+        "evidence_span": "setze sie auf eins zurück",
+        "is_critical": true
+      }
+    },
+    "conflicts": [
+      {
+        "field": "Class",
+        "existing_value": "3",
+        "correct_value": "1",
+        "direction": "correction"
+      }
+    ],
+    "catalog_valid": true
+  },
+  "benchmark": {
+    "expected_warning_stages": [],
+    "expected_audio_quality": "good"
+  }
+}

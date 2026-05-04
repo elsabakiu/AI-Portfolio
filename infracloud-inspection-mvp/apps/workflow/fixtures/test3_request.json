@@ -1,0 +1,10 @@
+{
+  "suspicion_id": "14403",
+  "existing_record": {
+    "ID": 14403,
+    "Status": "Suspicion",
+    "Material": "Beton | Stahlbeton",
+    "Damage Type": "Beton | Feuchte Stelle"
+  },
+  "transcript_override": "Achtung, das ist eigentlich Stahlkorrosion, kein Betonschaden. Das Material ist unlegierten Stahl."
+}

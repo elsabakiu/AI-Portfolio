@@ -1,0 +1,66 @@
+version: "3.9"
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: infracloud_inspection_mvp
+      POSTGRES_USER: infracloud
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD}
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U infracloud -d infracloud_inspection_mvp"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  workflow:
+    build:
+      context: .
+      dockerfile: infra/docker/Dockerfile.workflow
+    restart: unless-stopped
+    env_file:
+      - .env.staging.local
+    depends_on:
+      postgres:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8001/health')"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+
+  api:
+    build:
+      context: .
+      dockerfile: infra/docker/Dockerfile.api
+    restart: unless-stopped
+    env_file:
+      - .env.staging.local
+    environment:
+      NODE_ENV: staging
+      DATABASE_URL: postgresql://infracloud:${POSTGRES_PASSWORD}@postgres:5432/infracloud_inspection_mvp
+      LANGGRAPH_SERVICE_URL: http://workflow:8001
+    depends_on:
+      postgres:
+        condition: service_healthy
+      workflow:
+        condition: service_started
+    ports:
+      - "8787:8787"
+
+  web:
+    build:
+      context: .
+      dockerfile: infra/docker/Dockerfile.web
+    restart: unless-stopped
+    depends_on:
+      api:
+        condition: service_started
+    ports:
+      - "8080:80"
+
+volumes:
+  postgres-data:

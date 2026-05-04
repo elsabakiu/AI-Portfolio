@@ -1,0 +1,61 @@
+{
+  "case_id": "TC031",
+  "scenario": "Quantity correction from isolated to general, widespread occurrence",
+  "description": "Inspector reports that the damage is no longer isolated but occurs throughout the entire structure. Quantity is updated from isolated to general. Clean audio. Single conflict.",
+  "tags": ["update", "clean_audio", "quantity_correction", "single_conflict"],
+  "difficulty": "easy",
+  "audio": {"noise_profile": "clean", "snr_db": 999},
+  "split": "test",
+  "input": {
+    "suspicion_id": "TC031",
+    "transcript": "Die Verrostung ist nicht mehr nur lokal begrenzt, sie zieht sich über die gesamte Fläche. Ich würde das jetzt als flächendeckend, also allgemein, einstufen. Menge bitte auf allgemein ändern.",
+    "existing_record": {
+      "Suspicion ID": "TC031",
+      "Asset": "Duisburg Rheinkai",
+      "Part": "Spundwand",
+      "Object Part Category": "Steg",
+      "Main Component Category": "Spundwand",
+      "Status": "Damage",
+      "Material": "Metall | unlegierten Stahl",
+      "Damage Type": "Stahl | Verrostet",
+      "Class": "2",
+      "Length": "100",
+      "Width": "50",
+      "Depth": null,
+      "Quantity": "isolated",
+      "Location Longitudinal": "km 3+600",
+      "Location Cross Section": "wasserseitig",
+      "Location Height": "MTnw",
+      "Damage description": "Verrostung an der Stahlspundwand",
+      "Remark": null,
+      "Note": null,
+      "Longitude": 6.7301,
+      "Latitude": 51.4541,
+      "Height [m+NHN]": 27.4
+    }
+  },
+  "gold": {
+    "intent": "UPDATE_FIELD",
+    "fields": {
+      "Quantity": {
+        "value": "general",
+        "source_type": "stated",
+        "evidence_span": "flächendeckend, also allgemein",
+        "is_critical": false
+      }
+    },
+    "conflicts": [
+      {
+        "field": "Quantity",
+        "existing_value": "isolated",
+        "correct_value": "general",
+        "direction": "correction"
+      }
+    ],
+    "catalog_valid": true
+  },
+  "benchmark": {
+    "expected_warning_stages": [],
+    "expected_audio_quality": "good"
+  }
+}

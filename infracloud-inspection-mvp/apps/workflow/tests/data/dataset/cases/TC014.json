@@ -1,0 +1,73 @@
+{
+  "case_id": "TC014",
+  "scenario": "VALIDATE_DAMAGE",
+  "description": "Inspector confirms form change (Angrenzend) at a masonry concrete block wall at Emden Außenhafen. Clean audio. Inspector confirms the damage type is adjacent deformation, consistent with the record.",
+  "tags": [
+    "masonry",
+    "concrete_block",
+    "form_change"
+  ],
+  "difficulty": "easy",
+  "audio": {
+    "noise_profile": "clean",
+    "snr_db": 999
+  },
+  "split": "test",
+  "input": {
+    "suspicion_id": "TC014",
+    "transcript": "Emden Außenhafen, Ufermauer Abschnitt 3, Feld 6. Betonstein, Mauerwerk. Es gibt eine Formänderung — angrenzende Bereiche sind verschoben, typisch für seitlichen Druck. Klasse 2, bestätigt.",
+    "existing_record": {
+      "Suspicion ID": "TC014",
+      "Asset": "Emden Außenhafen",
+      "Part": "Ufermauer Abschnitt 3",
+      "Object Part Category": "Betonkonstruktion",
+      "Main Component Category": "Kaikonstruktion",
+      "Status": "Suspicion",
+      "Material": "Mauerwerk | Betonstein",
+      "Damage Type": "Formänderung | Angrenzend",
+      "Class": "2",
+      "Length": null,
+      "Width": null,
+      "Depth": null,
+      "Quantity": "general",
+      "Location Longitudinal": "Ufermauer Abschnitt 3",
+      "Location Cross Section": "Feld 6",
+      "Location Height": null,
+      "Damage description": null,
+      "Remark": null,
+      "Note": null,
+      "Longitude": 9.994,
+      "Latitude": 54.323,
+      "Height [m+NHN]": 1.5
+    }
+  },
+  "gold": {
+    "intent": "VALIDATE_DAMAGE",
+    "fields": {
+      "Status": {
+        "value": "Damage",
+        "source_type": "stated",
+        "evidence_span": "Klasse 2, bestätigt",
+        "is_critical": true
+      },
+      "Class": {
+        "value": "2",
+        "source_type": "stated",
+        "evidence_span": "Klasse 2, bestätigt",
+        "is_critical": true
+      },
+      "Material": {
+        "value": "Mauerwerk | Betonstein",
+        "source_type": "inferred",
+        "evidence_span": "Betonstein, Mauerwerk",
+        "is_critical": false
+      }
+    },
+    "conflicts": [],
+    "catalog_valid": true
+  },
+  "benchmark": {
+    "expected_warning_stages": [],
+    "expected_audio_quality": "good"
+  }
+}

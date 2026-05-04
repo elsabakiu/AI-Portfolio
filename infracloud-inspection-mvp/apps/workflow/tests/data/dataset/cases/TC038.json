@@ -1,0 +1,121 @@
+{
+  "case_id": "TC038",
+  "scenario": "Full overhaul with six field conflicts, complete re-characterisation of damage",
+  "description": "Inspector completely re-characterises the damage record. All six key fields conflict with existing values: Status, Material, Damage Type, Class, Length, and Quantity. The existing record was entirely wrong. Mixed noise makes this the hardest audio case.",
+  "tags": ["update", "mixed_noise", "full_overhaul", "six_conflicts", "hard"],
+  "difficulty": "hard",
+  "audio": {"noise_profile": "mixed", "snr_db": 4},
+  "split": "test",
+  "input": {
+    "suspicion_id": "TC038",
+    "transcript": "Ich muss den kompletten Datensatz korrigieren. Das ist definitiv ein bestätigter Schaden, kein Verdacht mehr. Das Material ist unlegierten Stahl, kein Beton. Schadenstyp ist Verrostung, keine Feuchte Stelle. Klasse drei, nicht eins. Länge ist vierzig, nicht zehn. Und der Schaden ist flächendeckend, also allgemein, nicht isoliert.",
+    "existing_record": {
+      "Suspicion ID": "TC038",
+      "Asset": "Kiel Nordhafen",
+      "Part": "Spundwand",
+      "Object Part Category": "Steg",
+      "Main Component Category": "Spundwand",
+      "Status": "Suspicion",
+      "Material": "Beton | Stahlbeton",
+      "Damage Type": "Beton | Feuchte Stelle",
+      "Class": "1",
+      "Length": "10",
+      "Width": null,
+      "Depth": null,
+      "Quantity": "isolated",
+      "Location Longitudinal": "km 4+900",
+      "Location Cross Section": "wasserseitig",
+      "Location Height": "MTnw",
+      "Damage description": "Unklare Stelle an der Spundwand, Verdacht auf Feuchte",
+      "Remark": null,
+      "Note": null,
+      "Longitude": 10.1489,
+      "Latitude": 54.3285,
+      "Height [m+NHN]": 0.4
+    }
+  },
+  "gold": {
+    "intent": "UPDATE_FIELD",
+    "fields": {
+      "Status": {
+        "value": "Damage",
+        "source_type": "stated",
+        "evidence_span": "definitiv ein bestätigter Schaden",
+        "is_critical": true
+      },
+      "Material": {
+        "value": "Metall | unlegierten Stahl",
+        "source_type": "stated",
+        "evidence_span": "unlegierten Stahl, kein Beton",
+        "is_critical": true
+      },
+      "Damage Type": {
+        "value": "Stahl | Verrostet",
+        "source_type": "stated",
+        "evidence_span": "Schadenstyp ist Verrostung",
+        "is_critical": true
+      },
+      "Class": {
+        "value": "3",
+        "source_type": "stated",
+        "evidence_span": "Klasse drei, nicht eins",
+        "is_critical": true
+      },
+      "Length": {
+        "value": "40",
+        "source_type": "stated",
+        "evidence_span": "Länge ist vierzig, nicht zehn",
+        "is_critical": false
+      },
+      "Quantity": {
+        "value": "general",
+        "source_type": "stated",
+        "evidence_span": "flächendeckend, also allgemein",
+        "is_critical": false
+      }
+    },
+    "conflicts": [
+      {
+        "field": "Status",
+        "existing_value": "Suspicion",
+        "correct_value": "Damage",
+        "direction": "correction"
+      },
+      {
+        "field": "Material",
+        "existing_value": "Beton | Stahlbeton",
+        "correct_value": "Metall | unlegierten Stahl",
+        "direction": "correction"
+      },
+      {
+        "field": "Damage Type",
+        "existing_value": "Beton | Feuchte Stelle",
+        "correct_value": "Stahl | Verrostet",
+        "direction": "correction"
+      },
+      {
+        "field": "Class",
+        "existing_value": "1",
+        "correct_value": "3",
+        "direction": "correction"
+      },
+      {
+        "field": "Length",
+        "existing_value": "10",
+        "correct_value": "40",
+        "direction": "correction"
+      },
+      {
+        "field": "Quantity",
+        "existing_value": "isolated",
+        "correct_value": "general",
+        "direction": "correction"
+      }
+    ],
+    "catalog_valid": true
+  },
+  "benchmark": {
+    "expected_warning_stages": [],
+    "expected_audio_quality": "partial"
+  }
+}

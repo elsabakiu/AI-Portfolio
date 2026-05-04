@@ -1,0 +1,11 @@
+.env
+.env.local
+.env.development.local
+.env.staging.local
+.env.production.local
+dist
+node_modules
+.vite
+.pytest_cache
+__pycache__/
+.DS_Store

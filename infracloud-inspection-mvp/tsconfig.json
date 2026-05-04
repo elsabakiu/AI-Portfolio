@@ -1,0 +1,30 @@
+{
+  "compilerOptions": {
+    "target": "ES2020",
+    "useDefineForClassFields": true,
+    "lib": ["ES2020", "DOM", "DOM.Iterable"],
+    "allowJs": false,
+    "skipLibCheck": true,
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "strict": true,
+    "forceConsistentCasingInFileNames": true,
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "noEmit": true,
+    "jsx": "react-jsx",
+    "ignoreDeprecations": "6.0",
+    "types": ["vitest/globals", "@testing-library/jest-dom"],
+    "baseUrl": ".",
+    "paths": {
+      "@web/*": ["apps/web/src/*"],
+      "@ui/*": ["packages/ui/src/*"],
+      "@schemas/*": ["packages/schemas/src/*"],
+      "@config/*": ["packages/config/src/*"]
+    }
+  },
+  "include": ["apps/web/src", "apps/web/test", "packages/ui/src", "packages/schemas/src", "packages/config/src"],
+  "references": []
+}
